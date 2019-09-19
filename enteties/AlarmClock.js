@@ -1,6 +1,6 @@
 //@ts-check
-import ClockState from "./ClockState";
-import AlarmState from "./AlarmState";
+import ClockState from "../states/ClockState";
+import AlarmState from "../states/AlarmState";
 import Time from "./Time";
 
 export default class AlarmClock {

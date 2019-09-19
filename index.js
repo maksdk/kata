@@ -1,5 +1,5 @@
 //@ts-check
-import AlarmClock from "./AlarmClock";
+import AlarmClock from "./enteties/AlarmClock";
 
 const clock = new AlarmClock();
 
