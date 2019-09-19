@@ -12,6 +12,10 @@ export default class AlarmClock {
       this.alarmTime = new Time(6, 0);
    }
 
+   clickMode() {
+      this.state.setNextState();
+   }
+
    getCurrentMode() {
       return this.state.getMode();
    }
