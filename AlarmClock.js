@@ -1,16 +1,15 @@
 //@ts-check
 import ClockState from "./ClockState";
 import AlarmState from "./AlarmState";
+import Time from "./Time";
 
 export default class AlarmClock {
    constructor() {
       this.state = null;
       this.setState(ClockState);
 
-      this._minutes = 0;
-      this._hours = 12;
-      this._alarmHours = 6;
-      this._alarmMinutes = 0;
+      this.clockTime = new Time(12, 0);
+      this.alarmTime = new Time(6, 0);
    }
 
    getCurrentMode() {
@@ -27,18 +26,18 @@ export default class AlarmClock {
    }
 
    minutes() {
-      return this._minutes;
+      return this.clockTime.minutes;
    }
 
    hours() {
-      return this._hours;
+      return this.clockTime.hours;
    }
 
    alarmHours() {
-      return this._alarmHours;
+      return this.alarmTime.hours;
    }
 
    alarmMinutes() {
-      return this._alarmMinutes;
+      return this.alarmTime.minutes;
    }
 }
