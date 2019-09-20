@@ -10,19 +10,20 @@ export default class AlarmClock {
 
       this.clockTime = new Time(12, 0);
       this.alarmTime = new Time(6, 0);
+
+      this._isAlarmOn = false;
    }
 
    clickMode() {
       this.state.setNextState();
    }
 
-   getCurrentMode() {
-      return this.state.getMode();
+   longClickMode() {
+      this._isAlarmOn = !this._isAlarmOn;
    }
 
-   isAlarmOn() {
-      const currMode = this.state.getMode();
-      return currMode === AlarmState.mode;
+   getCurrentMode() {
+      return this.state.getMode();
    }
 
    setState(Klass) {
@@ -43,5 +44,35 @@ export default class AlarmClock {
 
    alarmMinutes() {
       return this.alarmTime.minutes;
+   }
+
+   clickH() {
+      this.state.clickH();
+   }
+
+   clickM() {
+      this.state.clickM();
+   }
+
+   incrementH(typeTime) {
+      this[typeTime].incrementH();
+   }
+
+   incrementM(typeTime) {
+      this[typeTime].incrementM();
+   }
+
+   tick() {
+      this.clockTime.tick();
+      this.state.tick();
+   }
+
+   isAlarmTime() {
+      return this.hours === this.alarmHours && 
+         this.minutes === this.alarmMinutes;
+   }
+
+   isAlarmOn() {
+      return this._isAlarmOn;
    }
 }

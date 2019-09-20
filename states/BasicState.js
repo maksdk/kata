@@ -5,13 +5,26 @@ export default class BasicState {
       this.mainClass = this.mainClass;
       this.nextState = null;
       this.mode = null;
+      this.typeTime = null;
    }
 
-   setNextState() {
-      this.mainClass.setNextState(this.nextState);
+   setNextState(state) {
+      this.mainClass.setNextState(state || this.nextState);
    }
 
    getMode() {
       return this.mode;
+   } 
+
+   clickH() {
+      this.mainClass.incrementH(this.typeTime);
+   }
+
+   clickM() {
+      this.mainClass.incrementM(this.typeTime);
+   }
+
+   tick() {
+      
    }
 }

@@ -9,7 +9,32 @@ export default class Time {
       return this._minutes;
    }
 
+   set minutes(m) {
+      this._minutes = m;
+   }
+
    get hours() {
       return this._hours;
+   }
+
+   set hours(h) {
+      this._hours = h;
+   }
+
+   incrementH() {
+      const h = this.hours;
+      this.hours = h + 1;
+   }
+
+   incrementM() {
+      const m = this.minutes;
+      this.minutes = m + 1;
+   }
+
+   tick() {
+      this.incrementM();
+      if (this.minutes === 0) {
+         this.incrementH();
+      }
    }
 }

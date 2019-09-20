@@ -1,6 +1,7 @@
 //@ts-check
 import BasicState from "./BasicState";
 import AlarmState from "./AlarmState";
+import BellState from "./BellState";
 
 const MODE = "clock";
 
@@ -10,17 +11,12 @@ export default class ClockState extends BasicState {
 
       this.nextState = AlarmState;
       this.mode = MODE;
+      this.typeTime = "clockTime";
    }
 
-   static get mode() {
-      return MODE;
-   }
-
-   clickH() {
-
-   }
-
-   clickM() {
-
+   tick() {
+      if (this.mainClass.isAlarmOn() && this.mainClass.isAlarmTime()) {
+         this.setNextState(BellState);
+      }
    }
 }
