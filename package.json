@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run": "./node_modules/.bin/babel-node index.js"
+    "run": "./node_modules/.bin/babel-node index.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,8 @@
   },
   "homepage": "https://github.com/maksdk/state_machine_alarm_clock#readme",
   "devDependencies": {
+    "@babel/preset-env": "^7.6.2",
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0"
+    "jest": "^24.9.0"
   }
 }
