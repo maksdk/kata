@@ -23,12 +23,12 @@ export default class Time {
 
    incrementH() {
       const h = this.hours;
-      this.hours = h + 1;
+      this.hours = (h + 1) % 24;
    }
 
    incrementM() {
       const m = this.minutes;
-      this.minutes = m + 1;
+      this.minutes = (m + 1) % 60;
    }
 
    tick() {

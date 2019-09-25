@@ -59,6 +59,7 @@ export default class AlarmClock {
    }
 
    incrementM(typeTime) {
+      //console.log(typeTime)
       this[typeTime].incrementM();
    }
 
@@ -68,8 +69,8 @@ export default class AlarmClock {
    }
 
    isAlarmTime() {
-      return this.hours === this.alarmHours && 
-         this.minutes === this.alarmMinutes;
+      return this.hours() === this.alarmHours() && 
+         this.minutes() === this.alarmMinutes();
    }
 
    isAlarmOn() {
