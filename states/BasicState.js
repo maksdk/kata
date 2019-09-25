@@ -18,11 +18,11 @@ export default class BasicState {
    } 
 
    clickH() {
-      this.mainClass.incrementH(this.typeTime);
+      this.typeTime && this.mainClass.incrementH(this.typeTime);
    }
 
    clickM() {
-      this.mainClass.incrementM(this.typeTime);
+      this.typeTime && this.mainClass.incrementM(this.typeTime);
    }
 
    tick() {
