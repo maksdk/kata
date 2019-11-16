@@ -1,0 +1,10 @@
+{
+   "scripts": {
+      "test": "jest --colors"
+   },
+   "dependencies": {
+      "lodash": "*",
+      "keycode": "*",
+      "js-beautify": "*"
+   }
+}
