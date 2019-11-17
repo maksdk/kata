@@ -1,0 +1,22 @@
+{
+   "scripts": {
+      "test": "jest --colors"
+   },
+   "jest": {
+      "verbose": false,
+      "bail": true
+   },
+   "dependencies": {
+      "lodash": "*",
+      "melanke-watchjs": "*",
+      "timer-promise": "*",
+      "js-polyfills": "*",
+      "js-beautify": "*"
+   },
+   "devDependencies": {
+      "jest": "*",
+      "babel-jest": "^24.9.0",
+      "@babel/core": "^7.6.4",
+      "@babel/preset-env": "^7.6.3"
+   }
+}
