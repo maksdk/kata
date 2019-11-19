@@ -147,5 +147,4 @@ describe('AlarmClock', () => {
       clock.clickMode();
       expect(clock.getCurrentMode()).toBe('clock');
    });
-
 });

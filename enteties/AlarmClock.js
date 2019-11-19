@@ -1,6 +1,5 @@
 //@ts-check
 import ClockState from "../states/ClockState";
-import AlarmState from "../states/AlarmState";
 import Time from "./Time";
 
 export default class AlarmClock {
@@ -59,7 +58,6 @@ export default class AlarmClock {
    }
 
    incrementM(typeTime) {
-      //console.log(typeTime)
       this[typeTime].incrementM();
    }
 
