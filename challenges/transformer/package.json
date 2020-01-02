@@ -6,10 +6,12 @@
       "testEnvironment": "node",
       "bail": true
    },
+   "dependencies": {},
    "devDependencies": {
       "@babel/core": "^7.7.5",
       "@babel/node": "^7.7.4",
       "@babel/preset-env": "^7.7.5",
-      "jest": "*"
+      "jest": "*",
+      "lodash": "^4.17.15"
    }
 }
