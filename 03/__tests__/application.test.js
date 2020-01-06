@@ -6,7 +6,7 @@ import {
 } from 'js-beautify';
 import keycode from 'keycode';
 
-import run from '../src/application';
+import run from '../src/index';
 
 const htmlOptions = {
    preserve_newlines: true,
