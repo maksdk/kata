@@ -1,8 +1,9 @@
+//@ts-check
 import fs from 'fs';
 import path from 'path';
 import { html } from 'js-beautify';
 
-import run from '../src/application';
+import run from '../src/solution1';
 
 const htmlOptions = {
   preserve_newlines: false,
