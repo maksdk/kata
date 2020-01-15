@@ -4,29 +4,29 @@ let state = {};
 const handleAddList = (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
+    const { target } = e;
+    const formData = new FormData(target);
     const title = formData.get("name");
-
+    target.reset();
+    
     if (title) {
         const id = String(state.lists.length + 1);
-        //@ts-ignore
         state.lists.push({ id, title });
-
         render(state);
     }
 };
 
 const handleAddTask = (e) => {
     e.preventDefault();
-
-    const formData = new FormData(e.target);
+    
+    const { target } = e;
+    const formData = new FormData(target);
     const title = formData.get("name");
+    target.reset();
 
     if (title) {
         const id = String(state.lists.length + 1);
-        //@ts-ignore
         state.tasks.push({ id, title, listId: state.currentListId });
-
         render(state);
     }
 };
@@ -59,10 +59,8 @@ const buildListHtml = (lists, currListId) => {
 
     const getSimpleLi = (body, id) => {
         const li = document.createElement("li");
-
         const a = document.createElement("a");
         const aText = document.createTextNode(body);
-
         a.setAttribute("href", `#${body.toLowerCase()}`);
         a.appendChild(aText);
         li.appendChild(a);
@@ -73,10 +71,8 @@ const buildListHtml = (lists, currListId) => {
     };
 
     const ul = document.createElement("ul");
-
     lists.forEach(list => {
         const { id, title } = list;
-        
         const li = id === currListId 
             ? getCurrentLi(title) 
             : getSimpleLi(title, id);
@@ -120,6 +116,5 @@ const app = () => {
     
     render(state);
 };
-// app()
+// app();
 export default app;
-// END
