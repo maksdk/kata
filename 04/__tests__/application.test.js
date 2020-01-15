@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import {
-  html
-} from 'js-beautify';
+import { html } from 'js-beautify';
 
 import run from '../src/application';
 
@@ -21,6 +19,7 @@ beforeEach(() => {
 });
 
 test('application', async () => {
+  console.log("1");
   expect(getTree()).toMatchSnapshot();
 
   const newTaskForm = document.querySelector('[data-container="new-task-form"]');
@@ -53,5 +52,6 @@ test('application', async () => {
 });
 
 test('application', async () => {
+  console.log("2");
   expect(getTree()).toMatchSnapshot();
 });

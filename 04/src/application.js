@@ -1,14 +1,5 @@
 // @ts-check
-const state = {
-    currentListId: "1",
-    lists:[
-        {
-            id: "1",
-            title: "General"
-        }
-    ],
-    tasks:[]
-};
+let state = {};
 
 const handleAddList = (e) => {
     e.preventDefault();
@@ -40,6 +31,11 @@ const handleAddTask = (e) => {
     }
 };
 
+const handleSelectList = (e, listId) => {
+    state.currentListId = listId;
+    render(state);
+};
+
 const buildTasksHtml = (tasks) => {
     const li = tasks.reduce((acc, task) => {
         const { title } = task;
@@ -51,22 +47,44 @@ const buildTasksHtml = (tasks) => {
     return "";
 };
 
-const buildListsHtml = (lists, currListId) => {
-    const getCurrentLi = (body) => `<li><b>${body}</b></li>`;
-    const getSimpleLi = (body) => `<li><a href="#${body.toLowerCase()}">${body}</a></li>`;
+const buildListHtml = (lists, currListId) => {
+    const getCurrentLi = (body) => {
+        const li = document.createElement("li");
+        const b = document.createElement("b");
+        const nodeText = document.createTextNode(body);
+        b.appendChild(nodeText);
+        li.appendChild(b);
+        return li;
+    };
 
-    const li = lists.reduce( (acc, list) => {
+    const getSimpleLi = (body, id) => {
+        const li = document.createElement("li");
+
+        const a = document.createElement("a");
+        const aText = document.createTextNode(body);
+
+        a.setAttribute("href", `#${body.toLowerCase()}`);
+        a.appendChild(aText);
+        li.appendChild(a);
+
+        a.addEventListener("click", (e) => handleSelectList(e, id), false);
+
+        return li;
+    };
+
+    const ul = document.createElement("ul");
+
+    lists.forEach(list => {
         const { id, title } = list;
+        
         const li = id === currListId 
             ? getCurrentLi(title) 
-            : getSimpleLi(title);
+            : getSimpleLi(title, id);
 
-        return `${acc}${li}`;
-    }, "");
+        ul.appendChild(li);
+    });
 
-    if (li) return `<ul>${li}</ul>`;
-
-    return "";
+    return ul;
 };
 
 const render = (state) => {
@@ -76,19 +94,32 @@ const render = (state) => {
     const tasksContainer = document.querySelector('[data-container="tasks"]');
     tasksContainer.innerHTML = buildTasksHtml(currTasks); 
 
-    const listsContainer = document.querySelector('[data-container="lists"]');;
-    listsContainer.innerHTML = buildListsHtml(lists, currentListId);
+    const listsContainer = document.querySelector('[data-container="lists"]');
+    const ul = buildListHtml(lists, currentListId);
+    listsContainer.innerHTML = "";
+    listsContainer.appendChild(ul);
 };
 
 const app = () => {
+    state = {
+        currentListId: "1",
+        lists:[
+            {
+                id: "1",
+                title: "General"
+            }
+        ],
+        tasks:[]
+    };
+    
     const inputList = document.querySelector('[data-container="new-list-form"]');
     inputList.addEventListener("submit", handleAddList, false);
-
+    
     const inputTask = document.querySelector('[data-container="new-task-form"]');
     inputTask.addEventListener("submit", handleAddTask, false);
-
+    
     render(state);
 };
-
-app();
+// app()
+export default app;
 // END
