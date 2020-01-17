@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "**/*"
+    ]
+}

@@ -24,76 +24,130 @@ const errorMessages = {
 };
 
 // BEGIN (write your solution here)
-const handleChangeName = (event) => {
-console.log("handleChangeName")
-console.log(event)
+const createErrorNode = (message) => {
+    const div = document.createElement("div");
+    div.appendChild(document.createTextNode(message));
+    div.setAttribute("class", "invalid-feedback");
+    return div;
 };
 
-const handleChangeEmail = (event) => {
-console.log("handleChangeEmail")
-console.log(event)
+const insertAfter = (newNode, referenceNode) => {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 };
 
-const handleChangePassword = (event) => {
-console.log("handleChangePassword")
-console.log(event)
+const mapValidates = {
+    "name": (value) => {
+        if (value === "") return { state: "empty" };
+        return { state: "valid" }; 
+    },
+    "email": (value) => {
+        if (!value) return { state: 'empty' };
+        if (!/\S+@\S+\.\S+/.test(value)) return { state: "invalid", error: errorMessages.email.valid }; 
+        return { state: "valid" };
+    },
+    "password": (value) => {
+        if (!value) return { state: 'empty' };
+        if (value.length < 6) return { state: "invalid", error: errorMessages.password.length };
+        return { state: "valid" };
+    },
+    "passwordConfirmation": (value, globalState) => {
+        const { password } = globalState;
+        if (!value) return { state: "empty" };
+        if (value !== password.value) return { state: "invalid", error: errorMessages.password.match };
+        return { state: "valid" };
+    }
 };
 
-const handleChangeConfirmPassword = (event) => {
-console.log("handleChangeConfirmPassword")
-console.log(event)
+const render = (state, target) => {
+    const { name } = target;
+    const targetState = state[name];
+
+    const existedErrorNode = target.parentNode.querySelector(".invalid-feedback");
+    if (existedErrorNode) {
+        target.parentNode.removeChild(existedErrorNode);
+    }
+
+    if (targetState && targetState.state === "invalid") {
+        target.classList.add("is-invalid"); 
+        if (targetState.error) {
+            const errorNode = createErrorNode(targetState.error);
+            insertAfter(errorNode, target);
+        } 
+    }
+    else {
+        target.classList.remove("is-invalid");
+    }
+
+    const submit = target.form.elements[target.form.elements.length - 1];
+    if (state.submit.state === "able") {
+        submit.removeAttribute("disabled");
+    }
+    else {
+        submit.setAttribute("disabled", true);
+    }
 };
 
-const handleSubmit = (event) => {
-console.log("handleSubmitnt")
-console.log(event)
+const handleSubmit = (event, state) => {
+    console.log("add logic for submit")
+};  
+
+const handleInput = (event, state) => {
+    const { target } = event;
+    const { name, value } = target;
+    
+    const { state: elemState, error="" } = mapValidates[name](value, state);
+
+    state[name].state = elemState;
+    state[name].value = value;
+    state[name].error = error;
+
+    const checkValidForm = (state) => {
+        for (let key in state) {
+            if (state[key].state === "invalid" || state[key].state === "empty") return false;
+        }
+        return true;
+    };
+
+    if (checkValidForm(state)) {
+        state.submit.state = "able";
+    }
+    else {
+        state.submit.state = "disabled";
+    }
+
+    render(state, target);
 };  
 
 const app = () => {
     const state = {
-        form: {
-            state: "idle",
-            name: "",
-            email: "",
-            password: "",
-            passwordConfirmation: ""
-        }
-    };
-
-    const elements = {
+        submit: {
+            state: "disabled"
+        },
         name: {
-            elem: document.getElementById("sign-up-name"),
-            event: "input",
-            callback: handleChangeName
+            state: "empty",
+            value: "",
+            error: ""
         },
         email: {
-            elem: document.getElementById("sign-up-email"),
-            event: "input",
-            callback: handleChangeEmail
+            state: "empty",
+            value: "",
+            error: ""
         },
         password: {
-            elem: document.getElementById("sign-up-password"),
-            event: "input",
-            callback: handleChangePassword
+            state: "empty",
+            value: "",
+            error: ""
         },
         passwordConfirmation: {
-            elem: document.getElementById("sign-up-password-confirmation"),
-            event: "input",
-            callback: handleChangeConfirmPassword
-        },
-        form: {
-            elem: document.querySelector('[data-form="sign-up"]'),
-            event: "submit",
-            callback: handleSubmit
+            state: "empty",
+            value: "",
+            error: ""
         }
     };
 
-    Object.values(elements)
-        .forEach(props => {
-            const { elem, event, callback } = props;
-            elem.addEventListener(event, (e) => callback(e, state), false);
-        });
-
+    const form = document.querySelector("[data-form='sign-up']");
+    form.addEventListener("input", (e) => handleInput(e, state), false);
+    form.addEventListener("submit", (e) => handleSubmit(e, state), false);
 };
 app()
 // export default app;
