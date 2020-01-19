@@ -1,31 +1,31 @@
 //@ts-check
 
 export default class BasicState {
-   constructor(mainClass) {
-      this.mainClass = mainClass;
-      
-      this.nextState = null;
-      this.mode = null;
-      this.typeTime = null;
-   }
+    constructor(mainClass) {
+        this.mainClass = mainClass;
 
-   setNextState(state) {
-      this.mainClass.setState(state || this.nextState);
-   }
+        this.nextState = null;
+        this.mode = null;
+        this.typeTime = null;
+    }
 
-   getMode() {
-      return this.mode;
-   } 
+    setNextState(state) {
+        this.mainClass.setState(state || this.nextState);
+    }
 
-   clickH() {
-      this.typeTime && this.mainClass.incrementH(this.typeTime);
-   }
+    getMode() {
+        return this.mode;
+    }
 
-   clickM() {
-      this.typeTime && this.mainClass.incrementM(this.typeTime);
-   }
+    clickH() {
+        this.typeTime && this.mainClass.incrementH(this.typeTime);
+    }
 
-   tick() {
-      
-   }
+    clickM() {
+        this.typeTime && this.mainClass.incrementM(this.typeTime);
+    }
+
+    tick() {
+
+    }
 }

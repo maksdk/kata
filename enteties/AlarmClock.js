@@ -3,75 +3,75 @@ import ClockState from "../states/ClockState";
 import Time from "./Time";
 
 export default class AlarmClock {
-   constructor() {
-      this.state = null;
-      this.setState(ClockState);
+    constructor() {
+        this.state = null;
+        this.setState(ClockState);
 
-      this.clockTime = new Time(12, 0);
-      this.alarmTime = new Time(6, 0);
+        this.clockTime = new Time(12, 0);
+        this.alarmTime = new Time(6, 0);
 
-      this._isAlarmOn = false;
-   }
+        this._isAlarmOn = false;
+    }
 
-   clickMode() {
-      this.state.setNextState();
-   }
+    clickMode() {
+        this.state.setNextState();
+    }
 
-   longClickMode() {
-      this._isAlarmOn = !this._isAlarmOn;
-   }
+    longClickMode() {
+        this._isAlarmOn = !this._isAlarmOn;
+    }
 
-   getCurrentMode() {
-      return this.state.getMode();
-   }
+    getCurrentMode() {
+        return this.state.getMode();
+    }
 
-   setState(Klass) {
-      this.state = new Klass(this);
-   }
+    setState(Klass) {
+        this.state = new Klass(this);
+    }
 
-   minutes() {
-      return this.clockTime.minutes;
-   }
+    minutes() {
+        return this.clockTime.minutes;
+    }
 
-   hours() {
-      return this.clockTime.hours;
-   }
+    hours() {
+        return this.clockTime.hours;
+    }
 
-   alarmHours() {
-      return this.alarmTime.hours;
-   }
+    alarmHours() {
+        return this.alarmTime.hours;
+    }
 
-   alarmMinutes() {
-      return this.alarmTime.minutes;
-   }
+    alarmMinutes() {
+        return this.alarmTime.minutes;
+    }
 
-   clickH() {
-      this.state.clickH();
-   }
+    clickH() {
+        this.state.clickH();
+    }
 
-   clickM() {
-      this.state.clickM();
-   }
+    clickM() {
+        this.state.clickM();
+    }
 
-   incrementH(typeTime) {
-      this[typeTime].incrementH();
-   }
+    incrementH(typeTime) {
+        this[typeTime].incrementH();
+    }
 
-   incrementM(typeTime) {
-      this[typeTime].incrementM();
-   }
+    incrementM(typeTime) {
+        this[typeTime].incrementM();
+    }
 
-   tick() {
-      this.clockTime.tick();
-      this.state.tick();
-   }
+    tick() {
+        this.clockTime.tick();
+        this.state.tick();
+    }
 
-   isAlarmTime() {
-      return this.hours() === this.alarmHours() && 
-         this.minutes() === this.alarmMinutes();
-   }
+    isAlarmTime() {
+        return this.hours() === this.alarmHours() &&
+            this.minutes() === this.alarmMinutes();
+    }
 
-   isAlarmOn() {
-      return this._isAlarmOn;
-   }
+    isAlarmOn() {
+        return this._isAlarmOn;
+    }
 }

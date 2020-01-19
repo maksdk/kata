@@ -6,17 +6,17 @@ import BellState from "./BellState";
 const MODE = "alarm";
 
 export default class AlarmState extends BasicState {
-   constructor(mainClass) {
-      super(mainClass);
+    constructor(mainClass) {
+        super(mainClass);
 
-      this.nextState = ClockState;
-      this.mode = MODE;
-      this.typeTime = "alarmTime";
-   }
+        this.nextState = ClockState;
+        this.mode = MODE;
+        this.typeTime = "alarmTime";
+    }
 
-   tick() {
-      if (this.mainClass.isAlarmTime()) {
-         this.setNextState(BellState);
-      }
-   }
+    tick() {
+        if (this.mainClass.isAlarmTime()) {
+            this.setNextState(BellState);
+        }
+    }
 }
