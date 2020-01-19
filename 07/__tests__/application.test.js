@@ -1,3 +1,4 @@
+//@ts-check
 import fs from 'fs';
 import path from 'path';
 import {
@@ -5,7 +6,7 @@ import {
 } from 'js-beautify';
 import timer from 'timer-promise';
 
-import run from '../src/application';
+import run from '../src';
 
 const htmlOptions = {
     preserve_newlines: true,
