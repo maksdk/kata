@@ -1,0 +1,19 @@
+{
+    "scripts": {
+        "test": "jest --colors"
+    },
+    "jest": {
+        "verbose": false,
+        "bail": true
+    },
+    "dependencies": {
+        "lodash": "*",
+        "melanke-watchjs": "*",
+        "timer-promise": "*",
+        "js-polyfills": "*",
+        "core-js": "*",
+        "regenerator-runtime": "*",
+        "i18next": "*",
+        "js-beautify": "*"
+    }
+}
