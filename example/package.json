@@ -1,0 +1,16 @@
+{
+  "name": "example_of_state_pattern",
+  "scripts": {
+    "dev": "webpack --mode development ./src/index.js --output ./dist/main.js --watch"
+  },
+  "author": "Maksym Havryshchenko",
+  "license": "ISC",
+  "dependencies": {
+    "pixi.js": "^5.2.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  }
+}
