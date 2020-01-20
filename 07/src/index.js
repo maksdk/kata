@@ -9,29 +9,69 @@ import resources from './locales';
 //asc - прямой
 //desc - обратный
 //unsorted - несортированый
-const render = (state) => {
-    const { sortBy, sortOrder, list } = state;
+const mapBodies = {
+    "name": (sortBy, sortOrder) => {
+        if (sortBy !== "name") return "Name (Unsorted)";
+        if (sortOrder === "asc") return "Name (Asc)";
+        if (sortOrder === "desc") return "Name (Desc)";
+        return "";
+    },
+    "value": (sortBy, sortOrder) => {
+        if (sortBy !== "value") return "Value (Unsorted)";
+        if (sortOrder === "asc") return "Value (Asc)";
+        if (sortOrder === "desc") return "Value (Desc)";
+        return "";
+    }
+};
 
-    const container = document.querySelector(".container");
-    container.addEventListener("click", () => console.log("click"));
-    
-    const table = document.createElement("table");
-    container.appendChild(table);
-    
-    const tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-
+const buildRowHead = (body) => {
     const tr = document.createElement("tr");
-    tbody.appendChild(tr);
 
     const th = document.createElement("th");
     tr.appendChild(th);
 
     const a = document.createElement("a");
     a.setAttribute("href", "#");
-    a.appendChild(document.createTextNode("Name"));
+    a.appendChild(document.createTextNode(body));
     th.appendChild(a);
+    return tr;
 };
+
+const render = (state, container, handleClick) => {
+    const { sortBy, sortOrder, list } = state;
+
+    const table = document.createElement("table");
+    table.setAttribute("class", "table");
+    container.appendChild(table);
+    
+    const tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
+    const headName = buildRowHead(mapBodies["name"](sortBy, sortOrder));
+    headName.addEventListener("click", (e) => handleClick(e, "name"), false);
+    tbody.appendChild(headName);
+    
+    const headValue = buildRowHead(mapBodies["value"](sortBy, sortOrder));
+    headValue.addEventListener("click", (e) => handleClick(e, "value"), false);
+    tbody.appendChild(headValue);
+
+    list.forEach(l => {
+        const { name, value } = l;
+
+        const tr = document.createElement("tr");
+
+        const tdName = document.createElement("td");
+        tdName.appendChild(document.createTextNode(name));
+        tr.appendChild(tdName);
+
+        const tdValue = document.createElement("td");
+        tdValue.appendChild(document.createTextNode(value));
+        tr.appendChild(tdValue);
+
+        tbody.appendChild(tr);
+    });
+};
+
 
 const sortOptionsByKey = (options, key="name", sortOrder="asc") => {
     //@ts-ignore
@@ -49,9 +89,29 @@ const app = () => {
     const sortOrder = "asc";
     const list = sortOptionsByKey(localOptions, sortBy, sortOrder);
 
-    const state = { sortBy, sortOrder, list };
+    const state = { 
+        sortBy, 
+        sortOrder, 
+        list 
+    };
+
+    const container = document.querySelector(".container");
     
-    render(state);
+    render(state, container, (e, currType) => {
+        e && e.preventDefault();
+        
+        if (state.sortBy === currType) {
+            state.sortOrder = state.sortOrder === "asc" ? "desc" : "asc";
+        }
+        else {
+            state.sortOrder = "asc";
+        }
+    
+        state.sortBy = currType;
+        state.list = sortOptionsByKey(localOptions, state.sortBy, state.sortOrder);
+
+        // render(state, container);
+    });
 };
 app();
 export default app;
