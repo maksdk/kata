@@ -1,7 +1,9 @@
 //@ts-check
-import app from "./view";
+import App from "./app";
 
 window.addEventListener("load", () => {
-    app();
+    const app = new App();
+    app.init();
+    app.start();
 });
 

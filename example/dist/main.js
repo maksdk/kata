@@ -726,6 +726,42 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 
 /***/ }),
 
+/***/ "./src/app/index.js":
+/*!**************************!*\
+  !*** ./src/app/index.js ***!
+  \**************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view */ \"./src/app/view/index.js\");\n//@ts-check\r\n\r\n\r\nclass App {\r\n    constructor() {\r\n        this.view = null;\r\n        // this.state = null;\r\n        // this.controller = null;\r\n        // this.fsm = null;\r\n    }\r\n\r\n    init() {\r\n        this.view = new _view__WEBPACK_IMPORTED_MODULE_0__[\"default\"]();\r\n        this.view.init();\r\n    }\r\n\r\n    start() {\r\n        this.view.start();\r\n    }\r\n}\r\n\r\n/* harmony default export */ __webpack_exports__[\"default\"] = (App);\n\n//# sourceURL=webpack:///./src/app/index.js?");
+
+/***/ }),
+
+/***/ "./src/app/view/MainStage.js":
+/*!***********************************!*\
+  !*** ./src/app/view/MainStage.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return MainStage; });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/pixi.es.js\");\n//@ts-check\r\n\r\n\r\nclass MainStage extends pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"] {\r\n    constructor() {\r\n        super();\r\n\r\n        this.timeFace = null;\r\n        this.hourButton = null;\r\n        this.minuteButton = null;\r\n        this.buttonMode = null;\r\n\r\n        this.create();\r\n    }\r\n\r\n    clickMode(e) {\r\n\r\n    }\r\n\r\n    clickHour(e) {\r\n        \r\n    }\r\n\r\n    clickMinute(e) {\r\n        \r\n    }\r\n\r\n    create() {\r\n        const container = this.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"]());\r\n        container.position.set(-150, -100);\r\n\r\n        container.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Graphics\"]())\r\n            .beginFill(0x0b6311)\r\n            .drawRoundedRect(0, 0, 400, 200, 10)\r\n            .endFill();\r\n\r\n        const timeFace = container.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Text\"](\"00:00\", { fill: 0xFFF, fontSize: 100 }));\r\n        timeFace.anchor.set(0.5);\r\n        timeFace.position.set(200, 65);\r\n        this.timeFace = timeFace;\r\n        \r\n        const hourButton = container.addChild(this.createButton(\"H\", 0xff9800));\r\n        hourButton.position.set(75, 150);\r\n        hourButton.interactive = true;\r\n        hourButton.on(\"pointerdown\", this.clickHour, this);\r\n        this.hourButton = hourButton;\r\n        \r\n        const minuteButton = container.addChild(this.createButton(\"M\", 0xff9800));\r\n        minuteButton.position.set(200, 150);\r\n        minuteButton.interactive = true;\r\n        minuteButton.on(\"pointerdown\", this.clickMinute, this);\r\n        this.minuteButton = minuteButton;\r\n        \r\n        const modeButton = container.addChild(this.createButton(\"Mode\", 0xf44336));\r\n        modeButton.position.set(325, 150);\r\n        modeButton.interactive = true;\r\n        modeButton.on(\"pointerdown\", this.clickMode, this);\r\n        this.modeButton = modeButton;\r\n    }\r\n\r\n    createButton(title=\"Button\", color) {\r\n        const btn = new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"]();\r\n        btn.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Graphics\"]())\r\n            .beginFill(color)\r\n            .drawRoundedRect(-50, -25, 100, 50, 10)\r\n            .endFill();\r\n        const titleText = btn.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Text\"](title, { fill: 0x000, fontSize: 30 }));\r\n        titleText.anchor.set(0.5);\r\n        return btn;\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/app/view/MainStage.js?");
+
+/***/ }),
+
+/***/ "./src/app/view/index.js":
+/*!*******************************!*\
+  !*** ./src/app/view/index.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return View; });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/pixi.es.js\");\n/* harmony import */ var _MainStage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MainStage */ \"./src/app/view/MainStage.js\");\n//@ts-check\r\n\r\n\r\n\r\nconst config = {\r\n    width: window.innerWidth, \r\n    height: window.innerHeight,\r\n    backgroundColor: 0x000\r\n};\r\n\r\nclass View {\r\n    constructor() {\r\n        this.app = null;\r\n    }\r\n\r\n    init() {\r\n        this.app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Application\"](config);\r\n        document.body.appendChild(this.app.view);\r\n    }\r\n\r\n    start() {\r\n        const mainStage = this.app.stage.addChild(new _MainStage__WEBPACK_IMPORTED_MODULE_1__[\"default\"]());\r\n        mainStage.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/app/view/index.js?");
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -734,19 +770,7 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view */ \"./src/view/index.js\");\n//@ts-check\r\n\r\n\r\nwindow.addEventListener(\"load\", () => {\r\n    Object(_view__WEBPACK_IMPORTED_MODULE_0__[\"default\"])();\r\n});\r\n\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
-
-/***/ }),
-
-/***/ "./src/view/index.js":
-/*!***************************!*\
-  !*** ./src/view/index.js ***!
-  \***************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/pixi.es.js\");\n//@ts-check\r\n\r\n\r\nconst config = {\r\n    width: window.innerWidth, \r\n    height: window.innerHeight,\r\n    backgroundColor: 0x000\r\n};\r\n\r\nfunction game() {\r\n    const app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Application\"](config);\r\n    document.body.appendChild(app.view);\r\n    \r\n    const scene = app.stage.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"]());\r\n    scene.position.set(app.renderer.width / 2, app.renderer.height / 2);\r\n\r\n    const clock = scene.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"]());\r\n    clock.position.set(-150, -100);\r\n\r\n    clock.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Graphics\"]())\r\n    .beginFill(0x0b6311)\r\n    .drawRoundedRect(0, 0, 400, 200, 10)\r\n    .endFill();\r\n\r\n    const clockTime = clock.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Text\"](\"00:00\", { fill: 0xFFF, fontSize: 100 }));\r\n    clockTime.anchor.set(0.5);\r\n    clockTime.position.set(200, 65);\r\n\r\n    const hourButton = createButton(\"H\");\r\n    hourButton.position.set(75, 150);\r\n    hourButton.interactive = true;\r\n    hourButton.on(\"pointerdown\", () => console.log(\"h\"));\r\n    clock.addChild(hourButton);\r\n    \r\n    const minuteButton = createButton(\"M\");\r\n    minuteButton.position.set(200, 150);\r\n    minuteButton.interactive = true;\r\n    minuteButton.on(\"pointerdown\", () => console.log(\"m\"));\r\n    clock.addChild(minuteButton);\r\n    \r\n    const modeButton = createButton(\"Mode\", 0xf44336);\r\n    modeButton.position.set(325, 150);\r\n    modeButton.interactive = true;\r\n    modeButton.on(\"pointerdown\", () => console.log(\"mode\"));\r\n    clock.addChild(modeButton);\r\n};\r\n\r\nfunction createButton(title=\"Button\", tint=0xffc107) {\r\n    const btn = new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Container\"]();\r\n    \r\n    btn.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Graphics\"]())\r\n        .beginFill(tint)\r\n        .drawRoundedRect(-50, -25, 100, 50, 10)\r\n        .endFill();\r\n\r\n    const titleText = btn.addChild(new pixi_js__WEBPACK_IMPORTED_MODULE_0__[\"Text\"](title, { fill: 0x000, fontSize: 30}));\r\n    titleText.anchor.set(0.5);\r\n\r\n    return btn;\r\n}\r\n\r\n/* harmony default export */ __webpack_exports__[\"default\"] = (game);\n\n//# sourceURL=webpack:///./src/view/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app */ \"./src/app/index.js\");\n//@ts-check\r\n\r\n\r\nwindow.addEventListener(\"load\", () => {\r\n    const app = new _app__WEBPACK_IMPORTED_MODULE_0__[\"default\"]();\r\n    app.init();\r\n    app.start();\r\n});\r\n\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 
