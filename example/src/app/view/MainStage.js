@@ -5,6 +5,8 @@ export default class MainStage extends Container {
     constructor() {
         super();
 
+        this.timerId = null;
+
         this.timeFace = null;
         this.hourButton = null;
         this.minuteButton = null;
@@ -12,17 +14,31 @@ export default class MainStage extends Container {
 
         this.create();
     }
-
-    clickMode(e) {
-
+    
+    onDownHour(e) {
+        console.log("clickHour");
+        this.emit("clickHour", this);
+    }
+    
+    onDownMinute(e) {
+        console.log("clickMinute");
+        this.emit("clickMinute", this);
     }
 
-    clickHour(e) {
-        
+    onDownMode() {
+        this.timerId = setTimeout(() => {
+            clearTimeout(this.timerId);
+            this.timerId = null;
+            console.log("longClickMode");
+            this.emit("longClickMode");
+        }, 1000);
     }
 
-    clickMinute(e) {
-        
+    onUpMode() {
+        if (this.timerId === null) return;
+        clearTimeout(this.timerId);
+        console.log("clickMode")
+        this.emit("clickMode");
     }
 
     create() {
@@ -42,19 +58,20 @@ export default class MainStage extends Container {
         const hourButton = container.addChild(this.createButton("H", 0xff9800));
         hourButton.position.set(75, 150);
         hourButton.interactive = true;
-        hourButton.on("pointerdown", this.clickHour, this);
+        hourButton.on("pointerdown", this.onDownHour, this);
         this.hourButton = hourButton;
         
         const minuteButton = container.addChild(this.createButton("M", 0xff9800));
         minuteButton.position.set(200, 150);
         minuteButton.interactive = true;
-        minuteButton.on("pointerdown", this.clickMinute, this);
+        minuteButton.on("pointerdown", this.onDownMinute, this);
         this.minuteButton = minuteButton;
         
         const modeButton = container.addChild(this.createButton("Mode", 0xf44336));
         modeButton.position.set(325, 150);
         modeButton.interactive = true;
-        modeButton.on("pointerdown", this.clickMode, this);
+        modeButton.on("pointerdown", this.onDownMode, this);
+        modeButton.on("pointerup", this.onUpMode, this);
         this.modeButton = modeButton;
     }
 

@@ -1,22 +1,26 @@
 //@ts-check
-import AppView from "./view";
+import View from "./view";
+import {ClockState} from "../states/index";
 
-class App {
+class Component {
     constructor() {
         this.view = null;
-        // this.state = null;
-        // this.controller = null;
-        // this.fsm = null;
+        this.state = null;
     }
 
     init() {
-        this.view = new AppView();
+        this.view = new View();
         this.view.init();
     }
 
     start() {
         this.view.start();
+        this.setState(ClockState)
+    }
+
+    setState(StateKlass) {
+        this.state = new StateKlass(this);
     }
 }
 
-export default App;
+export default Component;
