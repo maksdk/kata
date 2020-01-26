@@ -5,6 +5,15 @@ import State from "./states/index";
 import View from "./view/View";
 import Model from "./model/Model";
 
+
+const initState = {
+   state: "CLOCK",
+   alarm: {h: 6, m: 0, on: false },
+   clock: {h: 10, m: 0 }
+};
+
+
+
 class Component {
    constructor() {
       this.initData = {
