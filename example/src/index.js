@@ -1,9 +1,9 @@
 //@ts-check
-import App from "./app/index";
+import Component from "./Component";
 
 window.addEventListener("load", () => {
-    const app = new App();
-    app.init();
-    app.start();
+    const component = new Component();
+    component.init();
+    component.start();
 });
 
