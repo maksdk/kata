@@ -3,14 +3,22 @@ import BasicState from "./BasicState";
 
 export default class ClockState extends BasicState {
    static get stateName() {
-      return "CLOCK-STATE";
+      return "CLOCK";
    }
 
    clickHour() {
-      this.incrementH("clockTime");
+      this.incrementH("clock");
    }
 
    clickMinute() {
-      this.incrementM("clockTime");
+      this.incrementM("clock");
+   }
+
+   clickMode() {
+      this.fsm.setState("ALARM");
+   }
+
+   longClickMode() {
+      this.toggleAlarm();
    }
 }

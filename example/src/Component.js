@@ -1,73 +1,69 @@
 //@ts-check
 import { Application } from "pixi.js";
-// import { ClockState } from "./states/index";
-import State from "./states/index";
+import FSM from "./states/index";
 import View from "./view/View";
-import Model from "./model/Model";
-
-
-const initState = {
-   state: "CLOCK",
-   alarm: {h: 6, m: 0, on: false },
-   clock: {h: 10, m: 0 }
-};
-
-
 
 class Component {
    constructor() {
-      this.initData = {
-         currentState: "CLOCK-STATE",
-         alarmTime: { h: 6, m: 0 },
-         clockTime: { h: 10, m: 0 }
+      this.initStore = {
+         state: "CLOCK",
+         alarm: {h: 8, m: 0, on: false },
+         clock: {h: 7, m: 58 }
       };
 
       this.view = null;
-      this.state = null;
-      this.model = null;
+      this.fsm = null;
    }
 
    init() {
       const app = new Application({ width: window.innerWidth, height: window.innerHeight, backgroundColor: 0x000000});
       document.body.appendChild(app.view);
-
-      const view = app.stage.addChild(new View(this.initData));
+      const view = app.stage.addChild(new View(this.initStore));
       view.position.set(app.renderer.width / 2, app.renderer.height / 2);
       this.view = view;
 
-      this.model = new Model(this.initData);
-      this.state = State.getState(this.initData.currentState);
+      this.fsm = new FSM(this.initStore);
    }
    
    start() {
       this.view.create();
-      this.view.on("clickHour", this.state.clickHour, this.state);
-      this.view.on("clickMinute", this.state.clickMinute, this.state);
-      this.view.on("longClickMode", this.state.longClickMode, this.state);
-      this.view.on("clickMode", this.state.clickMode, this.state);
+      this.view.on("clickHour", this.clickHour, this);
+      this.view.on("clickMinute", this.clickMinute, this);
+      this.view.on("longClickMode", this.longClickMode, this);
+      this.view.on("clickMode", this.clickMode, this);
+      this.view.on("clickTick", this.clickTick, this);
 
-      this.model.on("update", this.view.updateData, this.view);
+      this.fsm.start();
+      this.fsm.on("updateState", this.updateState, this);
+      this.fsm.on("updateStore", this.updateStore, this);
    }
 
-   setState(StateKlass) {
-      this.state = new StateKlass(this);
-      // this.state.start();
+   updateState(e) {
+      this.view.updateData(e);
+   }
+
+   updateStore(e) {
+      this.view.updateData(e);
    }
 
    clickHour() {
-      this.state.clickHour();
+      this.fsm.currentState.clickHour();
    }
 
    clickMinute() {
-      this.state.clickMinute();
+      this.fsm.currentState.clickMinute();
    }
 
    clickMode() {
-      this.state.clickMode();
+      this.fsm.currentState.clickMode();
    }
 
    longClickMode() {
-      this.state.longClickMode();
+      this.fsm.currentState.longClickMode();
+   }
+
+   clickTick() {
+      this.fsm.currentState.tick();
    }
 }
 
