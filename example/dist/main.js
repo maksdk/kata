@@ -37706,7 +37706,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "isMobile", function() { return _pixi_settings__WEBPACK_IMPORTED_MODULE_0__["isMobile"]; });
 
-/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/@pixi/utils/node_modules/eventemitter3/index.js");
+/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
 /* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(eventemitter3__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return eventemitter3__WEBPACK_IMPORTED_MODULE_1___default.a; });
 /* harmony import */ var earcut__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! earcut */ "./node_modules/earcut/src/earcut.js");
@@ -38702,354 +38702,6 @@ function deprecation(version, message, ignoreDepth)
 
 /***/ }),
 
-/***/ "./node_modules/@pixi/utils/node_modules/eventemitter3/index.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/@pixi/utils/node_modules/eventemitter3/index.js ***!
-  \**********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var has = Object.prototype.hasOwnProperty
-  , prefix = '~';
-
-/**
- * Constructor to create a storage for our `EE` objects.
- * An `Events` instance is a plain object whose properties are event names.
- *
- * @constructor
- * @private
- */
-function Events() {}
-
-//
-// We try to not inherit from `Object.prototype`. In some engines creating an
-// instance in this way is faster than calling `Object.create(null)` directly.
-// If `Object.create(null)` is not supported we prefix the event names with a
-// character to make sure that the built-in object properties are not
-// overridden or used as an attack vector.
-//
-if (Object.create) {
-  Events.prototype = Object.create(null);
-
-  //
-  // This hack is needed because the `__proto__` property is still inherited in
-  // some old browsers like Android 4, iPhone 5.1, Opera 11 and Safari 5.
-  //
-  if (!new Events().__proto__) prefix = false;
-}
-
-/**
- * Representation of a single event listener.
- *
- * @param {Function} fn The listener function.
- * @param {*} context The context to invoke the listener with.
- * @param {Boolean} [once=false] Specify if the listener is a one-time listener.
- * @constructor
- * @private
- */
-function EE(fn, context, once) {
-  this.fn = fn;
-  this.context = context;
-  this.once = once || false;
-}
-
-/**
- * Add a listener for a given event.
- *
- * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} context The context to invoke the listener with.
- * @param {Boolean} once Specify if the listener is a one-time listener.
- * @returns {EventEmitter}
- * @private
- */
-function addListener(emitter, event, fn, context, once) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('The listener must be a function');
-  }
-
-  var listener = new EE(fn, context || emitter, once)
-    , evt = prefix ? prefix + event : event;
-
-  if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
-  else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
-  else emitter._events[evt] = [emitter._events[evt], listener];
-
-  return emitter;
-}
-
-/**
- * Clear event by name.
- *
- * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
- * @param {(String|Symbol)} evt The Event name.
- * @private
- */
-function clearEvent(emitter, evt) {
-  if (--emitter._eventsCount === 0) emitter._events = new Events();
-  else delete emitter._events[evt];
-}
-
-/**
- * Minimal `EventEmitter` interface that is molded against the Node.js
- * `EventEmitter` interface.
- *
- * @constructor
- * @public
- */
-function EventEmitter() {
-  this._events = new Events();
-  this._eventsCount = 0;
-}
-
-/**
- * Return an array listing the events for which the emitter has registered
- * listeners.
- *
- * @returns {Array}
- * @public
- */
-EventEmitter.prototype.eventNames = function eventNames() {
-  var names = []
-    , events
-    , name;
-
-  if (this._eventsCount === 0) return names;
-
-  for (name in (events = this._events)) {
-    if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
-  }
-
-  if (Object.getOwnPropertySymbols) {
-    return names.concat(Object.getOwnPropertySymbols(events));
-  }
-
-  return names;
-};
-
-/**
- * Return the listeners registered for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Array} The registered listeners.
- * @public
- */
-EventEmitter.prototype.listeners = function listeners(event) {
-  var evt = prefix ? prefix + event : event
-    , handlers = this._events[evt];
-
-  if (!handlers) return [];
-  if (handlers.fn) return [handlers.fn];
-
-  for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) {
-    ee[i] = handlers[i].fn;
-  }
-
-  return ee;
-};
-
-/**
- * Return the number of listeners listening to a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Number} The number of listeners.
- * @public
- */
-EventEmitter.prototype.listenerCount = function listenerCount(event) {
-  var evt = prefix ? prefix + event : event
-    , listeners = this._events[evt];
-
-  if (!listeners) return 0;
-  if (listeners.fn) return 1;
-  return listeners.length;
-};
-
-/**
- * Calls each of the listeners registered for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Boolean} `true` if the event had listeners, else `false`.
- * @public
- */
-EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-  var evt = prefix ? prefix + event : event;
-
-  if (!this._events[evt]) return false;
-
-  var listeners = this._events[evt]
-    , len = arguments.length
-    , args
-    , i;
-
-  if (listeners.fn) {
-    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
-
-    switch (len) {
-      case 1: return listeners.fn.call(listeners.context), true;
-      case 2: return listeners.fn.call(listeners.context, a1), true;
-      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
-      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
-      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
-      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
-    }
-
-    for (i = 1, args = new Array(len -1); i < len; i++) {
-      args[i - 1] = arguments[i];
-    }
-
-    listeners.fn.apply(listeners.context, args);
-  } else {
-    var length = listeners.length
-      , j;
-
-    for (i = 0; i < length; i++) {
-      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
-
-      switch (len) {
-        case 1: listeners[i].fn.call(listeners[i].context); break;
-        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
-        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
-        case 4: listeners[i].fn.call(listeners[i].context, a1, a2, a3); break;
-        default:
-          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
-            args[j - 1] = arguments[j];
-          }
-
-          listeners[i].fn.apply(listeners[i].context, args);
-      }
-    }
-  }
-
-  return true;
-};
-
-/**
- * Add a listener for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} [context=this] The context to invoke the listener with.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.on = function on(event, fn, context) {
-  return addListener(this, event, fn, context, false);
-};
-
-/**
- * Add a one-time listener for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} [context=this] The context to invoke the listener with.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.once = function once(event, fn, context) {
-  return addListener(this, event, fn, context, true);
-};
-
-/**
- * Remove the listeners of a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn Only remove the listeners that match this function.
- * @param {*} context Only remove the listeners that have this context.
- * @param {Boolean} once Only remove one-time listeners.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
-  var evt = prefix ? prefix + event : event;
-
-  if (!this._events[evt]) return this;
-  if (!fn) {
-    clearEvent(this, evt);
-    return this;
-  }
-
-  var listeners = this._events[evt];
-
-  if (listeners.fn) {
-    if (
-      listeners.fn === fn &&
-      (!once || listeners.once) &&
-      (!context || listeners.context === context)
-    ) {
-      clearEvent(this, evt);
-    }
-  } else {
-    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-      if (
-        listeners[i].fn !== fn ||
-        (once && !listeners[i].once) ||
-        (context && listeners[i].context !== context)
-      ) {
-        events.push(listeners[i]);
-      }
-    }
-
-    //
-    // Reset the array, or remove it completely if we have no more listeners.
-    //
-    if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
-    else clearEvent(this, evt);
-  }
-
-  return this;
-};
-
-/**
- * Remove all listeners, or those of the specified event.
- *
- * @param {(String|Symbol)} [event] The event name.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
-  var evt;
-
-  if (event) {
-    evt = prefix ? prefix + event : event;
-    if (this._events[evt]) clearEvent(this, evt);
-  } else {
-    this._events = new Events();
-    this._eventsCount = 0;
-  }
-
-  return this;
-};
-
-//
-// Alias methods names because people roll like that.
-//
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-
-//
-// Expose the prefix.
-//
-EventEmitter.prefixed = prefix;
-
-//
-// Allow `EventEmitter` to be imported as module namespace.
-//
-EventEmitter.EventEmitter = EventEmitter;
-
-//
-// Expose the module.
-//
-if (true) {
-  module.exports = EventEmitter;
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/earcut/src/earcut.js":
 /*!*******************************************!*\
   !*** ./node_modules/earcut/src/earcut.js ***!
@@ -39353,9 +39005,6 @@ function eliminateHole(hole, outerNode) {
     outerNode = findHoleBridge(hole, outerNode);
     if (outerNode) {
         var b = splitPolygon(outerNode, hole);
-
-        // filter collinear points around the cuts
-        filterPoints(outerNode, outerNode.next);
         filterPoints(b, b.next);
     }
 }
@@ -41059,8 +40708,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "settings", function() { return _pixi_settings__WEBPACK_IMPORTED_MODULE_33__["settings"]; });
 
 /*!
- * pixi.js - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * pixi.js - v5.2.0
+ * Compiled Wed, 06 Nov 2019 02:32:43 UTC
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -41254,6 +40903,34 @@ function useDeprecated()
                 Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.FilterManager class has moved to PIXI.systems.FilterSystem');
 
                 return PIXI.systems.FilterSystem;
+            },
+        },
+
+        /**
+         * @namespace PIXI.CanvasTinter
+         * @see PIXI.canvasUtils
+         * @deprecated since 5.2.0
+         */
+        CanvasTinter: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.CanvasTinter namespace has moved to PIXI.canvasUtils');
+
+                return PIXI.canvasUtils;
+            },
+        },
+
+        /**
+         * @namespace PIXI.GroupD8
+         * @see PIXI.groupD8
+         * @deprecated since 5.2.0
+         */
+        GroupD8: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.GroupD8 namespace has moved to PIXI.groupD8');
+
+                return PIXI.groupD8;
             },
         },
     });
@@ -41740,6 +41417,8 @@ function useDeprecated()
         this.update();
     };
 
+    var baseTextureIdDeprecation = false;
+
     Object.defineProperties(BaseTexture.prototype, {
         /**
          * @name PIXI.BaseTexture#hasLoaded
@@ -41760,15 +41439,98 @@ function useDeprecated()
          * @name PIXI.BaseTexture#imageUrl
          * @type {string}
          * @deprecated since 5.0.0
-         * @readonly
          * @see PIXI.resource.ImageResource#url
          */
         imageUrl: {
             get: function get()
             {
-                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.imageUrl property has been removed, use resource.url');
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.imageUrl property has been removed, use PIXI.BaseTexture.resource.url');
 
                 return this.resource && this.resource.url;
+            },
+
+            set: function set(imageUrl)
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.imageUrl property has been removed, use PIXI.BaseTexture.resource.url');
+
+                if (this.resource)
+                {
+                    this.resource.url = imageUrl;
+                }
+            },
+        },
+        /**
+         * @name PIXI.BaseTexture#source
+         * @type {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement|SVGElement}
+         * @deprecated since 5.0.0
+         * @readonly
+         * @see PIXI.resources.BaseImageResource#source
+         */
+        source: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.source property has been moved, use `PIXI.BaseTexture.resource.source`');
+
+                return this.resource && this.resource.source;
+            },
+            set: function set(source)
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.source property has been moved, use `PIXI.BaseTexture.resource.source` '
+                    + 'if you want to set HTMLCanvasElement. Otherwise, create new BaseTexture.');
+
+                if (this.resource)
+                {
+                    this.resource.source = source;
+                }
+            },
+        },
+
+        /**
+         * @name PIXI.BaseTexture#premultiplyAlpha
+         * @type {boolean}
+         * @deprecated since 5.2.0
+         * @readonly
+         * @see PIXI.BaseTexture#alphaMode
+         */
+        premultiplyAlpha: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.BaseTexture.premultiplyAlpha property has been changed to `alphaMode`'
+                    + ', see `PIXI.ALPHA_MODES`');
+
+                return this.alphaMode !== 0;
+            },
+            set: function set(value)
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.BaseTexture.premultiplyAlpha property has been changed to `alphaMode`'
+                    + ', see `PIXI.ALPHA_MODES`');
+
+                this.alphaMode = Number(value);
+            },
+        },
+        /**
+         * Batch local field, stores current texture location
+         *
+         * @name PIXI.BaseTexture#_id
+         * @deprecated since 5.2.0
+         * @type {number}
+         * @see PIXI.BaseTexture#_batchLocation
+         */
+        _id: {
+            get: function get()
+            {
+                if (!baseTextureIdDeprecation)
+                {
+                    // #popelyshev: That property was a hot place, I don't want to call deprecation method on it if possible
+                    Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.BaseTexture._id batch local field has been changed to `_batchLocation`');
+                    baseTextureIdDeprecation = true;
+                }
+
+                return this._batchLocation;
+            },
+            set: function set(value)
+            {
+                this._batchLocation = value;
             },
         },
     });
@@ -41819,6 +41581,31 @@ function useDeprecated()
         return BaseTexture.from(canvas, { scaleMode: scaleMode, resourceOptions: resourceOptions });
     };
 
+    Object.defineProperties(PIXI.resources.ImageResource.prototype, {
+        /**
+         * @name PIXI.resources.ImageResource#premultiplyAlpha
+         * @type {boolean}
+         * @deprecated since 5.2.0
+         * @readonly
+         * @see PIXI.resources.ImageResource#alphaMode
+         */
+        premultiplyAlpha: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.resources.ImageResource.premultiplyAlpha property '
+                    + 'has been changed to `alphaMode`, see `PIXI.ALPHA_MODES`');
+
+                return this.alphaMode !== 0;
+            },
+            set: function set(value)
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('5.2.0', 'PIXI.resources.ImageResource.premultiplyAlpha property '
+                    + 'has been changed to `alphaMode`, see `PIXI.ALPHA_MODES`');
+                this.alphaMode = Number(value);
+            },
+        },
+    });
+
     /**
      * @method PIXI.Point#copy
      * @deprecated since 5.0.0
@@ -41865,6 +41652,18 @@ function useDeprecated()
         Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.Matrix.copy method has been replaced with PIXI.Matrix.copyTo');
 
         return this.copyTo(p);
+    };
+
+    /**
+     * @method PIXI.systems.StateSystem#setState
+     * @deprecated since 5.1.0
+     * @see PIXI.systems.StateSystem#set
+     */
+    PIXI.systems.StateSystem.prototype.setState = function setState(s)
+    {
+        Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])('v5.1.0', 'StateSystem.setState has been renamed to StateSystem.set');
+
+        return this.set(s);
     };
 
     Object.assign(PIXI.systems.FilterSystem.prototype, {
@@ -42038,6 +41837,21 @@ function useDeprecated()
         };
     }
 
+    /**
+     * @deprecated since 5.0.0
+     * @member {PIXI.Graphics} PIXI.Graphics#graphicsData
+     * @see PIXI.Graphics#geometry
+     * @readonly
+     */
+    Object.defineProperty(PIXI.Graphics.prototype, 'graphicsData', {
+        get: function get()
+        {
+            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.Graphics.graphicsData property is deprecated, use PIXI.Graphics.geometry.graphicsData');
+
+            return this.geometry.graphicsData;
+        },
+    });
+
     // Use these to deprecate all the Sprite from* methods
     function spriteFrom(name, source, crossorigin, scaleMode)
     {
@@ -42152,15 +41966,31 @@ function useDeprecated()
     Object.defineProperty(PIXI.AbstractRenderer.prototype, 'autoResize', {
         get: function get()
         {
-            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.AbstractRenderer.autoResize property is deprecated, use autoDensity');
+            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.AbstractRenderer.autoResize property is deprecated, '
+                + 'use PIXI.AbstractRenderer.autoDensity');
 
             return this.autoDensity;
         },
         set: function set(value)
         {
-            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.AbstractRenderer.autoResize property is deprecated, use autoDensity');
+            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.AbstractRenderer.autoResize property is deprecated, '
+                + 'use PIXI.AbstractRenderer.autoDensity');
 
             this.autoDensity = value;
+        },
+    });
+
+    /**
+     * @deprecated since 5.0.0
+     * @member {PIXI.systems.TextureSystem} PIXI.Renderer#textureManager
+     * @see PIXI.Renderer#texture
+     */
+    Object.defineProperty(PIXI.Renderer.prototype, 'textureManager', {
+        get: function get()
+        {
+            Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.Renderer.textureManager property is deprecated, use PIXI.Renderer.texture');
+
+            return this.texture;
         },
     });
 
@@ -42223,7 +42053,7 @@ _pixi_app__WEBPACK_IMPORTED_MODULE_6__["Application"].registerPlugin(_pixi_loade
  * @name VERSION
  * @type {string}
  */
-var VERSION = '5.0.0-rc.3';
+var VERSION = '5.2.0';
 
 /**
  * @namespace PIXI
@@ -46733,16 +46563,16 @@ class Component {
       // state
       this.stateController.setState(this.initStore.state);
       this.stateController.on("updateState", this.updateState, this);
-      this.stateController.on("updateStore", this.updateStore, this);
+      // this.stateController.on("updateStore", this.updateStore, this);
    }
 
    updateState(data) {
       this.view.setData(data);
    }
 
-   updateStore(data) {
-      this.view.setData(data);
-   }
+   // updateStore(data) {
+   //    this.view.setData(data);
+   // }
 
    clickHour() {
       this.stateController.currentState.clickHour();
@@ -46817,7 +46647,7 @@ class AlarmState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
          this.controller.store.alarm.h = 0;
       }
 
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMinute() {
@@ -46825,7 +46655,7 @@ class AlarmState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
       if (this.controller.store.alarm.m === 60) { 
          this.controller.store.alarm.m = 0;
       }
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMode() {
@@ -46920,11 +46750,11 @@ class BellState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
    }
 
    clickHour() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 
    clickMinute() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 
    clickMode() {
@@ -46932,7 +46762,7 @@ class BellState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
    }
 
    tick() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 }  
 
@@ -46963,7 +46793,7 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
          this.controller.store.clock.h = 0;
       }
 
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMinute() {
@@ -46971,7 +46801,7 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
       if (this.controller.store.clock.m === 60) { 
          this.controller.store.clock.m = 0;
       }
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMode() {
@@ -46980,7 +46810,7 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
    longClickMode() {
       this.controller.store.alarm.on = !this.controller.store.alarm.on;
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    tick() {
@@ -46998,7 +46828,7 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
          this.controller.setState("BELL");
       }
       else {
-         this.controller.emit("updateStore", this.controller.store);
+         this.controller.emit("updateState", this.controller.store);
       }
    }
 }
@@ -47056,7 +46886,7 @@ class StateController extends eventemitter3__WEBPACK_IMPORTED_MODULE_0___default
 
    getState(name) {
       const CurrentState = this.states.find(state => state.stateName === name);
-      if (!CurrentState) throw new Error(`Such state name - ${name} , is not existed.`);
+      if (!CurrentState) throw new Error(`Such state name - ${name}, is not existed.`);
       return  CurrentState;
    }
 }

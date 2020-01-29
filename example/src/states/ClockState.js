@@ -12,7 +12,7 @@ export default class ClockState extends BasicState {
          this.controller.store.clock.h = 0;
       }
 
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMinute() {
@@ -20,7 +20,7 @@ export default class ClockState extends BasicState {
       if (this.controller.store.clock.m === 60) { 
          this.controller.store.clock.m = 0;
       }
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMode() {
@@ -29,7 +29,7 @@ export default class ClockState extends BasicState {
 
    longClickMode() {
       this.controller.store.alarm.on = !this.controller.store.alarm.on;
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    tick() {
@@ -47,7 +47,7 @@ export default class ClockState extends BasicState {
          this.controller.setState("BELL");
       }
       else {
-         this.controller.emit("updateStore", this.controller.store);
+         this.controller.emit("updateState", this.controller.store);
       }
    }
 }

@@ -34,7 +34,7 @@ export default class StateController extends EventEmitter {
 
    getState(name) {
       const CurrentState = this.states.find(state => state.stateName === name);
-      if (!CurrentState) throw new Error(`Such state name - ${name} , is not existed.`);
+      if (!CurrentState) throw new Error(`Such state name - ${name}, is not existed.`);
       return  CurrentState;
    }
 }

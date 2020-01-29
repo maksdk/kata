@@ -7,11 +7,11 @@ export default class BellState extends BasicState {
    }
 
    clickHour() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 
    clickMinute() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 
    clickMode() {
@@ -19,6 +19,6 @@ export default class BellState extends BasicState {
    }
 
    tick() {
-      console.log("BELL")
+      console.log("State: " + BellState.stateName);
    }
 }  

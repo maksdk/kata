@@ -12,7 +12,7 @@ export default class AlarmState extends BasicState {
          this.controller.store.alarm.h = 0;
       }
 
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMinute() {
@@ -20,7 +20,7 @@ export default class AlarmState extends BasicState {
       if (this.controller.store.alarm.m === 60) { 
          this.controller.store.alarm.m = 0;
       }
-      this.controller.emit("updateStore", this.controller.store);
+      this.controller.emit("updateState", this.controller.store);
    }
 
    clickMode() {

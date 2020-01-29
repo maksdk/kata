@@ -42,16 +42,16 @@ class Component {
       // state
       this.stateController.setState(this.initStore.state);
       this.stateController.on("updateState", this.updateState, this);
-      this.stateController.on("updateStore", this.updateStore, this);
+      // this.stateController.on("updateStore", this.updateStore, this);
    }
 
    updateState(data) {
       this.view.setData(data);
    }
 
-   updateStore(data) {
-      this.view.setData(data);
-   }
+   // updateStore(data) {
+   //    this.view.setData(data);
+   // }
 
    clickHour() {
       this.stateController.currentState.clickHour();
