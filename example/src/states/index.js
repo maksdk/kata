@@ -1,37 +1,39 @@
 //@ts-check
 import EventEmitter from "eventemitter3";
+
 import AlarmState from "./AlarmState";
 import BellState from "./BellState";
 import ClockState from "./ClockState";
 
-const states = [
-   AlarmState,
-   BellState,
-   ClockState
-];
  
-export default class FSM extends EventEmitter {
+export default class StateController extends EventEmitter {
    constructor(initStore) {
       super();
 
-      this.store = { ...initStore };
-      this.currentState = null;
-   }
+      this.states = [
+         AlarmState,
+         BellState,
+         ClockState
+      ];
 
-   start() {
-      const ClassState = FSM.getState(this.store.state);
-      this.currentState = new ClassState(this);
+      this.store = { 
+         ...initStore 
+      };
+      
+      this.currentState = null;
    }
 
    setState(name) {
       this.store.state = name;
-      const ClassState = FSM.getState(name);
+
+      const ClassState = this.getState(name);
       this.currentState = new ClassState(this);
+
       this.emit("updateState", this.store);
    }
 
-   static getState(name) {
-      const CurrentState = states.find(state => state.stateName === name);
+   getState(name) {
+      const CurrentState = this.states.find(state => state.stateName === name);
       if (!CurrentState) throw new Error(`Such state name - ${name} , is not existed.`);
       return  CurrentState;
    }

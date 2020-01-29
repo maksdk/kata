@@ -21,9 +21,9 @@ export default class MainStage extends Container {
       this.alarmPoint = null;
    }
 
-   updateData(data={}) {
+   setData(data={}) {
       const newData = { ...this.data, ...data };
-      const { state,  clock, alarm} = newData;
+      const { state,  clock, alarm } = newData;
 
       if (state === "CLOCK") {
          this.timeFace.text = this.fitTimeValue(clock.h, clock.m);
@@ -32,7 +32,7 @@ export default class MainStage extends Container {
 
       if (state === "ALARM") {
          this.timeFace.text = this.fitTimeValue(alarm.h, alarm.m);
-         this.timeFace.style.fill = 0xFFFFFF;
+         this.timeFace.style.fill = 0xFFFF00;
       }
 
       if (state === "BELL") {
@@ -41,6 +41,8 @@ export default class MainStage extends Container {
       }
 
       this.alarmPoint.tint = alarm.on ? 0xFF0000 : 0xFFFFFF;
+
+      this.data = newData;
    }
 
    fitTimeValue(h, m) {
@@ -128,8 +130,6 @@ export default class MainStage extends Container {
       clickButton.interactive = true;
       clickButton.on("pointerdown", this.onDownTick, this);
       this.clickButton = clickButton;
-
-      this.updateData();
    }
 
    createButton(title = "Button", color) {

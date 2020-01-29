@@ -6,10 +6,6 @@ export default class BellState extends BasicState {
       return "BELL";
    }
 
-   tick() {
-      console.log("BELL")
-   }
-
    clickHour() {
       console.log("BELL")
    }
@@ -19,7 +15,10 @@ export default class BellState extends BasicState {
    }
 
    clickMode() {
-      this.fsm.setState("CLOCK");
+      this.controller.setState("CLOCK");
    }
-   
+
+   tick() {
+      console.log("BELL")
+   }
 }  

@@ -6,6 +6,7 @@
   "author": "Maksym Havryshchenko",
   "license": "ISC",
   "dependencies": {
+    "es6-tween": "^5.5.10",
     "eventemitter3": "^4.0.0",
     "pixi.js": "5.0.0"
   },

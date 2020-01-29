@@ -46688,7 +46688,7 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js");
 /* harmony import */ var _states_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./states/index */ "./src/states/index.js");
-/* harmony import */ var _view_View__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view/View */ "./src/view/View.js");
+/* harmony import */ var _views_AlarmClock__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/AlarmClock */ "./src/views/AlarmClock.js");
 //@ts-check
 
 
@@ -46703,58 +46703,65 @@ class Component {
       };
 
       this.view = null;
-      this.fsm = null;
+      this.stateController = null;
    }
 
    init() {
+      // view
       const app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Application"]({ width: window.innerWidth, height: window.innerHeight, backgroundColor: 0x000000});
       document.body.appendChild(app.view);
-      const view = app.stage.addChild(new _view_View__WEBPACK_IMPORTED_MODULE_2__["default"](this.initStore));
+      
+      const view = app.stage.addChild(new _views_AlarmClock__WEBPACK_IMPORTED_MODULE_2__["default"](this.initStore));
       view.position.set(app.renderer.width / 2, app.renderer.height / 2);
       this.view = view;
 
-      this.fsm = new _states_index__WEBPACK_IMPORTED_MODULE_1__["default"](this.initStore);
+      // state
+      this.stateController = new _states_index__WEBPACK_IMPORTED_MODULE_1__["default"](this.initStore);
    }
    
    start() {
+      //view
       this.view.create();
+      this.view.setData(this.initStore);
+
       this.view.on("clickHour", this.clickHour, this);
       this.view.on("clickMinute", this.clickMinute, this);
       this.view.on("longClickMode", this.longClickMode, this);
       this.view.on("clickMode", this.clickMode, this);
       this.view.on("clickTick", this.clickTick, this);
 
-      this.fsm.start();
-      this.fsm.on("updateState", this.updateState, this);
-      this.fsm.on("updateStore", this.updateStore, this);
+      // state
+      this.stateController.setState(this.initStore.state);
+      this.stateController.on("updateState", this.updateState, this);
+      this.stateController.on("updateStore", this.updateStore, this);
    }
 
-   updateState(e) {
-      this.view.updateData(e);
+   updateState(data) {
+      this.view.setData(data);
    }
 
-   updateStore(e) {
-      this.view.updateData(e);
+   updateStore(data) {
+      this.view.setData(data);
    }
 
    clickHour() {
-      this.fsm.currentState.clickHour();
+      this.stateController.currentState.clickHour();
    }
 
    clickMinute() {
-      this.fsm.currentState.clickMinute();
+      this.stateController.currentState.clickMinute();
    }
 
    clickMode() {
-      this.fsm.currentState.clickMode();
+      this.stateController.currentState.clickMode();
    }
 
    longClickMode() {
-      this.fsm.currentState.longClickMode();
+      this.stateController.currentState.longClickMode();
    }
 
    clickTick() {
-      this.fsm.currentState.tick();
+      this.stateController.currentState.tick();
    }
 }
 
@@ -46805,15 +46812,24 @@ class AlarmState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
    }
 
    clickHour() {
-      this.incrementH("alarm");
+      this.controller.store.alarm.h += 1;
+      if (this.controller.store.alarm.h === 24) {
+         this.controller.store.alarm.h = 0;
+      }
+
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMinute() {
-      this.incrementM("alarm");
+      this.controller.store.alarm.m += 1;
+      if (this.controller.store.alarm.m === 60) { 
+         this.controller.store.alarm.m = 0;
+      }
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMode() {
-      this.fsm.setState("CLOCK");
+      this.controller.setState("CLOCK");
    }
 }
 
@@ -46831,88 +46847,55 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return BasicState; });
 //@ts-check
 class BasicState {
-   constructor(fsm) {
-      this.fsm = fsm;
+   constructor(controller) {
+      this.controller = controller;
    }
 
    static get stateName() {
-      return "BasicState";
+      return "BASIC";
    }
    
-   setNextState(NextStateClass) {
-      this.fsm.setState(NextStateClass);
-   }
-
-   incrementH(typeTime) {
-      this.fsm.store[typeTime].h += 1;
-      if (this.fsm.store[typeTime].h === 24) {
-         this.fsm.store[typeTime].h = 0;
-      }
-
-      this.fsm.emit("updateStore", this.fsm.store);
-   }
-
-   incrementM(typeTime) {
-      this.fsm.store[typeTime].m += 1;
-      if (this.fsm.store[typeTime].m === 60) { 
-         this.fsm.store[typeTime].m = 0;
-      }
-      this.fsm.emit("updateStore", this.fsm.store);
-   }
-
-   toggleAlarm() {
-      this.fsm.store.alarm.on = !this.fsm.store.alarm.on;
-      this.fsm.emit("updateStore", this.fsm.store);
-   }
-
-   tick() {
-      console.log("tick")
-      this.fsm.store.clock.m += 1;
-      if (this.fsm.store.clock.m === 60) {
-         this.fsm.store.clock.m = 0;
-         
-         this.fsm.store.clock.h += 1;
-         if (this.fsm.store.clock.h === 24) {
-            this.fsm.store.clock.h = 0;
-         }
-      }
-
-      if (this.isBell()) {
-         this.fsm.setState("BELL");
-      }
-      else {
-         this.fsm.emit("updateStore", this.fsm.store);
-      }
-   }
-
    isBell() {
-      const { clock, alarm } = this.fsm.store;
+      const { clock, alarm } = this.controller.store;
       if (alarm.on === false) return false;
       if (clock.h === alarm.h && clock.m === alarm.m) return true;
       return false;
    }
 
-   start() {
-      console.error("I am a method of the Basic State. Override me, a stupid programmer");
-   }
-
+   /**
+    * @abstract
+    */
    clickHour() {
-      console.error("I am a method of the Basic State. Override me, a stupid programmer");
+      console.warn("I am a method of the Basic State. Override me, a stupid programmer");
    }
 
+   /**
+    * @abstract
+    */
    clickMinute() {
-      console.error("I am a method of the Basic State. Override me, a stupid programmer");
+      console.warn("I am a method of the Basic State. Override me, a stupid programmer");
    }
 
+   /**
+    * @abstract
+    */
    clickMode() {
-      console.error("I am a method of the Basic State. Override me, a stupid programmer");
+      console.warn("I am a method of the Basic State. Override me, a stupid programmer");
    }
 
+   /**
+    * @abstract
+    */
    longClickMode() {
-      console.error("I am a method of the Basic State. Override me, a stupid programmer");
+      console.warn("I am a method of the Basic State. Override me, a stupid programmer");
    }
 
-   
+   /**
+    * @abstract
+    */
+   tick() {
+      console.warn("I am a method of the Basic State. Override me, a stupid programmer");
+   }
 }
 
 /***/ }),
@@ -46936,10 +46919,6 @@ class BellState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
       return "BELL";
    }
 
-   tick() {
-      console.log("BELL")
-   }
-
    clickHour() {
       console.log("BELL")
    }
@@ -46949,9 +46928,12 @@ class BellState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
    }
 
    clickMode() {
-      this.fsm.setState("CLOCK");
+      this.controller.setState("CLOCK");
    }
-   
+
+   tick() {
+      console.log("BELL")
+   }
 }  
 
 /***/ }),
@@ -46976,19 +46958,48 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
    }
 
    clickHour() {
-      this.incrementH("clock");
+      this.controller.store.clock.h += 1;
+      if (this.controller.store.clock.h === 24) {
+         this.controller.store.clock.h = 0;
+      }
+
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMinute() {
-      this.incrementM("clock");
+      this.controller.store.clock.m += 1;
+      if (this.controller.store.clock.m === 60) { 
+         this.controller.store.clock.m = 0;
+      }
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMode() {
-      this.fsm.setState("ALARM");
+      this.controller.setState("ALARM");
    }
 
    longClickMode() {
-      this.toggleAlarm();
+      this.controller.store.alarm.on = !this.controller.store.alarm.on;
+      this.controller.emit("updateStore", this.controller.store);
+   }
+
+   tick() {
+      this.controller.store.clock.m += 1;
+      if (this.controller.store.clock.m === 60) {
+         this.controller.store.clock.m = 0;
+         
+         this.controller.store.clock.h += 1;
+         if (this.controller.store.clock.h === 24) {
+            this.controller.store.clock.h = 0;
+         }
+      }
+
+      if (this.isBell()) {
+         this.controller.setState("BELL");
+      }
+      else {
+         this.controller.emit("updateStore", this.controller.store);
+      }
    }
 }
 
@@ -47003,7 +47014,7 @@ class ClockState extends _BasicState__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FSM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return StateController; });
 /* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
 /* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(eventemitter3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _AlarmState__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AlarmState */ "./src/states/AlarmState.js");
@@ -47015,34 +47026,36 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const states = [
-   _AlarmState__WEBPACK_IMPORTED_MODULE_1__["default"],
-   _BellState__WEBPACK_IMPORTED_MODULE_2__["default"],
-   _ClockState__WEBPACK_IMPORTED_MODULE_3__["default"]
-];
+
  
-class FSM extends eventemitter3__WEBPACK_IMPORTED_MODULE_0___default.a {
+class StateController extends eventemitter3__WEBPACK_IMPORTED_MODULE_0___default.a {
    constructor(initStore) {
       super();
 
-      this.store = { ...initStore };
-      this.currentState = null;
-   }
+      this.states = [
+         _AlarmState__WEBPACK_IMPORTED_MODULE_1__["default"],
+         _BellState__WEBPACK_IMPORTED_MODULE_2__["default"],
+         _ClockState__WEBPACK_IMPORTED_MODULE_3__["default"]
+      ];
 
-   start() {
-      const ClassState = FSM.getState(this.store.state);
-      this.currentState = new ClassState(this);
+      this.store = { 
+         ...initStore 
+      };
+      
+      this.currentState = null;
    }
 
    setState(name) {
       this.store.state = name;
-      const ClassState = FSM.getState(name);
+
+      const ClassState = this.getState(name);
       this.currentState = new ClassState(this);
+
       this.emit("updateState", this.store);
    }
 
-   static getState(name) {
-      const CurrentState = states.find(state => state.stateName === name);
+   getState(name) {
+      const CurrentState = this.states.find(state => state.stateName === name);
       if (!CurrentState) throw new Error(`Such state name - ${name} , is not existed.`);
       return  CurrentState;
    }
@@ -47050,10 +47063,10 @@ class FSM extends eventemitter3__WEBPACK_IMPORTED_MODULE_0___default.a {
 
 /***/ }),
 
-/***/ "./src/view/View.js":
-/*!**************************!*\
-  !*** ./src/view/View.js ***!
-  \**************************/
+/***/ "./src/views/AlarmClock.js":
+/*!*********************************!*\
+  !*** ./src/views/AlarmClock.js ***!
+  \*********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -47080,9 +47093,9 @@ class MainStage extends pixi_js__WEBPACK_IMPORTED_MODULE_0__["Container"] {
       this.alarmPoint = null;
    }
 
-   updateData(data={}) {
+   setData(data={}) {
       const newData = { ...this.data, ...data };
-      const { state,  clock, alarm} = newData;
+      const { state,  clock, alarm } = newData;
 
       if (state === "CLOCK") {
          this.timeFace.text = this.fitTimeValue(clock.h, clock.m);
@@ -47091,7 +47104,7 @@ class MainStage extends pixi_js__WEBPACK_IMPORTED_MODULE_0__["Container"] {
 
       if (state === "ALARM") {
          this.timeFace.text = this.fitTimeValue(alarm.h, alarm.m);
-         this.timeFace.style.fill = 0xFFFFFF;
+         this.timeFace.style.fill = 0xFFFF00;
       }
 
       if (state === "BELL") {
@@ -47100,6 +47113,8 @@ class MainStage extends pixi_js__WEBPACK_IMPORTED_MODULE_0__["Container"] {
       }
 
       this.alarmPoint.tint = alarm.on ? 0xFF0000 : 0xFFFFFF;
+
+      this.data = newData;
    }
 
    fitTimeValue(h, m) {
@@ -47187,8 +47202,6 @@ class MainStage extends pixi_js__WEBPACK_IMPORTED_MODULE_0__["Container"] {
       clickButton.interactive = true;
       clickButton.on("pointerdown", this.onDownTick, this);
       this.clickButton = clickButton;
-
-      this.updateData();
    }
 
    createButton(title = "Button", color) {

@@ -7,14 +7,23 @@ export default class AlarmState extends BasicState {
    }
 
    clickHour() {
-      this.incrementH("alarm");
+      this.controller.store.alarm.h += 1;
+      if (this.controller.store.alarm.h === 24) {
+         this.controller.store.alarm.h = 0;
+      }
+
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMinute() {
-      this.incrementM("alarm");
+      this.controller.store.alarm.m += 1;
+      if (this.controller.store.alarm.m === 60) { 
+         this.controller.store.alarm.m = 0;
+      }
+      this.controller.emit("updateStore", this.controller.store);
    }
 
    clickMode() {
-      this.fsm.setState("CLOCK");
+      this.controller.setState("CLOCK");
    }
 }

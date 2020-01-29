@@ -1,7 +1,7 @@
 //@ts-check
 import { Application } from "pixi.js";
-import FSM from "./states/index";
-import View from "./view/View";
+import StateController from "./states/index";
+import View from "./views/AlarmClock";
 
 class Component {
    constructor() {
@@ -12,58 +12,65 @@ class Component {
       };
 
       this.view = null;
-      this.fsm = null;
+      this.stateController = null;
    }
 
    init() {
+      // view
       const app = new Application({ width: window.innerWidth, height: window.innerHeight, backgroundColor: 0x000000});
       document.body.appendChild(app.view);
+      
       const view = app.stage.addChild(new View(this.initStore));
       view.position.set(app.renderer.width / 2, app.renderer.height / 2);
       this.view = view;
 
-      this.fsm = new FSM(this.initStore);
+      // state
+      this.stateController = new StateController(this.initStore);
    }
    
    start() {
+      //view
       this.view.create();
+      this.view.setData(this.initStore);
+
       this.view.on("clickHour", this.clickHour, this);
       this.view.on("clickMinute", this.clickMinute, this);
       this.view.on("longClickMode", this.longClickMode, this);
       this.view.on("clickMode", this.clickMode, this);
       this.view.on("clickTick", this.clickTick, this);
 
-      this.fsm.start();
-      this.fsm.on("updateState", this.updateState, this);
-      this.fsm.on("updateStore", this.updateStore, this);
+      // state
+      this.stateController.setState(this.initStore.state);
+      this.stateController.on("updateState", this.updateState, this);
+      this.stateController.on("updateStore", this.updateStore, this);
    }
 
-   updateState(e) {
-      this.view.updateData(e);
+   updateState(data) {
+      this.view.setData(data);
    }
 
-   updateStore(e) {
-      this.view.updateData(e);
+   updateStore(data) {
+      this.view.setData(data);
    }
 
    clickHour() {
-      this.fsm.currentState.clickHour();
+      this.stateController.currentState.clickHour();
    }
 
    clickMinute() {
-      this.fsm.currentState.clickMinute();
+      this.stateController.currentState.clickMinute();
    }
 
    clickMode() {
-      this.fsm.currentState.clickMode();
+      this.stateController.currentState.clickMode();
    }
 
    longClickMode() {
-      this.fsm.currentState.longClickMode();
+      this.stateController.currentState.longClickMode();
    }
 
    clickTick() {
-      this.fsm.currentState.tick();
+      this.stateController.currentState.tick();
    }
 }
 
