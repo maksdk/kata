@@ -1,0 +1,18 @@
+{
+   "scripts": {
+      "test": "jest --colors"
+   },
+   "dependencies": {
+      "@hexlet/immutable-fs-trees": "*",
+      "lodash": "*"
+   },
+   "jest": {
+      "testEnvironment": "node",
+      "bail": true
+   },
+   "devDependencies": {
+      "jest": "*",
+      "@babel/core": "^7.7.5",
+      "@babel/preset-env": "^7.7.5"
+   }
+}
