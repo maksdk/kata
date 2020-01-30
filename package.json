@@ -1,0 +1,26 @@
+{
+    "name": "state_machine_alarm_clock",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "run": "./node_modules/.bin/babel-node index.js",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/maksdk/state_machine_alarm_clock.git"
+    },
+    "keywords": [],
+    "author": "maksdk",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/maksdk/state_machine_alarm_clock/issues"
+    },
+    "homepage": "https://github.com/maksdk/state_machine_alarm_clock#readme",
+    "devDependencies": {
+        "@babel/preset-env": "^7.6.2",
+        "babel-cli": "^6.26.0",
+        "jest": "^24.9.0"
+    }
+}
