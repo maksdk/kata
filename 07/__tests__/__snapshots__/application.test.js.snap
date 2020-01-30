@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`application 1`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Asc)</a></th>
+                <th><a href=\\"#\\">Value (Unsorted)</a></th>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 2`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Desc)</a></th>
+                <th><a href=\\"#\\">Value (Unsorted)</a></th>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 2 1`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Asc)</a></th>
+                <th><a href=\\"#\\">Value (Unsorted)</a></th>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 3`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Unsorted)</a></th>
+                <th><a href=\\"#\\">Value (Asc)</a></th>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 4`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Unsorted)</a></th>
+                <th><a href=\\"#\\">Value (Desc)</a></th>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 5`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Asc)</a></th>
+                <th><a href=\\"#\\">Value (Unsorted)</a></th>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;
+
+exports[`application 6`] = `
+"<div class=\\"container m-3\\">
+    <table class=\\"table\\">
+        <tbody>
+            <tr>
+                <th><a href=\\"#\\">Name (Unsorted)</a></th>
+                <th><a href=\\"#\\">Value (Asc)</a></th>
+            </tr>
+            <tr>
+                <td>pathname</td>
+                <td>/</td>
+            </tr>
+            <tr>
+                <td>protocol</td>
+                <td>http:</td>
+            </tr>
+            <tr>
+                <td>origin</td>
+                <td>http://localhost</td>
+            </tr>
+            <tr>
+                <td>href</td>
+                <td>http://localhost/</td>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>localhost</td>
+            </tr>
+            <tr>
+                <td>hostname</td>
+                <td>localhost</td>
+            </tr>
+        </tbody>
+    </table>
+</div>"
+`;

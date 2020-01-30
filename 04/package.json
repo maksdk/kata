@@ -1,0 +1,14 @@
+{
+   "scripts": {
+      "test": "jest --colors"
+   },
+   "dependencies": {
+      "lodash": "*",
+      "keycode": "*",
+      "js-beautify": "*"
+   },
+   "devDependencies": {
+      "@babel/preset-env": "^7.7.7",
+      "jest": "*"
+   }
+}
