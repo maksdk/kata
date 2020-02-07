@@ -1,0 +1,21 @@
+{
+    "scripts": {
+        "debug": "babel solution.js --out-dir _debug_compiled --source-maps --watch",
+        "dev": "babel-node src/index.js",
+        "test": "jest --colors"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.7.7",
+        "@babel/core": "^7.7.7",
+        "@babel/node": "^7.7.7",
+        "@babel/preset-env": "*",
+        "@types/jest": "^25.1.2",
+        "jest": "*"
+    },
+    "dependencies": {
+        "crc-32": "*"
+    }
+}
