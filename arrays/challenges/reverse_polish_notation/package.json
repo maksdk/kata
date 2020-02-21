@@ -1,0 +1,19 @@
+{
+    "scripts": {
+        "debug": "babel src --out-dir _compiled --source-maps --watch",
+        "test": "jest --colors"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.7.7",
+        "@babel/core": "^7.7.7",
+        "@babel/node": "^7.7.7",
+        "@babel/preset-env": "*",
+        "jest": "*"
+    },
+    "dependencies": {
+        
+    }
+}
