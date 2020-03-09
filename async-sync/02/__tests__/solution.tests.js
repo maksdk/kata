@@ -1,1 +1,0 @@
-import apply from '../solution';
