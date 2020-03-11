@@ -1,0 +1,15 @@
+{
+    "scripts": {
+        "test": "jest --colors"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "*",
+        "jest": "*"
+    },
+    "dependencies": {
+        "lodash": "*"
+    }
+}
