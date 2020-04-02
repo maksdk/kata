@@ -45,12 +45,54 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
       // три двумерных точки
+      // координаты для пространства отсечения 
       const positions = [
         0, 0,
         0, 0.5,
         0.7, 0,
       ];
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+
+      // рачтягиваем канвас на весь экран
+      resizeCanvas(gl.canvas);
+
+
+      // говорим gl_Position как преобразовать координаты в пиксели
+      // диапазон отсечение в webgl от -1 до 1
+      // в пикселях это от 0 до ширины канваса
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      // очищаем canvas
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      // говорим использовать нашу программу (пару шейдеров)
+      gl.useProgram(program);
+
+      // включаем ранее созданый атрибут для позиций
+      gl.enableVertexAttribArray(positionAttributeLocation);
+
+      // Привязываем буфер положений
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+      // Указываем атрибуту, как получать данные от positionBuffer (ARRAY_BUFFER)
+      const size = 2;          // 2 компоненты на итерацию // смотри positions
+      const type = gl.FLOAT;   // наши данные - 32-битные числа с плавающей точкой
+      const normalize = false; // не нормализовать данные
+      const stride = 0;        // 0 = перемещаться на size * sizeof(type) каждую итерацию для получения следующего положения
+      const offset = 0;        // начинать с начала буфера
+      gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+
+      // по умолчанию vec4 gl_position = {x: 0, y: 0, z: 0, w: 0}
+      // мы указали size = 2 значит на gl_position на каждой итерации будет менять x и y, 
+      // а z и w остануться по умолчанию
+
+      // говорим webgl выполнить нашу программу 
+      const primitiveType = gl.TRIANGLES;
+      // const offset = 0;
+      const count = 3;
+      gl.drawArrays(primitiveType, offset, count);
     }
 
     function createShader(gl, type, source) {
@@ -79,6 +121,22 @@
       console.log(gl.getProgramInfoLog(program));
       gl.deleteProgram(program);
     }
+
+    function resizeCanvas(canvas) {
+      // получаем размер HTML-элемента canvas
+      const displayWidth = window.innerWidth;
+      const displayHeight = window.innerHeight;
+
+      // проверяем, отличается ли размер canvas
+      if (canvas.width != displayWidth ||
+        canvas.height != displayHeight) {
+
+        // подгоняем размер буфера отрисовки под размер HTML-элемента
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+      }
+    }
+
   </script>
 </body>
 
