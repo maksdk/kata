@@ -146,3 +146,26 @@ function setCanvasSize(canvas, widht = window.innerWidth, height = window.innerH
     canvas.height = height;
   }
 }
+
+function setRectangle(gl, x, y, w, h) {
+  const x1 = x;
+  const x2 = x + w;
+  const y1 = y;
+  const y2 = y + h;
+  
+  const positions = [
+    x1,y1,
+    x2,y1,
+    x1,y2,
+
+    x1,y2,
+    x2,y1,
+    x2,y2
+  ];
+  
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+}
+
+function randomInt(range) {
+  return Math.floor(Math.random() * range);
+}
