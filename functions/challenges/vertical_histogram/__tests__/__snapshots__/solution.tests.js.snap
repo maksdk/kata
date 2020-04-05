@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test histogram with rounds count 9 1`] = `""`;
+
+exports[`test histogram with rounds count 10 1`] = `""`;
+
+exports[`test histogram with rounds count 13 1`] = `""`;
+
+exports[`test histogram with rounds count 32 1`] = `""`;
+
+exports[`test histogram with rounds count 100 1`] = `""`;
+
+exports[`test histogram with rounds count 125 1`] = `""`;
+
+exports[`test histogram with rounds count 210 1`] = `""`;
