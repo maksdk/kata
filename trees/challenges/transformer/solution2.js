@@ -1,43 +1,36 @@
+// @ts-check
+
 import _ from 'lodash';
 
-// BEGIN
-const makeGraph = (tree, parent, leafs = {}) => {
-    const [leaf, children] = tree;
+// BEGIN (write your solution here)
+const makeGraph = (tree, parent) => {
+  const [name, children = []] = tree;
 
-    if (!children) {
-        return {
-            ...leafs,
-            [leaf]: [parent]
-        };
-    }
+  const neighbors = [ ...children.flat(), parent ] 
+    .filter(v => v && !Array.isArray(v));
 
-    const flatChildren = _.flatten(children);
-    const neighbors = [...flatChildren, parent]
-        .filter((n) => n && !_.isArray(n));
+  const leafs = children
+    .reduce((acc, child) => ({ ...acc, ...makeGraph(child, name) }), {});
 
-    return {
-        ...leafs,
-        [leaf]: neighbors,
-        ...children.reduce((acc, c) => ({
-            ...acc,
-            ...makeGraph(c, leaf)
-        }), {}),
-    };
+  return { [name]: neighbors, ...leafs };
 };
 
-const buildTreeFromLeaf = (graph, leaf) => {
-    const iter = (current, acc) => {
-        const checked = [...acc, current];
-        const neighbors = graph[current]
-            .filter((n) => !checked.includes(n))
-            .map((n) => iter(n, checked));
-        return _.isEmpty(neighbors) ? [current] : [current, neighbors];
-    };
+const renderTree = (graph, leaf) => {
+  const iter = (leafName, checkedAcc) => {
+    const newCheckedAcc = [...checkedAcc, leafName];
+    const children = graph[leafName]
+      .filter((childName) => !newCheckedAcc.includes(childName))
+      .map((childName) => iter(childName, newCheckedAcc));
 
-    return iter(leaf, []);
+    return _.isEmpty(children) ? [leafName] : [leafName, children];
+  };
+
+  return iter(leaf, []);
 };
 
 export default (tree, leaf) => {
-    const graph = makeGraph(tree);
-    return buildTreeFromLeaf(graph, leaf);
+  const graph = makeGraph(tree);
+  const tramsformedTree = renderTree(graph, leaf);
+  return tramsformedTree;
 };
+// END
