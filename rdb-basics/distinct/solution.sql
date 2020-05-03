@@ -1,0 +1,2 @@
+SELECT DISTINCT house FROM users
+	ORDER BY house;
