@@ -1,0 +1,1 @@
+Go to: [Meth Meth Method](https://www.youtube.com/playlist?list=PLS8HfBXv9ZWWe8zXrViYbIM2Hhylx8DZx) 
