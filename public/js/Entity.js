@@ -6,7 +6,7 @@ export default class Entity {
         this.vel = new Vec2(0, 0);
     }
 
-    update() {
+    update(deltaTime) {
 
     }
 
