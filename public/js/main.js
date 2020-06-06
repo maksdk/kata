@@ -9,7 +9,7 @@ const canvas = document.getElementById('screen');
 // @ts-ignore
 const context = canvas.getContext('2d');
 
-Promise.all([
+Promise.all([ 
     createMario(), 
     loadLevel('1-1')
 ])
