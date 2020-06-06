@@ -28,12 +28,13 @@ Promise.all([createMario(), loadBackgroundSprites(), loadLevel('1-1')])
             console.log(keyState);
             if (keyState) {
                 mario.jump.start();
+            } else {
+                mario.jump.cancel();
             }
         });
 
         const gravity = 2000;
         mario.pos.set(64, 180);
-        mario.vel.set(200, -600);
 
         const spriteLayer = createSpriteLayer(mario);
         comp.layers.push(spriteLayer);
