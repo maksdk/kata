@@ -30,7 +30,7 @@ export class Matrix {
 }
 
 export class Vec2 {
-    constructor(x, y) {
+    constructor(x = 0, y = 0) {
         this.set(x, y);
     }
 
