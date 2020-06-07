@@ -13,7 +13,6 @@ export function createMario() {
 
             mario.addTrait(new Jump());
             mario.addTrait(new Go());
-            // mario.addTrait(new Velocity());
 
             mario.draw = function drawMario(context) {
                 sprite.draw('idle', context, 0, 0);

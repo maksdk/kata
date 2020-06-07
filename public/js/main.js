@@ -18,7 +18,6 @@ Promise.all([
 ])
     .then(([mario, level]) => {
         const camera = new Camera();
-        window.camera = camera;
 
         level.entities.add(mario);
         
