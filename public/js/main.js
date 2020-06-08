@@ -24,10 +24,10 @@ Promise.all([
         const input = setupKeyboard(mario);
         input.listenTo(window);
 
-        level.compositor.layers.push(
-            createCollisionLayer(level),
-            createCameraLayer(camera)
-        );
+        // level.compositor.layers.push(
+        //     createCollisionLayer(level),
+        //     createCameraLayer(camera)
+        // );
         
         //debug
         setupMouseControl(canvas, mario, camera);

@@ -2,6 +2,7 @@
 import SpriteSheet from './SpriteSheet.js';
 import Level from './Level.js';
 import { createSpriteLayer, createBackgroundLayer } from './layers.js';
+import { createAnim } from './anim.js';
 
 export function loadImage(url) {
     return new Promise((resolve) => {
@@ -49,7 +50,7 @@ function createTiles(level, backgrounds) {
     });
 }
 
-function loadSpriteSheet(name) {
+export function loadSpriteSheet(name) {
     return loadJSON(`/sprites/${name}.json`)
         .then((sheetSpec) => {
             return Promise.all([
@@ -60,11 +61,29 @@ function loadSpriteSheet(name) {
         .then(([sheetSpec, image]) => {
             const sprites = new SpriteSheet(image, sheetSpec.tileW, sheetSpec.tileH);
 
-            sheetSpec.tiles.forEach((tileSpec) => {
-                const { name, index } = tileSpec;
-                sprites.defineTile(name, index[0], index[1]);
-            });
-    
+            if (sheetSpec.tiles) {
+                sheetSpec.tiles.forEach((tileSpec) => {
+                    const { name, index } = tileSpec;
+                    sprites.defineTile(name, index[0], index[1]);
+                });
+            }
+
+            if (sheetSpec.frames) {
+                sheetSpec.frames.forEach((frameSpec) => {
+                    const [x, y, width, height] = frameSpec.rect;
+                    sprites.define(frameSpec.name, x, y, width, height);
+                });
+            }
+
+            if (sheetSpec.animations) {
+                sheetSpec.animations.forEach((animSpec) => {
+                    const animation = createAnim(animSpec.frames, animSpec.frameLength);
+                    sprites.defineAnim(animSpec.name, animation);
+                });
+            }
+
+            console.log(sprites)
+
             return sprites;
         });
 }

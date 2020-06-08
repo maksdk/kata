@@ -6,7 +6,8 @@ import { Matrix } from './math.js';
 export default class Level {
     constructor() {
         this.gravity = 500;
-
+        this.totalTime = 0;
+        
         this.compositor = new Compositor();
         this.entities = new Set();
         this.tiles = new Matrix();
@@ -25,5 +26,7 @@ export default class Level {
             
             entity.vel.y += this.gravity * deltaTime;
         });
+
+        this.totalTime += deltaTime;
     }
 }
