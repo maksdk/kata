@@ -18,6 +18,7 @@ Promise.all([
 ])
     .then(([mario, level]) => {
         const camera = new Camera();
+        window.camera = camera;
 
         level.entities.add(mario);
         
@@ -30,11 +31,15 @@ Promise.all([
         // );
         
         //debug
-        setupMouseControl(canvas, mario, camera);
+        // setupMouseControl(canvas, mario, camera);
 
         const timer = new Timer(1/ 60);
         timer.update = function update(deltaTime) {
             level.compositor.draw(context, camera);
+
+            if (mario.pos.x > 100) {
+                camera.pos.x = mario.pos.x - 100;
+            }
             level.update(deltaTime);
         }
 

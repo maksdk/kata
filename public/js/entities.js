@@ -19,15 +19,19 @@ export function createMario() {
             const runAnim = createAnim(['run-1', 'run-2', 'run-3'], 10);
 
             function routeFrame(mario) {
-                if (mario.go.direction !== 0) {
+                if (mario.go.distance > 0) {
+                    if ((mario.vel.x > 0 && mario.go.direction < 0) || (mario.vel.x < 0 && mario.go.direction > 0)) {
+                        return 'break';
+                    }
                     return runAnim(mario.go.distance);
                 }
                 return 'idle';
             }
 
             mario.draw = function drawMario(context) {
+                const frame = routeFrame(this);
                 // @ts-ignore
-                sprite.draw(routeFrame(this), context, 0, 0, this.go.heading < 0);
+                sprite.draw(frame, context, 0, 0, this.go.heading < 0);
             }
 
             return mario;
