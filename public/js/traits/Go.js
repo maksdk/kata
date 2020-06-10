@@ -20,7 +20,17 @@ export default class Go extends Trait {
         if (this.direction !== 0) {
             entity.vel.x += this.acceleration * deltaTime * this. direction;
 
-            this.heading = this.direction;
+            // TODO: чтобы не поварачивать во время прыжка
+            if (entity.jump) {
+                if (entity.jump.falling === false) {
+                    this.heading = this.direction;
+                }
+            } else {
+                this.heading = this.direction;
+            }
+            // this.heading = this.direction;
+            //>
+
         } else if (entity.vel.x !== 0) {
             const decel = Math.min(absX, this.deceleration * deltaTime);
             entity.vel.x += entity.vel.x > 0 ? -decel : decel;

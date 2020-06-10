@@ -4,6 +4,10 @@ export default class Trait {
         this.NAME = name;
     }
 
+    obstruct() {
+        
+    }
+
     update(entity, deltaTime) {
         console.warn('Unhandled update call in Trait');
     }
