@@ -5,9 +5,6 @@ export class MainStage extends Container {
     constructor() {
         super();
 
-        this.stopped = false;
-
-        this.playerIsRun = false;
         this.playerSpeed = 20;
         this.playerDir = 1;
 
@@ -17,19 +14,25 @@ export class MainStage extends Container {
         this.obstacleSpeed = 40;
         this.obstacleDir = 1;
 
-        this.player = this.addChild(new Graphics())
+        const player = this.addChild(new Graphics())
             .beginFill(0xFFFFFF)
             .drawRect(0, 0, 50, 50)
             .endFill();
-        this.player.tint = 0x0000FF;
-        this.player.x = 150;
+        player.tint = 0x0000FF;
+        player.x = 150;
 
 
-        this.remotePlayer =  this.addChild(new Graphics())
-            .beginFill(0x00FFFF)
+        const remotePlayer =  this.addChild(new Graphics())
+            .beginFill(0xFFFFFF)
             .drawRect(0, 0, 50, 50)
             .endFill();
-        this.remotePlayer.x = 450;
+        remotePlayer.tint = 0x00FFFF;
+        remotePlayer.x = 450;
+
+        this.entities = {
+            player: { elem: player, direction: 1, state: 'idle' },
+            remotePlayer: { elem: remotePlayer, direction: 1, state: 'idle' }
+        };
 
         this.obstacle = this.addChild(new Graphics())
             .beginFill(0xFFFF00)
@@ -37,21 +40,23 @@ export class MainStage extends Container {
             .endFill();
         this.obstacle.y = 200;
 
+
         this.eventShape = this.addChild(new Sprite());
         this.eventShape.width = this.gw;
         this.eventShape.height = this.gh;
         this.eventShape.interactive = true;
-        this.eventShape.on('pointerdown', this.onDown, this);
-        this.eventShape.on('pointerup', this.onUp, this);
+
+        this.eventShape.on('pointerdown', () => {
+            this.emit('movePlayer');
+            this.moveEntity('player');
+        }, this);
+
+        this.eventShape.on('pointerup', () => {
+            this.emit('stopPlayer');
+            this.stopEntity('player');
+        }, this);
     }
 
-    onDown() {
-        this.playerIsRun = true;
-    }
-    
-    onUp() {
-        this.playerIsRun = false;
-    }
 
     rectIntersect(r0, r1) {
         return this.rangeIntersect(r0.x, r0.x + r0.width, r1.x, r1.x + r1.width) &&
@@ -63,13 +68,26 @@ export class MainStage extends Container {
             Math.min(max0, min0) <= Math.max(max1, min1);
     }
 
-    collide() {
-        this.player.tint = 0xFF0000;
+    collide(entity) {
+        entity.tint = 0xFF0000;
+    }
+
+    moveEntity(name = 'player') {
+        if (this.entities[name].state === 'died') return;
+        this.entities[name].state = 'move';
+    }
+
+    stopEntity(name = 'player') {
+        if (this.entities[name].state === 'died') return;
+        this.entities[name].state = 'stop';
     }
 
     tick(delta) {
-        if(this.stopped) return;
+        // if(this.stopped) return;
 
+        /**
+         * Move obstacle
+         */
         const obstacleSpeed = (delta / 100) * this.obstacleSpeed;
         this.obstacle.x += obstacleSpeed * this.obstacleDir;
         if (this.obstacle.x + 20 > this.gw) {
@@ -80,22 +98,37 @@ export class MainStage extends Container {
             this.obstacleDir *= -1;
         }
 
+        /**
+         * Move player
+         */
+        const playerSpeed = (delta / 100) * this.playerSpeed;
+        Object.values(this.entities)
+            .forEach(({ state, elem, direction }) => {
+                if (state !== 'move') return;
+                // if (state === 'died') return;
 
-        if (this.playerIsRun) {
-            const playerSpeed = (delta / 100) * this.playerSpeed;
-            this.player.y += playerSpeed * this.playerDir;
+                elem.y += playerSpeed * direction;
 
-            if (this.player.y + 50 > this.gh) {
-                this.player.y = this.gh - 50;
-                this.playerDir *= -1;
-            }
-        }
+                if (elem.y + 50 > this.gh) {
+                    elem.y = this.gh - 50;
+                    direction *= -1;
+                }
+            });
 
+
+        /**
+         * Check collide
+         */
         const obstacleRect = { width: 20, height: 20, x: this.obstacle.x, y: this.obstacle.y };
-        const playerRect = { width: 50, height: 50, x: this.player.x, y: this.player.y };
-        if (this.rectIntersect(obstacleRect, playerRect)) {
-            this.collide();
-            this.stopped = true;
-        }
+        Object.values(this.entities)
+            .forEach((entity) => {
+                if (entity.state === 'died') return;
+                const playerRect = { width: 50, height: 50, x: entity.elem.x, y: entity.elem.y };
+
+                if (this.rectIntersect(obstacleRect, playerRect)) {
+                    entity.elem.tint = 0xFF0000;
+                    entity.state = 'died';
+                }
+            });
     }
 }

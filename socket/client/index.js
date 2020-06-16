@@ -4,12 +4,6 @@ import io from 'socket.io-client';
 import config from '../config.json';
 import { MainStage } from "./MainStage";
 
-const serverUrl = `${config.protocol}://${config.hostname}:${config.port}`
-const socket = io(serverUrl);
-socket.on('connect', () => {
-    console.log('Конектед сука!!!');
-});
-
 const app = new Application({
     width: 600, 
     height: 600, 
@@ -26,3 +20,17 @@ app.ticker.add(() => {
 app.stage.addChild(stage);
 
 document.body.appendChild(app.view);
+
+const serverUrl = `${config.protocol}://${config.hostname}:${config.port}`
+const socket = io(serverUrl);
+socket.on('connect', () => {
+    console.log('Connected!');
+});
+
+socket.on('run', () => {
+    stage.moveEntity('remotePlayer');
+});
+
+socket.on('stop', () => {
+    stage.stopEntity('remotePlayer');
+});
