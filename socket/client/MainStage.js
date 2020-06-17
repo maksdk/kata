@@ -11,6 +11,7 @@ export class MainStage extends Container {
         this.gw = 600;
         this.gh = 600;
 
+        this.obstacleRunning = false;
         this.obstacleSpeed = 40;
         this.obstacleDir = 1;
 
@@ -29,15 +30,22 @@ export class MainStage extends Container {
         remotePlayer.tint = 0x00FFFF;
         remotePlayer.x = 450;
 
+
         this.entities = {
-            player: { elem: player, direction: 1, state: 'idle' },
-            remotePlayer: { elem: remotePlayer, direction: 1, state: 'idle' }
+            player: { name: 'player', elem: player, direction: 1, state: 'idle' },
+            remotePlayer: {name: 'remote', elem: remotePlayer, direction: 1, state: 'idle' }
         };
 
+    
         this.obstacle = this.addChild(new Graphics())
             .beginFill(0xFFFF00)
             .drawRect(0, 0, 20, 20)
             .endFill();
+        this.obstacle.once('pointerdown', () => {
+            this.emit('runObstacle');
+            this.obstacleRunning = true;
+        });
+        this.obstacle.interactive = true;
         this.obstacle.y = 200;
 
 
@@ -50,6 +58,7 @@ export class MainStage extends Container {
             this.emit('movePlayer');
             this.moveEntity('player');
         }, this);
+
 
         this.eventShape.on('pointerup', () => {
             this.emit('stopPlayer');
@@ -75,6 +84,7 @@ export class MainStage extends Container {
     moveEntity(name = 'player') {
         if (this.entities[name].state === 'died') return;
         this.entities[name].state = 'move';
+        console.log('move', name)
     }
 
     stopEntity(name = 'player') {
@@ -88,30 +98,35 @@ export class MainStage extends Container {
         /**
          * Move obstacle
          */
-        const obstacleSpeed = (delta / 100) * this.obstacleSpeed;
-        this.obstacle.x += obstacleSpeed * this.obstacleDir;
-        if (this.obstacle.x + 20 > this.gw) {
-            this.obstacle.x = this.gw - 20;
-            this.obstacleDir *= -1;
-        } else if (this.obstacle.x < 0) {
-            this.obstacle.x = 0;
-            this.obstacleDir *= -1;
+        if (this.obstacleRunning) {
+            const obstacleSpeed = (delta / 100) * this.obstacleSpeed;
+            this.obstacle.x += obstacleSpeed * this.obstacleDir;
+            if (this.obstacle.x + 20 > this.gw) {
+                this.obstacle.x = this.gw - 20;
+                this.obstacleDir *= -1;
+            } else if (this.obstacle.x < 0) {
+                this.obstacle.x = 0;
+                this.obstacleDir *= -1;
+            }
         }
+        
 
         /**
          * Move player
          */
         const playerSpeed = (delta / 100) * this.playerSpeed;
         Object.values(this.entities)
-            .forEach(({ state, elem, direction }) => {
-                if (state !== 'move') return;
-                // if (state === 'died') return;
+            .forEach(({ name, state, elem, direction }) => {
+                if (name === 'remote') {
+                    console.log(state)
+                }
+                if (state === 'move') {
+                    elem.y += playerSpeed * direction;
 
-                elem.y += playerSpeed * direction;
-
-                if (elem.y + 50 > this.gh) {
-                    elem.y = this.gh - 50;
-                    direction *= -1;
+                    if (elem.y + 50 > this.gh) {
+                        elem.y = this.gh - 50;
+                        direction *= -1;
+                    }
                 }
             });
 

@@ -27,10 +27,15 @@ socket.on('connect', () => {
     console.log('Connected!');
 });
 
-socket.on('run', () => {
+socket.on('move', () => {
+    console.log('Client move')
     stage.moveEntity('remotePlayer');
 });
 
 socket.on('stop', () => {
+    console.log('Client stop')
     stage.stopEntity('remotePlayer');
 });
+
+stage.on('movePlayer', () => socket.emit('move'));
+stage.on('stopPlayer', () => socket.emit('stop'));
