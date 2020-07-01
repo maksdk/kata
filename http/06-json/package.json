@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "jest",
+    "start": "node ./bin/phonebook.js"
+  },
+  "devDependencies": {
+    "jest": "^26.1.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
+}
