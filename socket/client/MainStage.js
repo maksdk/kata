@@ -5,13 +5,14 @@ export class MainStage extends Container {
     constructor() {
         super();
 
+        this.trackNumber = 1;
+
         this.playerSpeed = 20;
         this.playerDir = 1;
 
         this.gw = 600;
         this.gh = 600;
 
-        this.obstacleRunning = false;
         this.obstacleSpeed = 40;
         this.obstacleDir = 1;
 
@@ -32,8 +33,8 @@ export class MainStage extends Container {
 
 
         this.entities = {
-            player: { name: 'player', elem: player, direction: 1, state: 'idle' },
-            remotePlayer: {name: 'remote', elem: remotePlayer, direction: 1, state: 'idle' }
+            1: { elem: player, direction: 1, state: 'idle' },
+            2: { elem: remotePlayer, direction: 1, state: 'idle' }
         };
 
     
@@ -41,10 +42,6 @@ export class MainStage extends Container {
             .beginFill(0xFFFF00)
             .drawRect(0, 0, 20, 20)
             .endFill();
-        this.obstacle.once('pointerdown', () => {
-            this.emit('runObstacle');
-            this.obstacleRunning = true;
-        });
         this.obstacle.interactive = true;
         this.obstacle.y = 200;
 
@@ -55,15 +52,19 @@ export class MainStage extends Container {
         this.eventShape.interactive = true;
 
         this.eventShape.on('pointerdown', () => {
-            this.emit('movePlayer');
-            this.moveEntity('player');
+            this.emit('movePlayer', this.trackNumber);
+            this.moveEntity(this.trackNumber);
         }, this);
 
 
         this.eventShape.on('pointerup', () => {
-            this.emit('stopPlayer');
-            this.stopEntity('player');
+            this.emit('stopPlayer', this.trackNumber);
+            this.stopEntity(this.trackNumber);
         }, this);
+    }
+
+    start(params) {
+        this.trackNumber = params.trackNumber;
     }
 
 
@@ -81,33 +82,32 @@ export class MainStage extends Container {
         entity.tint = 0xFF0000;
     }
 
-    moveEntity(name = 'player') {
+    moveEntity(name) {
         if (this.entities[name].state === 'died') return;
         this.entities[name].state = 'move';
         console.log('move', name)
     }
 
-    stopEntity(name = 'player') {
+    stopEntity(name) {
         if (this.entities[name].state === 'died') return;
         this.entities[name].state = 'stop';
     }
 
     tick(delta) {
+        // delta *= this.trackNumber;
         // if(this.stopped) return;
 
         /**
          * Move obstacle
          */
-        if (this.obstacleRunning) {
-            const obstacleSpeed = (delta / 100) * this.obstacleSpeed;
-            this.obstacle.x += obstacleSpeed * this.obstacleDir;
-            if (this.obstacle.x + 20 > this.gw) {
-                this.obstacle.x = this.gw - 20;
-                this.obstacleDir *= -1;
-            } else if (this.obstacle.x < 0) {
-                this.obstacle.x = 0;
-                this.obstacleDir *= -1;
-            }
+        const obstacleSpeed = (delta / 100) * this.obstacleSpeed;
+        this.obstacle.x += obstacleSpeed * this.obstacleDir;
+        if (this.obstacle.x + 20 > this.gw) {
+            this.obstacle.x = this.gw - 20;
+            this.obstacleDir *= -1;
+        } else if (this.obstacle.x < 0) {
+            this.obstacle.x = 0;
+            this.obstacleDir *= -1;
         }
         
 
@@ -116,10 +116,7 @@ export class MainStage extends Container {
          */
         const playerSpeed = (delta / 100) * this.playerSpeed;
         Object.values(this.entities)
-            .forEach(({ name, state, elem, direction }) => {
-                if (name === 'remote') {
-                    console.log(state)
-                }
+            .forEach(({ state, elem, direction }) => {
                 if (state === 'move') {
                     elem.y += playerSpeed * direction;
 

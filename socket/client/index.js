@@ -10,14 +10,8 @@ const app = new Application({
     backgroundColor: 0x000000
 });
 
-const stage = new MainStage();
 
-app.ticker.add(() => {
-    const delta = Ticker.shared.elapsedMS;
-    stage.tick(delta);
-});
 
-app.stage.addChild(stage);
 
 document.body.appendChild(app.view);
 
@@ -27,15 +21,29 @@ socket.on('connect', () => {
     console.log('Connected!');
 });
 
-socket.on('move', () => {
+const stage = new MainStage();
+socket.on('start', (trackNumber) => {
+    console.log('Client start')
+    
+    app.stage.addChild(stage);
+    stage.start({ trackNumber });
+
+    app.ticker.add(() => {
+        const delta = Ticker.shared.elapsedMS;
+        
+        stage.tick(delta);
+    });
+});
+
+socket.on('move', (trackNumber) => {
     console.log('Client move')
-    stage.moveEntity('remotePlayer');
+    stage.moveEntity(trackNumber);
 });
 
-socket.on('stop', () => {
+socket.on('stop', (trackNumber) => {
     console.log('Client stop')
-    stage.stopEntity('remotePlayer');
+    stage.stopEntity(trackNumber);
 });
 
-stage.on('movePlayer', () => socket.emit('move'));
-stage.on('stopPlayer', () => socket.emit('stop'));
+stage.on('movePlayer', (trackNumber) => socket.emit('move', trackNumber));
+stage.on('stopPlayer', (trackNumber) => socket.emit('stop', trackNumber));

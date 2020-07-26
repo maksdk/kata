@@ -1,17 +1,12 @@
 //@ts-check
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { config } = require('process');
 
 module.exports = (env={}, arg={}) => {
-    return {
+    const common = {
         entry: { main: './client/index.js' },
-        output: {
-            path: path.resolve(__dirname, 'dist'),
-            filename: 'main.js'
-        },
         plugins:[
-            // new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'client', 'index.html'),
                 filename: 'index.html'
@@ -29,4 +24,21 @@ module.exports = (env={}, arg={}) => {
             ]
         }
     };
+
+    const config1 = {
+        ...common,
+        output: {
+            path: path.resolve(__dirname, 'dist1'),
+            filename: 'main.js'
+        },
+    };
+
+    const config2 = {
+        ...common,
+        output: {
+            path: path.resolve(__dirname, 'dist2'),
+            filename: 'main.js'
+        },
+    }
+    return [config1, config2];
 };  
