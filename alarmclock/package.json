@@ -1,0 +1,19 @@
+{
+  "name": "example_of_state_pattern",
+  "scripts": {
+    "dev": "webpack --mode development ./src/index.js --output ./dist/main.js --watch --devtool cheap-source-map"
+  },
+  "author": "Maksym Havryshchenko",
+  "license": "ISC",
+  "dependencies": {
+    "es6-tween": "^5.5.10",
+    "eventemitter3": "^4.0.0",
+    "pixi.js": "5.0.0"
+  },
+  "devDependencies": {
+    "@types/eventemitter3": "^2.0.2",
+    "@types/pixi.js": "5.0.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}
