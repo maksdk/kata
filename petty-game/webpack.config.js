@@ -1,10 +1,9 @@
-// @ts-check
-
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {
   CleanWebpackPlugin
 } = require('clean-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = () => ({
   entry: {
@@ -19,6 +18,7 @@ module.exports = () => ({
     filename: 'main.js'
   },
   plugins: [
+    new LodashModuleReplacementPlugin(),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'index.html'),

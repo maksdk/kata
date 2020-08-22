@@ -1,8 +1,11 @@
 // @ts-check
 /* eslint-disable */
 import {
-  Application, Container, Graphics, Text
+  Application, Container, Graphics, Text, utils
 } from 'pixi.js';
+
+import has from 'lodash/has';
+import FontFaceObserver from 'fontfaceobserver';
 
 const config = {
   width: 1280,
@@ -30,6 +33,71 @@ function getPoint(index, w, h) {
   return [ x, y ]; 
 }
 
+export class AssetsPreloader {
+  constructor(app, assets) {
+    this.options = { crossOrigin: 'anonymous' }
+    this.app = app;
+    this.assets = {
+      images: [
+        { name: 'cartman', url: 'assets/images/cartman.png' },
+        { name: 'butters', url: 'assets/images/butters.png' },
+        { name: 'kenny', url: 'assets/images/kenny.png' }
+      ],
+      fonts: [
+        { name: 'MotionPicture', url: 'assets/fonts/MotionPicture.ttf' },
+        { name: 'Coneria', url: 'assets/fonts/Coneria.ttf' }
+      ]
+    };
+
+    this.loadedItemsCount = 0;
+    this.totalItemsCount = Object.values(this.assets)
+      .reduce((acc, item) => acc + item.length, 0);
+
+    this.loadersMap = {
+      images: (loader) => loader.loadImages(),
+      fonts: (loader) => loader.loadFonts()
+    };
+
+    Object.keys(this.assets)
+      .forEach((key) => this.loadersMap[key](this));
+  }
+
+  loadImages(images = this.assets.images) {
+    images.forEach(({ name, url }) => {
+      if (!has(this.app.loader.resources, name)) {
+        this.app.loader.add(name, url, this.options);
+      }
+    });
+
+    this.app.loader.onProgress.add(() => this.incrementProgress());
+
+    return new Promise((resolve) => this.app.loader.load(resolve));
+  }
+
+  loadFonts(fonts = this.assets.fonts) {
+		const [container] = document.getElementsByTagName('head');
+		const promises = fonts.map(({ name, url }) => {
+			const style = document.createElement('style');
+			style.type = 'text/css';
+			style.appendChild(document.createTextNode(`@font-face { font-family:${name}; src: url(${url}); }`));
+			container.appendChild(style);
+
+			return new FontFaceObserver(name).load()
+				.then(() => this.incrementProgress());
+		});
+
+		return Promise.all(promises);
+  }
+  
+  incrementProgress() {
+    this.loadedItemsCount += 1;
+    console.log('progress: ', this.loadedItemsCount,Math.floor((this.loadedItemsCount / this.totalItemsCount) * 100) );
+		// if (this.onProgressCallback) {
+		// 	this.onProgressCallback(Math.floor((this.loadedItemsCount / this.totalItemsCount) * 100));
+		// }
+	}
+}
+
 class MainWindow extends Container {
   constructor() {
     super();
@@ -40,17 +108,17 @@ class MainWindow extends Container {
     back.endFill();
     this.addChild(back);
 
-    const field = new Container();
-    field.x = config.width * -0.5;
-    field.y = config.height * -0.5;
-    this.addChild(field);
+    const world = new Container();
+    world.x = config.width * -0.5;
+    world.y = config.height * -0.5;
+    this.addChild(world);
 
     for (let i = 0; i < gridLength; i += 1) {
       const cell = new Graphics();
       cell.lineStyle(1, 0xFF0000);
       cell.drawRect(0, 0, cellW, cellH);
       cell.endFill();
-      field.addChild(cell);
+      world.addChild(cell);
 
       // const text = new Text(String(i), { fontSize: 10 });
       // text.anchor.set(0.5);
@@ -91,6 +159,9 @@ class Game {
     this.currentWindow.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
 
     this.onResize();
+
+
+    const loader = new AssetsPreloader(this.app, []);
   }
 
   onResize() {
