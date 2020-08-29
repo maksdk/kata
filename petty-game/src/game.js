@@ -164,7 +164,10 @@ class MainWindow extends Container {
         const y = Math.floor(pos.y / cellH);
         const index = getIndex(x, y, gridWidth);
         const cell = cells[index];
-        cell[editState](editState);
+
+        if (editState !== cell.state) {
+            cell[editState](editState);
+        }
     });
   }
 }
