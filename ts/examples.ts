@@ -29,3 +29,13 @@ function getProp<O, K extends keyof O>(obj: O, key: K): O[K] {
 
 getProp(list, 'id'); // correct
 getProp(list, 'idd'); // wrong
+
+
+/**
+ * Generic conditional
+ */
+type R<T> = T extends number ? [number] : string;
+
+const res1: R<number> = [1];
+
+const res2: R<boolean> = 'string';
