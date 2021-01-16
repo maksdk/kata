@@ -39,3 +39,19 @@ type R<T> = T extends number ? [number] : string;
 const res1: R<number> = [1];
 
 const res2: R<boolean> = 'string';
+
+
+ /**
+  * Combine types #1
+  */
+type A = { key1: string, key2: number };
+type B = { key2: number, key3: boolean };
+type C = A & B;
+const res = (a: C) => a.key2;
+
+
+/**
+ * Combine types #2
+ */
+type DifferentKeys<T, U> = Omit<T, keyof U> & Omit<U, keyof T>;
+type SameKeys<T, U> = Omit<T | U, keyof DifferentKeys<T, U>>;
