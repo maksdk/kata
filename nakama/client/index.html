@@ -1,111 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suka</title>
-    <script src='./nakama-js.js'></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Petty game</title>
+  <style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+      overflow: hidden;
+		}
+	</style>
 </head>
+
 <body>
-    <h1>Hello suka</h1>
-    <script type="module">
-        // console.log(nakamajs)
-        class App {
-            constructor(socket) {
-                this.socket = socket;
-            }
-
-            async callRpc() {
-                try {
-                    const response = await this.socket.send({
-                        rpc: {
-                            id: 'GetMatchRpc',
-                            payload: JSON.stringify({})
-                        }
-                    });
-                    return response;
-                } catch(e) {
-                    console.error('Error:', e);
-                }
-            }
-
-            async join() {
-                const response = await this.callRpc();
-                const payload = JSON.parse(response.rpc.payload);
-
-                console.log('RESPONSE: ', response);
-                console.log('PAYLOAD: ', payload);
-
-                try {
-                    this.socket.send({
-                        match_join: {
-                            match_id: payload.matchId
-                        }
-                    });
-                } catch(e) {
-                    console.error('Error:', e);
-                }
-            }
-        }
-
-        async function run() {
-            var client = new nakamajs.Client("defaultkey", "127.0.0.1", 7350);
-            client.ssl = false;
-
-            console.log(client)
-            const socket = client.createSocket(false, false);
-            window.App = new App(socket);
-
-
-            
-            socket.ondisconnect = (event) => {
-                console.info("Disconnected from the server. Event:", event);
-            };
-            socket.onnotification = (notification) => {
-                console.info("Received notification:", notification);
-            };
-            socket.onchannelpresence = (presence) => {
-                console.info("Received presence update:", presence);
-            };
-            socket.onchannelmessage = (message) => {
-                console.info("Received new chat message:", message);
-            };
-            socket.onmatchdata = (matchdata) => {
-                console.info("Received match data: %o", matchdata);
-            };
-            socket.onmatchpresence = (matchpresence) => {
-                console.info("Received match presence update:", matchpresence);
-            };
-            socket.onmatchmakermatched = (matchmakerMatched) => {
-                console.info("Received matchmaker update:", matchmakerMatched);
-            };
-            socket.onstatuspresence = (statusPresence) => {
-                console.info("Received status presence update:", statusPresence);
-            };
-            socket.onstreampresence = (streamPresence) => {
-                console.info("Received stream presence update:", streamPresence);
-            };
-            socket.onstreamdata = (streamdata) => {
-                console.info("Received stream data:", streamdata);
-            };
-
-            try {
-                const customId = [...Array(30)].map(() => Math.random().toString(36)[3]).join('');
-                const session = await client.authenticateCustom({
-                        id: "customId",
-                        create: true,
-                });
-
-                console.info("Successfully authenticated:", session);
-
-                await socket.connect(session, false);
-            } catch (e) {
-                console.log('Error: ', e);
-            }
-        }
-
-        run();
-
-    </script>
 </body>
+
 </html>
