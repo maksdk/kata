@@ -1,7 +1,7 @@
-import Game from './game.js';
+import { Game } from './game';
 
 window.addEventListener('load', () => {
-  const game = new Game();
-  game.create();
-  game.start();
+	const game = new Game();
+	game.create();
+	game.start();
 });
