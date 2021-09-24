@@ -1,7 +1,7 @@
 // @ts-check
 
 import * as dat from "../dat.gui.js";
-import { m4 } from '../matrix.js';
+import { m4 } from '../math.js';
 import { degToRad } from "../utils.js";
 import {
     createGL,

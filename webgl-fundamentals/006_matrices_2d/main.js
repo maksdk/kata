@@ -1,12 +1,12 @@
 // @ts-check
 
 import * as dat from "../dat.gui.js";
-import { m3 } from '../matrix.js';
+import { m3 } from '../math.js';
 import {
-	createGL,
-	createProgram,
-	createShader,
-	resize,
+    createGL,
+    createProgram,
+    createShader,
+    resize,
 } from "../webgl-utils.js";
 
 
@@ -54,7 +54,7 @@ const FragShader = `
 let state = {
     width: 100,
     height: 150,
-    position: {x: 100, y: 100 },
+    position: { x: 100, y: 100 },
     rotation: 0,
     scale: { x: 0.9, y: 0.9 },
     origin: { x: -0.5, y: -0.5 },
@@ -111,32 +111,32 @@ originFolder.add(state.origin, "y", -1, 1).onChange((v) => {
 });
 
 function main() {
-	const gl = createGL();
+    const gl = createGL();
 
-	const vertShader = createShader(gl, gl.VERTEX_SHADER, VertShader);
-	const fragShader = createShader(gl, gl.FRAGMENT_SHADER, FragShader);
+    const vertShader = createShader(gl, gl.VERTEX_SHADER, VertShader);
+    const fragShader = createShader(gl, gl.FRAGMENT_SHADER, FragShader);
 
-	const program = createProgram(gl, vertShader, fragShader);
+    const program = createProgram(gl, vertShader, fragShader);
 
-	const positionAttrLoc = gl.getAttribLocation(program, "aPosition");
-	const positionBuffer = gl.createBuffer();
+    const positionAttrLoc = gl.getAttribLocation(program, "aPosition");
+    const positionBuffer = gl.createBuffer();
 
-	const resolutionUniformLoc = gl.getUniformLocation(program, "uResolution");
-	const colorUniformLoc = gl.getUniformLocation(program, "uColor");
-	const matrixUniformLoc = gl.getUniformLocation(program, "uMatrix");
+    const resolutionUniformLoc = gl.getUniformLocation(program, "uResolution");
+    const colorUniformLoc = gl.getUniformLocation(program, "uColor");
+    const matrixUniformLoc = gl.getUniformLocation(program, "uMatrix");
 
-	// Set data for positions
-	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-	setGeometry(gl);
-	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    // Set data for positions
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    setGeometry(gl);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     state = {
         ...state,
         gl,
-		program,
-		positionBuffer,
-		positionAttrLoc,
-		resolutionUniformLoc,
+        program,
+        positionBuffer,
+        positionAttrLoc,
+        resolutionUniformLoc,
         colorUniformLoc,
         matrixUniformLoc
     };
@@ -145,13 +145,13 @@ function main() {
 }
 
 function drawScene() {
-	const {
-		gl,
-		program,
-		positionAttrLoc,
-		positionBuffer,
-		resolutionUniformLoc,
-		colorUniformLoc,
+    const {
+        gl,
+        program,
+        positionAttrLoc,
+        positionBuffer,
+        resolutionUniformLoc,
+        colorUniformLoc,
         matrixUniformLoc,
         position,
         rotation,
@@ -159,37 +159,37 @@ function drawScene() {
         origin,
         width,
         height
-	} = state;
+    } = state;
 
-	resize(gl);
+    resize(gl);
 
-	gl.clearColor(0, 0, 0, 1);
-	gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
-	gl.useProgram(program);
+    gl.useProgram(program);
 
-	//  =====   positions =====
-	// 1 активируем сылку на атрибут
-	gl.enableVertexAttribArray(positionAttrLoc);
-	// 2 глобально устанавлваем текущий буфер
-	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    //  =====   positions =====
+    // 1 активируем сылку на атрибут
+    gl.enableVertexAttribArray(positionAttrLoc);
+    // 2 глобально устанавлваем текущий буфер
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-	// 2 Привязывает к атрибуту текущий буфер чтобы брать данные из этого атрибута
-	const size = 2;
-	const type = gl.FLOAT;
-	const normalize = false;
-	const stride = 0;
-	const offset = 0;
-	gl.vertexAttribPointer(
-		positionAttrLoc,
-		size,
-		type,
-		normalize,
-		stride,
-		offset
-	);
+    // 2 Привязывает к атрибуту текущий буфер чтобы брать данные из этого атрибута
+    const size = 2;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.vertexAttribPointer(
+        positionAttrLoc,
+        size,
+        type,
+        normalize,
+        stride,
+        offset
+    );
 
-	gl.uniform2f(resolutionUniformLoc, gl.canvas.width, gl.canvas.height);
+    gl.uniform2f(resolutionUniformLoc, gl.canvas.width, gl.canvas.height);
 
 
     const projectionMatrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
@@ -198,20 +198,20 @@ function drawScene() {
     const scalingMatrix = m3.scaling(scale.x, scale.y);
 
     const moveOriginalMatrix = m3.translation(origin.x * width, origin.y * height);
-    
+
     let matrix = m3.identify();
-    
+
     for (let i = 0; i < 1; i++) {
         matrix = m3.multiply(matrix, projectionMatrix);
         matrix = m3.multiply(matrix, translationMatrix);
         matrix = m3.multiply(matrix, rotationMatrix);
         matrix = m3.multiply(matrix, scalingMatrix);
         matrix = m3.multiply(matrix, moveOriginalMatrix);
-        
+
         gl.uniformMatrix3fv(matrixUniformLoc, false, matrix);
 
         gl.uniform4fv(colorUniformLoc, [Math.random(), Math.random(), Math.random(), 1.0]);
-        
+
         // Отрислвываем каждый прямоугольник отдельно
         const primitiveType = gl.TRIANGLES;
         const drawOffset = 0;
@@ -234,7 +234,7 @@ function setGeometry(gl) {
             0, 150,
             30, 0,
             30, 150,
-  
+
             // top rung
             30, 0,
             100, 0,
@@ -242,7 +242,7 @@ function setGeometry(gl) {
             30, 30,
             100, 0,
             100, 30,
-  
+
             // middle rung
             30, 60,
             67, 60,

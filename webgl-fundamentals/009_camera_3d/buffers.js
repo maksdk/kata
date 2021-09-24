@@ -1,6 +1,6 @@
 // @ts-check
 
-import { m4, vec3 } from "../matrix.js";
+import { m4, vec3 } from "../math.js";
 
 /**
 * @param {WebGLRenderingContext} gl 
