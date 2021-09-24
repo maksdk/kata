@@ -300,5 +300,37 @@ export const m4 = {
             0, 0, 2 / (near - far), 0,
             (left + right) / (left - right), (bottom + top) / (bottom - top), (near + far) / (near - far), 1
         ];
+    },
+
+    /**
+     * @param {Number} fudgeFactor 
+     * @returns {Matrix4}
+     */
+    makeZToWMatrix(fudgeFactor) {
+        return [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, fudgeFactor,
+            0, 0, 0, 1
+        ]
+    },
+
+    /**
+     * @param {Number} fieldOfViewInRad 
+     * @param {Number} aspect 
+     * @param {Number} near 
+     * @param {Number} far 
+     * @returns {Matrix4}
+     */
+    perspective(fieldOfViewInRad, aspect, near, far) {
+        const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRad);
+        const rangeInv = 1.0 / (near - far);
+
+        return [
+            f/aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (near + far) * rangeInv, -1,
+            0, 0, near * far * rangeInv * 2, 0
+        ];
     }
 };
