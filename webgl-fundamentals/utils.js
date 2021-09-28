@@ -21,3 +21,11 @@ export function radToDeg(r) {
 export function degToRad(d) {
     return d * Math.PI / 180;
 }
+
+/**
+ * @param {Number} range
+ * @returns {Number}
+ */
+function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+}
