@@ -1,12 +1,17 @@
 // @ts-check
 
 /**
- * @typedef {Number[]} Matrix4
+ * @typedef {number[]} Matrix4
  */
 
 /**
- * @typedef {Number[]} Vector3
+ * @typedef {number[]} Vector3
  */
+
+/**
+ * @typedef {number[]} Vector4
+ */
+
 export const m3 = {
     identify() {
         return [
@@ -445,6 +450,25 @@ export const m4 = {
             cameraPos[0], cameraPos[1], cameraPos[2], 1
         ];
     },
+
+    /**
+     * Takes a  matrix and a vector with 4 entries, transforms that vector by
+     * the matrix, and returns the result as a vector with 4 entries.
+     * @param {Matrix4} m The matrix.
+     * @param {Vector4} v The point in homogenous coordinates.
+     * @param {Vector4} dst optional vector4 to store result
+     * @return {Vector4} dst or new Vector4 if not provided
+     */
+    transformVector(m, v, dst = []) {
+        for (let i = 0; i < 4; ++i) {
+            dst[i] = 0.0;
+
+            for (let j = 0; j < 4; ++j) {
+                dst[i] += v[j] * m[j * 4 + i];
+            }
+        }
+        return dst;
+    }
 };
 
 export const vec3 = {
