@@ -468,6 +468,57 @@ export const m4 = {
             }
         }
         return dst;
+    },
+
+    /**
+     * Takes a 4-by-4 matrix and a vector with 3 entries,
+     * interprets the vector as a point, transforms that point by the matrix, and
+     * returns the result as a vector with 3 entries.
+     * @param {Matrix4} m The matrix.
+     * @param {Vector3} v The point.
+     * @param {Vector4} dst optional vector4 to store result
+     * @return {Vector4} dst or new Vector4 if not provided
+     * @memberOf module:webgl-3d-math
+     */
+    transformPoint(m, v, dst = []) {
+        const v0 = v[0];
+        const v1 = v[1];
+        const v2 = v[2];
+        const d = v0 * m[0 * 4 + 3] + v1 * m[1 * 4 + 3] + v2 * m[2 * 4 + 3] + m[3 * 4 + 3];
+
+        dst[0] = (v0 * m[0 * 4 + 0] + v1 * m[1 * 4 + 0] + v2 * m[2 * 4 + 0] + m[3 * 4 + 0]) / d;
+        dst[1] = (v0 * m[0 * 4 + 1] + v1 * m[1 * 4 + 1] + v2 * m[2 * 4 + 1] + m[3 * 4 + 1]) / d;
+        dst[2] = (v0 * m[0 * 4 + 2] + v1 * m[1 * 4 + 2] + v2 * m[2 * 4 + 2] + m[3 * 4 + 2]) / d;
+
+        return dst;
+    },
+
+    /**
+   * Transposes a matrix.
+   * @param {Matrix4} m matrix to transpose.
+   * @param {Matrix4} [dst] optional matrix to store result
+   * @return {Matrix4} dst or a new matrix if none provided
+   * @memberOf module:webgl-3d-math
+   */
+    transpose(m, dst = []) {
+        dst[0] = m[0];
+        dst[1] = m[4];
+        dst[2] = m[8];
+        dst[3] = m[12];
+        dst[4] = m[1];
+        dst[5] = m[5];
+        dst[6] = m[9];
+        dst[7] = m[13];
+        dst[8] = m[2];
+        dst[9] = m[6];
+        dst[10] = m[10];
+        dst[11] = m[14];
+        dst[12] = m[3];
+        dst[13] = m[7];
+        dst[14] = m[11];
+        dst[15] = m[15];
+
+        return dst;
     }
 };
 
@@ -532,3 +583,35 @@ export const vec3 = {
         return dst;
     },
 };
+
+/**
+ * @param {Number} range
+ * @returns {Number}
+ */
+export function randomInt(range) {
+    return Math.floor(Math.random() * range);
+}
+
+/**
+ * @param {Number} r
+ * @returns {Number}
+ */
+export function radToDeg(r) {
+    return r * 180 / Math.PI;
+}
+
+/**
+ * @param {Number} d
+ * @returns {Number}
+ */
+export function degToRad(d) {
+    return d * Math.PI / 180;
+}
+
+/**
+ * @param {Number} value
+ * @returns {boolean}
+ */
+function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+}
