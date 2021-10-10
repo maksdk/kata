@@ -15,4 +15,12 @@ export class Vector {
     public sub(v: Vector): Vector {
         return new Vector(this.x - v.x, this.y - v.y);
     }
+
+    public add(v: Vector): Vector {
+        return new Vector(this.x + v.x, this.y + v.y);
+    }
+
+    public clone(): Vector {
+        return new Vector(this.x, this.y);
+    }
 }

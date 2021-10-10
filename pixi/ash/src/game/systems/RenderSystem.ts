@@ -9,8 +9,9 @@ export interface IRenderSystemOptions {
     height: number;
 }
 
-enum RenderViewLayers {
+export enum RenderViewLayer {
     Depth = 0,
+    Debug = 1,
 }
 
 export class RenderSystem extends System {
@@ -18,7 +19,7 @@ export class RenderSystem extends System {
     private stage: Container;
     private view: HTMLCanvasElement;
     private renderer: Renderer;
-    private layers: Map<RenderViewLayers, Container> = new Map();
+    private layers: Map<RenderViewLayer, Container> = new Map();
     private renderNodes: NodeList<RenderNode> | null = null;
     
     public constructor(private options: IRenderSystemOptions) {
@@ -34,17 +35,22 @@ export class RenderSystem extends System {
         this.view = this.app.view;
         this.renderer = this.app.renderer;
     
-        this.layers.set(RenderViewLayers.Depth, new Container());
+        this.layers.set(RenderViewLayer.Depth, new Container());
+        this.layers.set(RenderViewLayer.Debug, new Container());
     }
 
     // call when system add to ash system
     public addToEngine(engine: Engine): void {
         document.body.appendChild(this.view);
-
-        const layer = this.layers.get(RenderViewLayers.Depth);
-        if (layer) {
-            layer.position.set(this.renderer.width / 2, this.renderer.height / 2);
-            this.stage.addChild(layer);
+    
+        const depthContainer = this.layers.get(RenderViewLayer.Depth);
+        const debugContainer = this.layers.get(RenderViewLayer.Debug);
+        if (depthContainer) {
+            depthContainer.position.set(this.renderer.width / 2, this.renderer.height / 2);
+            this.stage.addChild(depthContainer);
+    
+            debugContainer.position.set(this.renderer.width / 2, this.renderer.height / 2);
+            this.stage.addChild(debugContainer);
         }
 
         this.renderNodes = engine.getNodeList(RenderNode);
@@ -54,6 +60,7 @@ export class RenderSystem extends System {
         }
 
         this.renderNodes.nodeAdded.add((node: RenderNode) => this.addToDisplay(node));
+        this.renderNodes.nodeRemoved.add((node: RenderNode) => this.removeFromDisplay(node));
 
     }
 
@@ -72,11 +79,19 @@ export class RenderSystem extends System {
         this.renderer.render(this.stage);
     }
 
-    protected addToDisplay(node: RenderNode): void {
-        const { displayObject } = node.display;
-        const layer = this.layers.get(RenderViewLayers.Depth);
-        if (layer) {
-            layer.addChild(displayObject);
+    private addToDisplay(node: RenderNode): void {
+        const { displayObject, layer = RenderViewLayer.Depth } = node.display;
+        const container = this.layers.get(layer);
+        if (container) {
+            container.addChild(displayObject);
+        }
+    }
+
+    private removeFromDisplay(node: RenderNode): void {
+        const { displayObject, layer = RenderViewLayer.Depth } = node.display;
+        const container = this.layers.get(layer);
+        if (container) {
+            container.removeChild(displayObject);
         }
     }
 }
