@@ -17,7 +17,7 @@ export class WallView extends Graphics {
         const x = origin.x * -width;
         const y = origin.y * -height;
 
-        this.lineStyle(2, 0xFFFF00)
+        this.beginFill(0x0000FF)
             .drawRect(x, y, width, height)
             .endFill();
     }

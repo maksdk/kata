@@ -7,6 +7,8 @@ import { Gun } from '@core/game/components/Gun';
 import { InputControl } from '@core/game/components/InputControl';
 import { Motion } from '@core/game/components/Motion';
 import { Transform } from '@core/game/components/Transform';
+import { TriggerTarget } from '@core/game/components/TriggerTarget';
+import { TriggerZone } from '@core/game/components/TriggerZone';
 import { Wall } from '@core/game/components/Wall';
 
 export const RenderNode = defineNode({
@@ -68,3 +70,16 @@ export const CollisionWallNode = defineNode({
     wall: Wall,
 }, 'CollisionWallNode');
 export type CollisionWallNode = InstanceType<typeof CollisionWallNode>;
+
+export const TriggerZoneNode = defineNode({
+    trigger: TriggerZone,
+    transform: Transform,
+}, 'TriggerZoneNode');
+export type TriggerZoneNode = InstanceType<typeof TriggerZoneNode>;
+
+export const TriggerTargetNode = defineNode({
+    transform: Transform,
+    triggerTarget: TriggerTarget,
+    character: Character,
+}, 'TriggerTargetNode');
+export type TriggerTargetNode = InstanceType<typeof TriggerTargetNode>;

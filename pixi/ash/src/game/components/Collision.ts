@@ -5,10 +5,9 @@ export enum CollisionShapeType {
     Circle = 'Circle',
 }
 
-interface ICollsionProps {
+export interface ICollsionProps {
     width?: number;
     height?: number;
-    position: Vector;
     type: CollisionShapeType;
     origin?: Vector; 
     radius?: number;
@@ -48,7 +47,7 @@ export class Collision {
         }
     }
 
-    private generateRectPolygon(w: number, h: number, origin: Vector): Vector[] {
+    protected generateRectPolygon(w: number, h: number, origin: Vector): Vector[] {
         const pos = new Vector().sub(new Vector(w * origin.x, h * origin.y));
         const p1 = pos.clone();
         const p2 = pos.add(new Vector(w, 0));

@@ -6,6 +6,7 @@ import { GunControlSystem } from '@core/game/systems/GunControlSystem';
 import { InputControlSystem } from '@core/game/systems/InputControlSystem';
 import { MovementSystem } from '@core/game/systems/MovementSystem';
 import { RenderSystem } from '@core/game/systems/RenderSystem';
+import { TriggerSystem } from '@core/game/systems/TriggerSystem';
 
 enum SystemPriorities {
     PreUpdate = 1,
@@ -19,30 +20,34 @@ enum SystemPriorities {
 }
 
 export class Game {
+    private readonly engine: Engine;
+    private readonly entityCreator: EntityCreator;
+    private readonly config = { width: window.innerWidth, height: window.innerHeight };
+
+    public constructor() {
+        this.engine = new Engine();
+        this.entityCreator = new EntityCreator(this.engine, this.config);
+    }
+
     public create(): void {
-        const config = { width: window.innerWidth, height: window.innerHeight };
-
-        const engine = new Engine();
-        const entityCreator = new EntityCreator(engine, config);
-
         const ticker = new FrameTickProvider();
-        ticker.add((delta: number) => engine.update(delta));
+        ticker.add((delta: number) => this.engine.update(delta));
         ticker.start();
 
-        engine.addSystem(new InputControlSystem(), SystemPriorities.PreUpdate); 
-        engine.addSystem(new GunControlSystem(entityCreator), SystemPriorities.Update);   
-        engine.addSystem(new MovementSystem(), SystemPriorities.Move);   
-        engine.addSystem(new CollisionSystem(entityCreator), SystemPriorities.Collision);   
-        engine.addSystem(new DebugSystem(entityCreator), SystemPriorities.Debug);   
-        engine.addSystem(new RenderSystem(config), SystemPriorities.Render);    
+        this.engine.addSystem(new InputControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new GunControlSystem(this.entityCreator), SystemPriorities.Update);   
+        this.engine.addSystem(new MovementSystem(), SystemPriorities.Move);   
+        this.engine.addSystem(new CollisionSystem(this.entityCreator), SystemPriorities.Collision);   
+        this.engine.addSystem(new TriggerSystem(this.entityCreator), SystemPriorities.Collision);   
+        this.engine.addSystem(new DebugSystem(this.entityCreator), SystemPriorities.Debug);   
+        this.engine.addSystem(new RenderSystem(this.config), SystemPriorities.Render);    
         
-        entityCreator.createWall();
-        entityCreator.createCharacter();
-        entityCreator.createInputControl();
+        this.entityCreator.createTrigger();
+        this.entityCreator.createWall();
+        this.entityCreator.createCharacter();
+        this.entityCreator.createInputControl();
         
         // @ts-ignore
-        window.Engine = engine;
-        // @ts-ignore
-        window.EntityCreator = entityCreator;
+        window.Game = this;
     }
 }

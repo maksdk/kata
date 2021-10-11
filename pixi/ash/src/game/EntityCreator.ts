@@ -15,6 +15,8 @@ import { DebugCollisionShapeView } from '@core/game/graphics/DebugCollisionShape
 import { RenderViewLayer } from '@core/game/systems/RenderSystem';
 import { Wall } from '@core/game/components/Wall';
 import { Bullet } from '@core/game/components/Bullet';
+import { TriggerZone } from '@core/game/components/TriggerZone';
+import { TriggerTarget } from '@core/game/components/TriggerTarget';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -32,25 +34,27 @@ export class EntityCreator {
 
     public createCharacter(): Entity {
         const character: Entity = new Entity('Character');
-        const characterView = new CharacterView();
 
         const fsm = new EntityStateMachine(character);
 
-        fsm.createState('playing')
-            .add(Motion)
-            .withInstance(new Motion())
-            .add(Transform)
-            .withInstance(new Transform())
-            .add(Gun)
-            .withInstance(new Gun());
+        fsm.createState('white')
+            .add(Display)
+            .withInstance(new Display(new CharacterView(0xFFFFFF)));
 
-        character.add(new Display(characterView))
+        fsm.createState('red')
+            .add(Display)
+            .withInstance(new Display(new CharacterView(0xFF0000)));
+
+        character
+            .add(new Motion())
+            .add(new Transform())
+            .add(new Gun())
+            .add(new TriggerTarget())
             .add(new Character(fsm));
 
-        fsm.changeState('playing');
+        fsm.changeState('white');
 
         this.engine.addEntity(character);
-
 
         return character;
     }
@@ -82,7 +86,7 @@ export class EntityCreator {
             .add(new Display(bulletView))
             .add(new Transform(position))
             .add(new Motion( {velocity, moveSpeed: 600 }))
-            .add(new Collision({ position: from, radius, type: CollisionShapeType.Circle }))
+            .add(new Collision({ radius, type: CollisionShapeType.Circle }))
             .add(new Bullet());
     
         this.engine.addEntity(bullet);
@@ -103,20 +107,20 @@ export class EntityCreator {
         wall.add(new Transform({x: p.x, y: p.y }))
             .add(new Display(wallView))
             .add(new Wall())
-            .add(new Collision({ type: CollisionShapeType.Rect, position: p, width: 30, height: 200 }));
+            .add(new Collision({ type: CollisionShapeType.Rect, width: 30, height: 200 }));
 
         this.engine.addEntity(wall);
 
         return wall;
     }
 
-    public createDebugCollisionShape(props: { transform: Transform, collision: Collision }): Entity {
+    public createDebugCollisionShape(props: { type: CollisionShapeType, polygon: Vector[], radius: number }): Entity {
         const shape = new Entity();
 
         const shapeView = new DebugCollisionShapeView({
-            type: props.collision.type,
-            polygon: props.collision.polygon,
-            radius: props.collision.radius,
+            type: props.type,
+            polygon: props.polygon,
+            radius: props.radius,
         });
 
         shape.add(new Display(shapeView, RenderViewLayer.Debug))
@@ -125,5 +129,21 @@ export class EntityCreator {
         this.engine.addEntity(shape);
 
         return shape;
+    }
+
+    public createTrigger(): Entity {
+        const trigger = new Entity('TriggerZone');
+
+        const pos = new Vector(0, -200);
+        const width = 50;
+        const height = 50;
+
+        trigger
+            .add(new TriggerZone({ type: CollisionShapeType.Rect, width, height }))
+            .add(new Transform({ x: pos.x, y: pos.y }));
+
+        this.engine.addEntity(trigger);
+
+        return trigger;
     }
 }
