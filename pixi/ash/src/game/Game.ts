@@ -2,11 +2,14 @@ import { Engine, FrameTickProvider } from '@ash.ts/ash';
 import { EntityCreator } from '@core/game/EntityCreator';
 import { CollisionSystem } from '@core/game/systems/CollisionSystem';
 import { DebugSystem } from '@core/game/systems/DebugSystem';
-import { GunControlSystem } from '@core/game/systems/GunControlSystem';
+import { PistolControlSystem } from '@core/game/systems/weapon/PistolControlNode';
 import { InputControlSystem } from '@core/game/systems/InputControlSystem';
 import { MovementSystem } from '@core/game/systems/MovementSystem';
 import { RenderSystem } from '@core/game/systems/RenderSystem';
 import { TriggerSystem } from '@core/game/systems/TriggerSystem';
+import { ShotgunControlSystem } from '@core/game/systems/weapon/ShotgunControlSystem';
+import { PickingUpWeaponSystem } from '@core/game/systems/weapon/PickingUpWeaponSystem';
+import { WeaponControlSystem } from '@core/game/systems/weapon/WeaponControlSystem';
 
 enum SystemPriorities {
     PreUpdate = 1,
@@ -35,7 +38,12 @@ export class Game {
         ticker.start();
 
         this.engine.addSystem(new InputControlSystem(), SystemPriorities.PreUpdate); 
-        this.engine.addSystem(new GunControlSystem(this.entityCreator), SystemPriorities.Update);   
+
+        this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update);   
+        this.engine.addSystem(new ShotgunControlSystem(this.entityCreator), SystemPriorities.Update);  
+        this.engine.addSystem(new PickingUpWeaponSystem(this.entityCreator), SystemPriorities.Update);  
+        this.engine.addSystem(new WeaponControlSystem(), SystemPriorities.Update);  
+ 
         this.engine.addSystem(new MovementSystem(), SystemPriorities.Move);   
         this.engine.addSystem(new CollisionSystem(this.entityCreator), SystemPriorities.Collision);   
         this.engine.addSystem(new TriggerSystem(this.entityCreator), SystemPriorities.Collision);   
@@ -43,6 +51,8 @@ export class Game {
         this.engine.addSystem(new RenderSystem(this.config), SystemPriorities.Render);    
         
         this.entityCreator.createTrigger();
+        this.entityCreator.createPistolItem();
+        this.entityCreator.createShotgunItem();
         this.entityCreator.createWall();
         this.entityCreator.createCharacter();
         this.entityCreator.createInputControl();

@@ -3,13 +3,16 @@ import { Bullet } from '@core/game/components/Bullet';
 import { Character } from '@core/game/components/Character';
 import { Collision } from '@core/game/components/Collision';
 import { Display } from '@core/game/components/Display';
-import { Gun } from '@core/game/components/Gun';
+import { Pistol } from '@core/game/components/weapon/Pistol';
 import { InputControl } from '@core/game/components/InputControl';
 import { Motion } from '@core/game/components/Motion';
 import { Transform } from '@core/game/components/Transform';
 import { TriggerTarget } from '@core/game/components/TriggerTarget';
 import { TriggerZone } from '@core/game/components/TriggerZone';
 import { Wall } from '@core/game/components/Wall';
+import { Shotgun } from '@core/game/components/weapon/Shotgun';
+import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
+import { WeaponToAdd } from '@core/game/components/weapon/WeaponToAdd';
 
 export const RenderNode = defineNode({
     display: Display,
@@ -27,11 +30,31 @@ export const CharacterNode = defineNode({
 }, 'CharacterNode');
 export type CharacterNode = InstanceType<typeof CharacterNode>;
 
-export const GunControlNode = defineNode({
-    gun: Gun,
+export const PistolControlNode = defineNode({
+    pistol: Pistol,
     transform: Transform,
-}, 'GunControlNode');
-export type GunControlNode = InstanceType<typeof GunControlNode>;
+}, 'PistolControlNode');
+export type PistolControlNode = InstanceType<typeof PistolControlNode>;
+
+export const ShotgunControlNode = defineNode({
+    shotgun: Shotgun,
+    transform: Transform,
+    motion: Motion,
+}, 'ShotgunControlNode');
+export type ShotgunControlNode = InstanceType<typeof ShotgunControlNode>;
+
+export const PickingUpWeaponItemNode = defineNode({
+    item: WeaponItem,
+    transform: Transform,
+    trigger: TriggerZone,
+}, 'PickingUpWeaponItemNode');
+export type PickingUpWeaponItemNode = InstanceType<typeof PickingUpWeaponItemNode>;
+
+export const PickingUpWeaponCharacterNode = defineNode({
+    character: Character,
+    transform: Transform,
+}, 'PickingUpWeaponCharacterNode');
+export type PickingUpWeaponCharacterNode = InstanceType<typeof PickingUpWeaponCharacterNode>;
 
 export const MovementNode = defineNode({
     transform: Transform,
@@ -83,3 +106,8 @@ export const TriggerTargetNode = defineNode({
     character: Character,
 }, 'TriggerTargetNode');
 export type TriggerTargetNode = InstanceType<typeof TriggerTargetNode>;
+
+export const WeaponControlSystemNode = defineNode({
+    weaponToAdd: WeaponToAdd,
+}, 'WeaponControlSystemNode');
+export type WeaponControlSystemNode = InstanceType<typeof WeaponControlSystemNode>;

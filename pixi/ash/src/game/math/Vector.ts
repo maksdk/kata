@@ -23,4 +23,18 @@ export class Vector {
     public clone(): Vector {
         return new Vector(this.x, this.y);
     }
+
+    public mulScalar(scalar: number): Vector {
+        return new Vector(this.x * scalar, this.y * scalar);
+    }
+
+    public setAngle(rad: number): Vector {
+		const x = Math.cos(rad) * this.length();
+		const y = Math.sin(rad) * this.length();
+        return new Vector(x, y);
+	}
+
+    public getAngle(): number {
+		return Math.atan2(this.y, this.x);
+	}
 }
