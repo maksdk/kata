@@ -11,7 +11,6 @@ import { TriggerTarget } from '@core/game/components/TriggerTarget';
 import { TriggerZone } from '@core/game/components/TriggerZone';
 import { Wall } from '@core/game/components/Wall';
 import { Shotgun } from '@core/game/components/weapon/Shotgun';
-import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
 import { WeaponToAdd } from '@core/game/components/weapon/WeaponToAdd';
 import { Input } from '@core/game/components/Input';
 
@@ -43,19 +42,6 @@ export const ShotgunControlNode = defineNode({
     motion: Motion,
 }, 'ShotgunControlNode');
 export type ShotgunControlNode = InstanceType<typeof ShotgunControlNode>;
-
-export const PickingUpWeaponItemNode = defineNode({
-    item: WeaponItem,
-    transform: Transform,
-    trigger: TriggerZone,
-}, 'PickingUpWeaponItemNode');
-export type PickingUpWeaponItemNode = InstanceType<typeof PickingUpWeaponItemNode>;
-
-export const PickingUpWeaponCharacterNode = defineNode({
-    character: Character,
-    transform: Transform,
-}, 'PickingUpWeaponCharacterNode');
-export type PickingUpWeaponCharacterNode = InstanceType<typeof PickingUpWeaponCharacterNode>;
 
 export const MovementNode = defineNode({
     transform: Transform,

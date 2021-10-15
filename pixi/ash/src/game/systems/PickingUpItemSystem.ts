@@ -1,11 +1,16 @@
-import { PickingUpWeaponItemNode, PickingUpWeaponCharacterNode } from '@game/nodes';
-import { Engine, NodeList, System } from '@ash.ts/ash';
+import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
 import { Vector } from '@core/game/math/Vector';
 import { pointInRect } from '@core/game/math/collision';
 import { EntityCreator } from '@core/game/EntityCreator';
 import { WeaponToAdd } from '@core/game/components/weapon/WeaponToAdd';
+import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
+import { Transform } from '@core/game/components/Transform';
+import { TriggerZone } from '@core/game/components/TriggerZone';
+import { Character } from '@core/game/components/Character';
 
-export class PickingUpWeaponSystem extends System {
+// TODO: Now use only weapon items
+
+export class PickingUpItemSystem extends System {
     private items: NodeList<PickingUpWeaponItemNode> | null = null;
     private characters: NodeList<PickingUpWeaponCharacterNode> | null = null;
 
@@ -51,3 +56,18 @@ export class PickingUpWeaponSystem extends System {
         }
     }
 }
+
+const PickingUpWeaponItemNode = defineNode({
+    item: WeaponItem,
+    transform: Transform,
+    trigger: TriggerZone,
+}, 'PickingUpWeaponItemNode');
+
+type PickingUpWeaponItemNode = InstanceType<typeof PickingUpWeaponItemNode>;
+
+const PickingUpWeaponCharacterNode = defineNode({
+    character: Character,
+    transform: Transform,
+}, 'PickingUpWeaponCharacterNode');
+
+type PickingUpWeaponCharacterNode = InstanceType<typeof PickingUpWeaponCharacterNode>;

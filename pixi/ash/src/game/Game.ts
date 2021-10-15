@@ -8,7 +8,7 @@ import { MovementSystem } from '@core/game/systems/MovementSystem';
 import { RenderSystem } from '@core/game/systems/RenderSystem';
 import { TriggerSystem } from '@core/game/systems/TriggerSystem';
 import { ShotgunControlSystem } from '@core/game/systems/weapon/ShotgunControlSystem';
-import { PickingUpWeaponSystem } from '@core/game/systems/weapon/PickingUpWeaponSystem';
+import { PickingUpItemSystem } from '@core/game/systems/PickingUpItemSystem';
 import { WeaponControlSystem } from '@core/game/systems/weapon/WeaponControlSystem';
 
 enum SystemPriorities {
@@ -24,24 +24,25 @@ enum SystemPriorities {
 
 export class Game {
     private readonly engine: Engine;
+    private readonly ticker: FrameTickProvider;
     private readonly entityCreator: EntityCreator;
     private readonly config = { width: window.innerWidth, height: window.innerHeight };
 
     public constructor() {
         this.engine = new Engine();
+        this.ticker = new FrameTickProvider();
         this.entityCreator = new EntityCreator(this.engine, this.config);
     }
 
     public create(): void {
-        const ticker = new FrameTickProvider();
-        ticker.add((delta: number) => this.engine.update(delta));
-        ticker.start();
+        this.ticker.add((delta: number) => this.engine.update(delta));
+        this.ticker.start();
 
         this.engine.addSystem(new InputControlSystem(), SystemPriorities.PreUpdate); 
 
         this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update);   
         this.engine.addSystem(new ShotgunControlSystem(this.entityCreator), SystemPriorities.Update);  
-        this.engine.addSystem(new PickingUpWeaponSystem(this.entityCreator), SystemPriorities.Update);  
+        this.engine.addSystem(new PickingUpItemSystem(this.entityCreator), SystemPriorities.Update);  
         this.engine.addSystem(new WeaponControlSystem(), SystemPriorities.Update);  
  
         this.engine.addSystem(new MovementSystem(), SystemPriorities.Move);   
