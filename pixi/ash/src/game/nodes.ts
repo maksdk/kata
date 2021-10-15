@@ -13,6 +13,7 @@ import { Wall } from '@core/game/components/Wall';
 import { Shotgun } from '@core/game/components/weapon/Shotgun';
 import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
 import { WeaponToAdd } from '@core/game/components/weapon/WeaponToAdd';
+import { Input } from '@core/game/components/Input';
 
 export const RenderNode = defineNode({
     display: Display,
@@ -70,7 +71,8 @@ export const MotionControlNode = defineNode({
 export type MotionControlNode = InstanceType<typeof MotionControlNode>;
 
 export const InputControlNode = defineNode({
-    input: InputControl,
+    control: InputControl,
+    input: Input,
 }, 'InputControlNode');
 export type InputControlNode = InstanceType<typeof InputControlNode>;
 

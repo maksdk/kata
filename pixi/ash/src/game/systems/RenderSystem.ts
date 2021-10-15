@@ -11,7 +11,9 @@ export interface IRenderSystemOptions {
 
 export enum RenderViewLayer {
     Depth = 0,
-    Debug = 1,
+    World = 1,
+    UI = 2,
+    Debug = 3,
 }
 
 export class RenderSystem extends System {

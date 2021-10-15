@@ -5,10 +5,12 @@ export class InputControl {
     public down: IInputControlSystemEvent | null = null;
     public pointer: { position: Vector; } | null = null;
 
-    public constructor(private view: InputControlView) {
-        view.on(InputControlViewEvent.OnDown, this.onDown, this);
-        view.on(InputControlViewEvent.OnUp, this.onUp, this);
-        view.on(InputControlViewEvent.OnMove, this.onMove, this);
+    public constructor(private view?: InputControlView) {
+        if (view) {
+            view.on(InputControlViewEvent.OnDown, this.onDown, this);
+            view.on(InputControlViewEvent.OnUp, this.onUp, this);
+            view.on(InputControlViewEvent.OnMove, this.onMove, this);
+        }
     }
 
     private onUp(e: IInputControlSystemEvent): void {

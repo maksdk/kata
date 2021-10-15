@@ -21,11 +21,22 @@ export class InputControlSystem extends System {
 
     public update(dt: number): void {
         const inputNode = this.inputNodes.head;
+        const motionNode = this.motionNodes.head;
+
 
         if (inputNode) {
-            const { input } = inputNode;
-            if (input.pointer) {
-                const { position } = input.pointer;
+            const { input, control } = inputNode;
+
+            // Hide input if there is not motionable entities
+            if (!motionNode) {
+                input.fsm.changeState('disabled');
+            } else {
+                input.fsm.changeState('enabled');
+            }
+
+            // Move entities that have motion component
+            if (control.pointer) {
+                const { position } = control.pointer;
                 for (let node = this.motionNodes.head; node; node = node.next) {
                     const { motion, transform } = node;
                     const dir = position.sub(new Vector(transform.x, transform.y)).normalize();

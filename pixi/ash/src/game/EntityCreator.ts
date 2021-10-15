@@ -22,6 +22,7 @@ import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
 import { WeaponType } from '@core/game/constants';
 import { ShotgunView } from '@core/game/graphics/ShotgunView';
 import { PistolView } from '@core/game/graphics/PistolItemView';
+import { Input } from '@core/game/components/Input';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -61,6 +62,9 @@ export class EntityCreator {
 
         this.engine.addEntity(character);
 
+        // @ts-ignore
+        window.Character = character;
+
         return character;
     }
 
@@ -68,9 +72,23 @@ export class EntityCreator {
         const input = new Entity('InputControl');
         const inputControlView = new InputControlView(this.config.width, this.config.height);
 
-        input.add(new Display(inputControlView))
-            .add(new Transform())
-            .add(new InputControl(inputControlView));
+        const fsm = new EntityStateMachine(input);
+
+        fsm.createState('enabled')
+            .add(Display)
+            .withInstance(new Display(inputControlView))
+            .add(Transform)
+            .withInstance(new Transform())
+            .add(InputControl)
+            .withInstance(new InputControl(inputControlView));
+
+        fsm.createState('disabled')
+            .add(InputControl)
+            .withInstance(new InputControl());
+
+        fsm.changeState('disabled');
+
+        input.add(new Input(fsm));
 
         this.engine.addEntity(input);
 
