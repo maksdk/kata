@@ -16,7 +16,6 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
-        module: ['node_modules'],
         plugins: [
             new TsConfigPathsWebpackPlugin({
                 configFile: path.resolve(__dirname, '../tsconfig.json')
