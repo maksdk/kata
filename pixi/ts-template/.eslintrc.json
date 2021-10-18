@@ -25,10 +25,12 @@
         "no-multi-spaces": "error",
         "key-spacing": "error",
         "semi": "error",
-        "sort-imports": "error",
+        "sort-imports": "off",
         "no-cond-assign": "error",
         "no-dupe-args": "error",
         "quotes": ["error", "single"],
-        "quote-props": ["error", "as-needed"]
+        "quote-props": ["error", "as-needed"],
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
     }
 }
