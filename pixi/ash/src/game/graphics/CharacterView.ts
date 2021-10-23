@@ -1,11 +1,12 @@
+import { Vector } from '@core/game/math/Vector';
 import { Graphics } from 'pixi.js';
 
 export class CharacterView extends Graphics {
     private color = 0xffffff;
 
-    public constructor(color?: number) {
+    public constructor(color: number, private vertices: Vector[]) {
         super();
-        
+
         this.draw(color || this.color);
     }
 
@@ -15,12 +16,17 @@ export class CharacterView extends Graphics {
     }
 
     private draw(color: number): void {
-        this.moveTo(20, 0)
-        .beginFill(color)
-        .lineTo(-14, 14)
-        .lineTo(-8, 0)
-        .lineTo(-14, -14)
-        .lineTo(20, 0)
-        .endFill();
+        this.vertices.forEach((v, i) => {
+            if (i === 0) {
+                this.moveTo(v.x, v.y)
+                .beginFill(color);
+            } else {
+                this.lineTo(v.x, v.y);
+            }
+
+            if (i + 1 === this.vertices.length) {
+                this.endFill();
+            }
+        });
     }
 }

@@ -13,7 +13,7 @@
             "@game/*": ["src/game/*"],
             "@systems/*": ["src/game/systems*"],
             "@components/*": ["src/game/components*"],
-            "@graphics/*": ["src/game/graphics*"],
+            "@graphics/*": ["src/game/graphics*"]
         },
         "types": [
             "pixi.js"

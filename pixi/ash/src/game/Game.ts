@@ -1,15 +1,10 @@
-import { Engine, FrameTickProvider } from '@ash.ts/ash';
+import { Engine, FrameTickProvider } from '../libs/ash';
 import { EntityCreator } from '@core/game/EntityCreator';
 import { CollisionSystem } from '@core/game/systems/CollisionSystem';
-import { DebugSystem } from '@core/game/systems/DebugSystem';
-import { PistolControlSystem } from '@core/game/systems/weapon/PistolControlNode';
-import { InputControlSystem } from '@core/game/systems/InputControlSystem';
-import { MovementSystem } from '@core/game/systems/MovementSystem';
 import { RenderSystem } from '@core/game/systems/RenderSystem';
-import { TriggerSystem } from '@core/game/systems/TriggerSystem';
-import { ShotgunControlSystem } from '@core/game/systems/weapon/ShotgunControlSystem';
-import { PickingUpItemSystem } from '@core/game/systems/PickingUpItemSystem';
-import { WeaponControlSystem } from '@core/game/systems/weapon/WeaponControlSystem';
+import { Physics } from '@core/game/math/Physics';
+import { Vector } from '@core/game/math/Vector';
+import { MotionControlSystem } from '@core/game/systems/MotionControlSystem';
 
 enum SystemPriorities {
     PreUpdate = 1,
@@ -23,37 +18,38 @@ enum SystemPriorities {
 }
 
 export class Game {
-    private readonly engine: Engine;
-    private readonly ticker: FrameTickProvider;
-    private readonly entityCreator: EntityCreator;
-    private readonly config = { width: window.innerWidth, height: window.innerHeight };
+    public readonly engine: Engine;
+    public readonly ticker: FrameTickProvider;
+    public readonly entityCreator: EntityCreator;
+    public readonly config = { width: window.innerWidth, height: window.innerHeight };
+    public readonly physics: Physics;
 
     public constructor() {
         this.engine = new Engine();
         this.ticker = new FrameTickProvider();
-        this.entityCreator = new EntityCreator(this.engine, this.config);
+        this.entityCreator = new EntityCreator(this);
+        this.physics = new Physics({
+            width: this.config.width,
+            height: this.config.height,
+            isDebug: true,
+            worldPosition: new Vector(this.config.width / 2, this.config.height / 2)
+        });
     }
 
     public create(): void {
-        this.ticker.add((delta: number) => this.engine.update(delta));
+        this.ticker.add((dt: number) => {
+            this.engine.update(dt);
+        });
         this.ticker.start();
 
-        this.engine.addSystem(new InputControlSystem(), SystemPriorities.PreUpdate); 
-
-        this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update);   
-        this.engine.addSystem(new ShotgunControlSystem(this.entityCreator), SystemPriorities.Update);  
-        this.engine.addSystem(new PickingUpItemSystem(this.entityCreator), SystemPriorities.Update);  
-        this.engine.addSystem(new WeaponControlSystem(), SystemPriorities.Update);  
- 
-        this.engine.addSystem(new MovementSystem(), SystemPriorities.Move);   
-        this.engine.addSystem(new CollisionSystem(this.entityCreator), SystemPriorities.Collision);   
-        this.engine.addSystem(new TriggerSystem(this.entityCreator), SystemPriorities.Collision);   
-        this.engine.addSystem(new DebugSystem(this.entityCreator), SystemPriorities.Debug);   
+        this.engine.addSystem(new MotionControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
         this.engine.addSystem(new RenderSystem(this.config), SystemPriorities.Render);    
-        
-        this.entityCreator.createTrigger();
-        this.entityCreator.createPistolItem();
-        this.entityCreator.createShotgunItem();
+
+        if (this.physics) {
+            this.physics.run();
+        }
+
         this.entityCreator.createWall();
         this.entityCreator.createCharacter();
         this.entityCreator.createInputControl();

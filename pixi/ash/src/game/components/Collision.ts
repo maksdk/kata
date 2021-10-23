@@ -1,45 +1,58 @@
+import { PrimitiveType } from '@core/game/constants';
 import { Vector } from '@core/game/math/Vector';
 
-export enum CollisionShapeType {
-    Rect = 'Rect',
-    Circle = 'Circle',
+export enum RigidBodyType {
+    Static = 'Static',
+    Dynamic = 'Dynamic',
 }
 
 export interface ICollsionProps {
+    type: PrimitiveType;
     width?: number;
     height?: number;
-    type: CollisionShapeType;
-    origin?: Vector; 
     radius?: number;
+    vertices?: Vector[];
+    isTrigger?: boolean;
+    rigigBodyType?: RigidBodyType
 }
 
 export class Collision {
-    public readonly polygon: Vector[];
-    public readonly type: CollisionShapeType;
+    public readonly vertices: Vector[];
+    public readonly type: PrimitiveType;
     public readonly radius: number;
     public readonly width: number;
     public readonly height: number;
-    public readonly origin: Vector;
+    public readonly isTrigger: boolean;
+    public readonly rigigBodyType: RigidBodyType;
+    private readonly origin: Vector = new Vector(0.5, 0.5);
 
     public constructor(props: ICollsionProps) {
-        const { width = 0, height = 0, radius = 0, type, origin = new Vector(0.5, 0.5) } = props;
+        const { width = 0, height = 0, radius = 0, vertices = [], isTrigger = false, rigigBodyType = RigidBodyType.Static, type } = props;
 
         this.type = type;
         this.radius = radius;
         this.width = width;
         this.height = height;
-        this.origin = origin;
+        this.vertices = vertices;
+        this.isTrigger = isTrigger;
+        this.rigigBodyType = rigigBodyType;
 
         switch (type) {
-            case CollisionShapeType.Rect:
+            case PrimitiveType.Rect:
                 if (width <= 0 || height <= 0) {
                     throw new Error('Width and height must be more 0px');
                 }
-                this.polygon = this.generateRectPolygon(width, height, origin);
+                this.vertices = this.generateRectVertices(width, height, this.origin);
                 break;
-            case CollisionShapeType.Circle:
+            case PrimitiveType.Circle:
                 if (radius <= 0) {
                     throw new Error('Radius must be more 0px');
+                }
+                break;
+
+            case PrimitiveType.Polygon:
+                if (vertices.length === 0) {
+                    throw new Error('Vertices can\'t be empty');
                 }
                 break;
             default:
@@ -47,7 +60,7 @@ export class Collision {
         }
     }
 
-    protected generateRectPolygon(w: number, h: number, origin: Vector): Vector[] {
+    protected generateRectVertices(w: number, h: number, origin: Vector): Vector[] {
         const pos = new Vector().sub(new Vector(w * origin.x, h * origin.y));
         const p1 = pos.clone();
         const p2 = pos.add(new Vector(w, 0));

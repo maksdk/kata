@@ -1,5 +1,5 @@
-import { Collision, CollisionShapeType } from '@core/game/components/Collision';
-import { Engine, Entity, EntityStateMachine } from '@ash.ts/ash';
+import { Entity, EntityStateMachine } from '@ash.ts/ash';
+import { Collision, RigidBodyType } from '@core/game/components/Collision';
 import { CharacterView } from '@core/game/graphics/CharacterView';
 import { Transform } from '@core/game/components/Transform';
 import { Display } from '@core/game/components/Display';
@@ -16,13 +16,15 @@ import { RenderViewLayer } from '@core/game/systems/RenderSystem';
 import { Wall } from '@core/game/components/Wall';
 import { Bullet } from '@core/game/components/Bullet';
 import { TriggerZone } from '@core/game/components/TriggerZone';
-import { TriggerTarget } from '@core/game/components/TriggerTarget';
 import { randomInt, randomRange } from '@core/game/math/helpers';
 import { WeaponItem } from '@core/game/components/weapon/WeaponItem';
-import { WeaponType } from '@core/game/constants';
+import { PrimitiveType, WeaponType } from '@core/game/constants';
 import { ShotgunView } from '@core/game/graphics/ShotgunView';
 import { PistolView } from '@core/game/graphics/PistolItemView';
 import { Input } from '@core/game/components/Input';
+import { createVerticesByPoints } from '@core/game/math/Physics';
+import { RigidBody } from '@core/game/components/RigidBody';
+import { Game } from '@core/game/Game';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -30,12 +32,10 @@ export interface IEntityCreatorConfig {
 }
 
 export class EntityCreator {
-    public constructor(private engine: Engine, private config: IEntityCreatorConfig) {
-
-    }
+    public constructor(private game: Game) {}
 
     public removeEntity(entity: Entity): void {
-        this.engine.removeEntity(entity);
+        this.game.engine.removeEntity(entity);
     }
 
     public createCharacter(): Entity {
@@ -43,24 +43,35 @@ export class EntityCreator {
 
         const fsm = new EntityStateMachine(character);
 
+        const vertices = createVerticesByPoints([
+            new Vector(0, 0),
+            new Vector(60, 0),
+            new Vector(60, 30),
+            new Vector(0, 30)
+        ]);
+
         fsm.createState('white')
             .add(Display)
-            .withInstance(new Display(new CharacterView(0xFFFFFF)));
+            .withInstance(new Display(new CharacterView(0xFFFFFF, vertices)));
 
         fsm.createState('red')
             .add(Display)
-            .withInstance(new Display(new CharacterView(0xFF0000)));
+            .withInstance(new Display(new CharacterView(0xFF0000, vertices)));
 
         character
             .add(new Motion())
-            .add(new Transform())
             .add(new Pistol())
-            .add(new TriggerTarget())
-            .add(new Character(fsm));
+            .add(new Character(fsm))
+            .add(new Transform())
+            .add(new RigidBody(this.game.physics, {
+                width: 60,
+                height: 30,
+                rigidbodyType: RigidBodyType.Dynamic
+            }));
 
         fsm.changeState('white');
 
-        this.engine.addEntity(character);
+        this.game.engine.addEntity(character);
 
         // @ts-ignore
         window.Character = character;
@@ -70,7 +81,7 @@ export class EntityCreator {
 
     public createInputControl(): Entity {
         const input = new Entity('InputControl');
-        const inputControlView = new InputControlView(this.config.width, this.config.height);
+        const inputControlView = new InputControlView(this.game.config.width, this.game.config.height);
 
         const fsm = new EntityStateMachine(input);
 
@@ -86,11 +97,11 @@ export class EntityCreator {
             .add(InputControl)
             .withInstance(new InputControl());
 
-        fsm.changeState('disabled');
+        fsm.changeState('enabled');
 
         input.add(new Input(fsm));
 
-        this.engine.addEntity(input);
+        this.game.engine.addEntity(input);
 
         return input;
     }
@@ -109,10 +120,10 @@ export class EntityCreator {
             .add(new Display(bulletView))
             .add(new Transform(position))
             .add(new Motion({ velocity, moveSpeed: 600 }))
-            .add(new Collision({ radius, type: CollisionShapeType.Circle }))
+            .add(new Collision({ radius, type: PrimitiveType.Circle }))
             .add(new Bullet());
 
-        this.engine.addEntity(bullet);
+        this.game.engine.addEntity(bullet);
 
         return bullet;
     }
@@ -130,14 +141,18 @@ export class EntityCreator {
         wall.add(new Transform({ x: p.x, y: p.y }))
             .add(new Display(wallView))
             .add(new Wall())
-            .add(new Collision({ type: CollisionShapeType.Rect, width: 30, height: 200 }));
+            .add(new RigidBody(this.game.physics, {
+                width: 30,
+                height: 200,
+                rigidbodyType: RigidBodyType.Static
+            }));
 
-        this.engine.addEntity(wall);
+        this.game.engine.addEntity(wall);
 
         return wall;
     }
 
-    public createDebugCollisionShape(props: { type: CollisionShapeType, polygon: Vector[], radius: number }): Entity {
+    public createDebugCollisionShape(props: { type: PrimitiveType, polygon: Vector[], radius: number }): Entity {
         const shape = new Entity();
 
         const shapeView = new DebugCollisionShapeView({
@@ -149,7 +164,7 @@ export class EntityCreator {
         shape.add(new Display(shapeView, RenderViewLayer.Debug))
             .add(new Transform({ x: 0, y: 0 }));
 
-        this.engine.addEntity(shape);
+        this.game.engine.addEntity(shape);
 
         return shape;
     }
@@ -175,10 +190,10 @@ export class EntityCreator {
                 .add(new Display(bulletView))
                 .add(new Transform(position))
                 .add(new Motion({ velocity, moveSpeed: randomInt(600, 900) }))
-                .add(new Collision({ radius, type: CollisionShapeType.Circle }))
+                .add(new Collision({ radius, type: PrimitiveType.Circle }))
                 .add(new Bullet());
 
-            this.engine.addEntity(bullet);
+            this.game.engine.addEntity(bullet);
 
             bullets.push(bullet);
         }
@@ -194,18 +209,18 @@ export class EntityCreator {
         const height = 50;
 
         trigger
-            .add(new TriggerZone({ type: CollisionShapeType.Rect, width, height }))
+            .add(new TriggerZone({ type: PrimitiveType.Rect, width, height }))
             .add(new Transform({ x: pos.x, y: pos.y }));
 
-        this.engine.addEntity(trigger);
+        this.game.engine.addEntity(trigger);
 
         return trigger;
     }
 
     public createPistolItem(): Entity {
         const pos = new Vector(
-            randomInt(-this.config.width * 0.4, this.config.width * 0.4),
-            randomInt(-this.config.height * 0.4, this.config.height * 0.4)
+            randomInt(-this.game.config.width * 0.4, this.game.config.width * 0.4),
+            randomInt(-this.game.config.height * 0.4, this.game.config.height * 0.4)
         );
         const width = 20;
         const height = 20;
@@ -213,19 +228,19 @@ export class EntityCreator {
 
         item
             .add(new Display(new PistolView({ width, height })))
-            .add(new TriggerZone({ type: CollisionShapeType.Rect, width, height }))
+            .add(new TriggerZone({ type: PrimitiveType.Rect, width, height }))
             .add(new Transform({ x: pos.x, y: pos.y }))
             .add(new WeaponItem({ type: WeaponType.Pistol }));
 
-        this.engine.addEntity(item);
+        this.game.engine.addEntity(item);
 
         return item;
     }
 
     public createShotgunItem(): Entity {
         const pos = new Vector(
-            randomInt(-this.config.width * 0.4, this.config.width * 0.4),
-            randomInt(-this.config.height * 0.4, this.config.height * 0.4)
+            randomInt(-this.game.config.width * 0.4, this.game.config.width * 0.4),
+            randomInt(-this.game.config.height * 0.4, this.game.config.height * 0.4)
         );
         const width = 20;
         const height = 20;
@@ -233,11 +248,11 @@ export class EntityCreator {
 
         item
             .add(new Display(new ShotgunView({ width, height })))
-            .add(new TriggerZone({ type: CollisionShapeType.Rect, width, height }))
+            .add(new TriggerZone({ type: PrimitiveType.Rect, width, height }))
             .add(new Transform({ x: pos.x, y: pos.y }))
             .add(new WeaponItem({ type: WeaponType.Shotgun }));
 
-        this.engine.addEntity(item);
+        this.game.engine.addEntity(item);
 
         return item;
     }

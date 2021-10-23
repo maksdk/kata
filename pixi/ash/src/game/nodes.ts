@@ -1,10 +1,9 @@
-import { defineNode } from '@ash.ts/ash';
+import { defineNode } from '../libs/ash';
 import { Bullet } from '@core/game/components/Bullet';
 import { Character } from '@core/game/components/Character';
 import { Collision } from '@core/game/components/Collision';
 import { Display } from '@core/game/components/Display';
 import { Pistol } from '@core/game/components/weapon/Pistol';
-import { InputControl } from '@core/game/components/InputControl';
 import { Motion } from '@core/game/components/Motion';
 import { Transform } from '@core/game/components/Transform';
 import { TriggerTarget } from '@core/game/components/TriggerTarget';
@@ -12,18 +11,7 @@ import { TriggerZone } from '@core/game/components/TriggerZone';
 import { Wall } from '@core/game/components/Wall';
 import { Shotgun } from '@core/game/components/weapon/Shotgun';
 import { WeaponToAdd } from '@core/game/components/weapon/WeaponToAdd';
-import { Input } from '@core/game/components/Input';
 
-export const RenderNode = defineNode({
-    display: Display,
-    transform: Transform,
-}, 'RenderNode');
-export type RenderNode = InstanceType<typeof RenderNode>;
-
-export const MotionNode = defineNode({
-    motion: Motion,
-}, 'MotionNode');
-export type MotionNode = InstanceType<typeof MotionNode>; 
 
 export const CharacterNode = defineNode({
     character: Character 
@@ -56,11 +44,6 @@ export const MotionControlNode = defineNode({
 }, 'MotionControlNode');
 export type MotionControlNode = InstanceType<typeof MotionControlNode>;
 
-export const InputControlNode = defineNode({
-    control: InputControl,
-    input: Input,
-}, 'InputControlNode');
-export type InputControlNode = InstanceType<typeof InputControlNode>;
 
 export const CollisionNode = defineNode({
     collision: Collision,

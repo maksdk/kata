@@ -24,9 +24,9 @@ module.exports = {
         alias: {
             "@core": path.resolve(__dirname, '..', 'src'),
             "@game": path.resolve(__dirname, '..', 'src', 'game'),
-            "@systems": path.resolve(__dirname, '..', 'src', 'systems'),
-            "@components": path.resolve(__dirname, '..', 'src', 'components'),
-            "@graphics": path.resolve(__dirname, '..', 'src', 'graphics'),
+            "@systems": path.resolve(__dirname, '..', 'src', 'game', 'systems'),
+            "@components": path.resolve(__dirname, '..', 'src', 'game', 'components'),
+            "@graphics": path.resolve(__dirname, '..', 'src', 'game', 'graphics'),
         }
     },
     output: {

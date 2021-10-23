@@ -43,6 +43,8 @@ export class InputControlView extends Container {
 
     private drawDebug(): void {
         this.addChild(new Graphics())
+            .beginFill(0xFF0000, 0.2)
+            .drawRect(this.w * -0.5, this.h * -0.5, this.w, this.h)
             .lineStyle(2, 0xFFFFFF)
             .beginFill(0xFFFFFF, 0.3)
             .drawCircle(0, this.h * 0.3, 100)

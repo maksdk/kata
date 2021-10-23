@@ -1,7 +1,6 @@
 import { Vector } from '@core/game/math/Vector';
 import { Graphics } from 'pixi.js';
 
-
 interface IWallViewProps {
     width: number;
     height: number;
@@ -14,11 +13,8 @@ export class WallView extends Graphics {
 
         const { width, height, origin = new Vector(0.5, 0.5) } = props;
 
-        const x = origin.x * -width;
-        const y = origin.y * -height;
-
         this.beginFill(0x0000FF)
-            .drawRect(x, y, width, height)
+            .drawRect(-width * origin.x, -height * origin.y, width, height)
             .endFill();
     }
 }

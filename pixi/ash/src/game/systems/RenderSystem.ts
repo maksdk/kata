@@ -1,8 +1,7 @@
-import { Engine, NodeList, System } from '@ash.ts/ash';
-import { RenderNode } from '@core/game/nodes';
+import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
+import { Display } from '@core/game/components/Display';
+import { Transform } from '@core/game/components/Transform';
 import { Application, Container, Renderer } from 'pixi.js';
-
-// TODO: Use display layers to split different views
 
 export interface IRenderSystemOptions {
     width: number;
@@ -15,6 +14,13 @@ export enum RenderViewLayer {
     UI = 2,
     Debug = 3,
 }
+
+const RenderNode = defineNode({
+    display: Display,
+    transform: Transform,
+}, 'RenderNode');
+
+type RenderNode = InstanceType<typeof RenderNode>;
 
 export class RenderSystem extends System {
     private app: Application;
@@ -63,14 +69,17 @@ export class RenderSystem extends System {
 
         this.renderNodes.nodeAdded.add((node: RenderNode) => this.addToDisplay(node));
         this.renderNodes.nodeRemoved.add((node: RenderNode) => this.removeFromDisplay(node));
-
     }
 
-    public removeFromEngine(engine: Engine): void {
-        console.log('RenderSystem => removeFromEngine', engine);
+    public removeFromEngine(): void {
+        this.stage.destroy();
+        this.renderer.destroy();
+        this.app.destroy();
+
+        this.renderNodes = null;
     }
 
-    public update(dt: number): void {
+    public update(): void {
         for (let node = this.renderNodes.head; node; node = node.next) {
             const { display, transform } = node;
             const { displayObject } = display;

@@ -1,50 +1,56 @@
-import { Vector } from '@core/game/math/Vector';
-import { Engine, System, NodeList } from '@ash.ts/ash';
-import { pointInRect } from '@core/game/math/collision';
-import { CollisionBulletNode, CollisionWallNode } from '@core/game/nodes';
-import { EntityCreator } from '@core/game/EntityCreator';
+import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
+import { RigidBody } from '@core/game/components/RigidBody';
+import { Transform } from '@core/game/components/Transform';
+import { Physics } from '@core/game/math/Physics';
 
-// TODO: Needs a lot of optimization
+const CollisionNode = defineNode({
+    transform: Transform,
+    rigidbody: RigidBody,
+}, 'CollisionNode');
+
+type CollisionNode = InstanceType<typeof CollisionNode>;
 
 export class CollisionSystem extends System {
-    private bulletNodes: NodeList<CollisionBulletNode>;
-    private wallNodes: NodeList<CollisionWallNode>;
+    private nodes: NodeList<CollisionNode> | null = null;
 
-    public constructor(private creator: EntityCreator) {
+    public constructor(private physics: Physics) {
         super();
     }
 
     public addToEngine(engine: Engine): void {
-        this.bulletNodes = engine.getNodeList(CollisionBulletNode);
-        this.wallNodes = engine.getNodeList(CollisionWallNode);
+        this.nodes = engine.getNodeList(CollisionNode);
+
+        for (let node = this.nodes.head; node; node = node.next) {
+            this.addNode(node);
+        }
+
+        this.nodes.nodeAdded.add((node) => this.addNode(node));
+        this.nodes.nodeRemoved.add((node) => this.removeNode(node));
     }
 
     public removeFromEngine(): void {
-        //
+        this.nodes = null;
     }
 
-    public update(dt: number): void {
-        if (this.wallNodes.head && this.bulletNodes.head) {
-            for (let wallNode = this.wallNodes.head; wallNode; wallNode = wallNode.next) {
+    private addNode(node: CollisionNode): void {
+        const { rigidbody, transform } = node;
+        rigidbody.body.setPosition(transform.x, transform.y);
+    }
 
-                for (let bulletNode = this.bulletNodes.head; bulletNode; bulletNode = bulletNode.next) {
+    private removeNode(node: CollisionNode): void {
+        const { rigidbody } = node;
+        rigidbody.remove();
+    }
 
-                    const bulletPoint = new Vector(bulletNode.transform.x, bulletNode.transform.y);
+    public update( dt: number): void {
+        this.physics.update(dt);
 
-                    const rect = {
-                        x: wallNode.transform.x,
-                        y: wallNode.transform.y,
-                        width: wallNode.collision.width,
-                        height: wallNode.collision.height,
-                        originX: wallNode.collision.origin.x,
-                        originY: wallNode.collision.origin.y,
-                    };
-
-                    const intersect = pointInRect(bulletPoint, rect);
-                    if (intersect) {
-                        this.creator.removeEntity(bulletNode.entity);
-                    }
-                } 
+        for (let node = this.nodes.head; node; node = node.next) {
+            const { rigidbody, transform } = node;
+            if (rigidbody.isDynamic) {
+                transform.x = rigidbody.body.position.x;
+                transform.y = rigidbody.body.position.y;
+                transform.rotation = rigidbody.body.rotation;
             }
         }
     }
