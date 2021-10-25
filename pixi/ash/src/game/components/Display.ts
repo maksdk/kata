@@ -1,9 +1,13 @@
+import { BaseView } from '@core/game/graphics/BaseView';
 import { RenderViewLayer } from '@core/game/systems/RenderSystem';
-import { DisplayObject } from 'pixi.js';
 
 export class Display {
     public constructor(
-        public displayObject: DisplayObject, 
-        public layer?: RenderViewLayer,
-    ) {}
+        public view: BaseView,
+        public layer: RenderViewLayer,
+    ) { }
+
+    public resize(): void {
+        this.view.resize();
+    }
 }

@@ -1,5 +1,6 @@
+import { BaseView } from '@core/game/graphics/BaseView';
 import { Vector } from '@core/game/math/Vector';
-import { Container, Graphics, InteractionEvent, Rectangle } from 'pixi.js';
+import { Graphics, InteractionEvent, Rectangle } from 'pixi.js';
 
 export enum InputControlViewEvent {
     OnDown = 'InputControlViewEvent.OnDown',
@@ -11,7 +12,10 @@ export interface IInputControlSystemEvent {
     point: Vector;
 }
 
-export class InputControlView extends Container {
+export class InputControlView extends BaseView {
+    private joyTouch: Graphics;
+    private joyBg: Graphics;
+
     public constructor(private w: number, private h: number) {
         super();
 
@@ -23,14 +27,24 @@ export class InputControlView extends Container {
         this.on('pointerup', this.onUp, this);
         this.on('pointermove', this.onMove, this);
 
-        this.drawDebug();
+        this.joyBg = this.addChild(new Graphics())
+            .lineStyle(2, 0xFFFFFF)
+            .beginFill(0xFFFFFF, 0.3)
+            .drawCircle(0, 0, 100)
+            .endFill();
+
+        this.joyTouch = this.addChild(new Graphics())
+            .lineStyle(2, 0xFFFFFF)
+            .beginFill(0xFFFFFF, 0.5)
+            .drawCircle(0, 0, 45)
+            .endFill();
     }
 
     private onDown(e: InteractionEvent): void {
         const pos = e.data.getLocalPosition(this);
         this.emit(InputControlViewEvent.OnDown, { point: new Vector(pos.x, pos.y) });
     }
-    
+
     private onUp(e: InteractionEvent): void {
         const pos = e.data.getLocalPosition(this);
         this.emit(InputControlViewEvent.OnUp, { point: new Vector(pos.x, pos.y) });
@@ -39,17 +53,5 @@ export class InputControlView extends Container {
     private onMove(e: InteractionEvent): void {
         const pos = e.data.getLocalPosition(this);
         this.emit(InputControlViewEvent.OnMove, { point: new Vector(pos.x, pos.y) });
-    }
-
-    private drawDebug(): void {
-        this.addChild(new Graphics())
-            .beginFill(0xFF0000, 0.2)
-            .drawRect(this.w * -0.5, this.h * -0.5, this.w, this.h)
-            .lineStyle(2, 0xFFFFFF)
-            .beginFill(0xFFFFFF, 0.3)
-            .drawCircle(0, this.h * 0.3, 100)
-            .beginFill(0xFFFFFF, 0.5)
-            .drawCircle(0, this.h * 0.3, 50)
-            .endFill();
     }
 }

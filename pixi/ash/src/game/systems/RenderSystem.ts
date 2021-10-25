@@ -30,7 +30,6 @@ export class RenderSystem extends System {
         this.layers.set(RenderViewLayer.UI, new Container());
     }
 
-    // call when system add to ash system
     public addToEngine(engine: Engine): void {
         const depthContainer = this.layers.get(RenderViewLayer.World);
         const debugContainer = this.layers.get(RenderViewLayer.Debug);
@@ -45,35 +44,50 @@ export class RenderSystem extends System {
 
         this.renderNodes.nodeAdded.add((node: RenderNode) => this.addToDisplay(node));
         this.renderNodes.nodeRemoved.add((node: RenderNode) => this.removeFromDisplay(node));
+
+        window.addEventListener('resize', () => this.onResize(), true);
     }
 
     public removeFromEngine(): void {
-        this.layers.forEach(c => c.destroy());
+        this.renderNodes.nodeAdded.remove((node: RenderNode) => this.addToDisplay(node));
+        this.renderNodes.nodeRemoved.remove((node: RenderNode) => this.removeFromDisplay(node));
         this.renderNodes = null;
+
+        this.layers.forEach(c => c.destroy());
+
+        window.removeEventListener('resize', () => this.onResize(), true);
     }
 
     public update(): void {
         for (let node = this.renderNodes.head; node; node = node.next) {
             const { display, transform } = node;
-            const { displayObject } = display;
+            const { view } = display;
             const { x, y, sx, sy, rotation } = transform;
-            displayObject.setTransform(x, y, sx, sy, rotation);
+            view.setTransform(x, y, sx, sy, rotation);
         }
     }
 
     private addToDisplay(node: RenderNode): void {
-        const { displayObject, layer = RenderViewLayer.World } = node.display;
+        const { view, layer } = node.display;
         const container = this.layers.get(layer);
         if (container) {
-            container.addChild(displayObject);
+            container.addChild(view);
         }
     }
 
     private removeFromDisplay(node: RenderNode): void {
-        const { displayObject, layer = RenderViewLayer.World } = node.display;
+        const { view, layer } = node.display;
         const container = this.layers.get(layer);
         if (container) {
-            container.removeChild(displayObject);
+            container.removeChild(view);
+        }
+    }
+
+    // TODO: Improve logic. Use from playbleads
+    private onResize(): void {
+        for (let node = this.renderNodes.head; node; node = node.next) {
+            const { display } = node;
+            display.resize();
         }
     }
 }

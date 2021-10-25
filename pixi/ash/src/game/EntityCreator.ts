@@ -52,11 +52,11 @@ export class EntityCreator {
 
         fsm.createState('white')
             .add(Display)
-            .withInstance(new Display(new CharacterView(0xFFFFFF, vertices)));
+            .withInstance(new Display(new CharacterView(0xFFFFFF, vertices), RenderViewLayer.World));
 
         fsm.createState('red')
             .add(Display)
-            .withInstance(new Display(new CharacterView(0xFF0000, vertices)));
+            .withInstance(new Display(new CharacterView(0xFF0000, vertices), RenderViewLayer.World));
 
         character
             .add(new Motion())
@@ -87,7 +87,7 @@ export class EntityCreator {
 
         fsm.createState('enabled')
             .add(Display)
-            .withInstance(new Display(inputControlView))
+            .withInstance(new Display(inputControlView, RenderViewLayer.World))
             .add(Transform)
             .withInstance(new Transform())
             .add(InputControl)
@@ -117,7 +117,7 @@ export class EntityCreator {
         const position = new Vector(from.x, from.y);
 
         bullet
-            .add(new Display(bulletView))
+            .add(new Display(bulletView, RenderViewLayer.World))
             .add(new Transform(position))
             .add(new Motion({ velocity, moveSpeed: 600 }))
             .add(new Collision({ radius, type: PrimitiveType.Circle }))
@@ -139,7 +139,7 @@ export class EntityCreator {
         });
 
         wall.add(new Transform({ x: p.x, y: p.y }))
-            .add(new Display(wallView))
+            .add(new Display(wallView, RenderViewLayer.World))
             .add(new Wall())
             .add(new RigidBody(this.game.physics, {
                 width: 30,
@@ -187,7 +187,7 @@ export class EntityCreator {
             const position = new Vector(x, y);
 
             bullet
-                .add(new Display(bulletView))
+                .add(new Display(bulletView, RenderViewLayer.World))
                 .add(new Transform(position))
                 .add(new Motion({ velocity, moveSpeed: randomInt(600, 900) }))
                 .add(new Collision({ radius, type: PrimitiveType.Circle }))
@@ -227,7 +227,7 @@ export class EntityCreator {
         const item = new Entity();
 
         item
-            .add(new Display(new PistolView({ width, height })))
+            .add(new Display(new PistolView({ width, height }), RenderViewLayer.World))
             .add(new TriggerZone({ type: PrimitiveType.Rect, width, height }))
             .add(new Transform({ x: pos.x, y: pos.y }))
             .add(new WeaponItem({ type: WeaponType.Pistol }));
@@ -247,7 +247,7 @@ export class EntityCreator {
         const item = new Entity();
 
         item
-            .add(new Display(new ShotgunView({ width, height })))
+            .add(new Display(new ShotgunView({ width, height }), RenderViewLayer.World))
             .add(new TriggerZone({ type: PrimitiveType.Rect, width, height }))
             .add(new Transform({ x: pos.x, y: pos.y }))
             .add(new WeaponItem({ type: WeaponType.Shotgun }));

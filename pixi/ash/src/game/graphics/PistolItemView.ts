@@ -1,3 +1,4 @@
+import { BaseView } from '@core/game/graphics/BaseView';
 import { Vector } from '@core/game/math/Vector';
 import { Graphics } from 'pixi.js';
 
@@ -7,7 +8,7 @@ interface IPistolViewProps {
     origin?: Vector;
 }
 
-export class PistolView extends Graphics {
+export class PistolView extends BaseView {
     public constructor(props: IPistolViewProps) {
         super();
 
@@ -16,7 +17,8 @@ export class PistolView extends Graphics {
         const x = origin.x * -width;
         const y = origin.y * -height;
 
-        this.beginFill(0xFF00FF)
+        this.addChild(new Graphics())
+            .beginFill(0xFF00FF)
             .drawRect(x, y, width, height)
             .endFill();
     }

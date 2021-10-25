@@ -1,7 +1,8 @@
+import { BaseView } from '@core/game/graphics/BaseView';
 import { Vector } from '@core/game/math/Vector';
 import { Graphics } from 'pixi.js';
 
-export class CharacterView extends Graphics {
+export class CharacterView extends BaseView {
     private color = 0xffffff;
 
     public constructor(color: number, private vertices: Vector[]) {
@@ -16,16 +17,18 @@ export class CharacterView extends Graphics {
     }
 
     private draw(color: number): void {
+        const graphics = this.addChild(new Graphics());
+
         this.vertices.forEach((v, i) => {
             if (i === 0) {
-                this.moveTo(v.x, v.y)
+                graphics.moveTo(v.x, v.y)
                 .beginFill(color);
             } else {
-                this.lineTo(v.x, v.y);
+                graphics.lineTo(v.x, v.y);
             }
 
             if (i + 1 === this.vertices.length) {
-                this.endFill();
+                graphics.endFill();
             }
         });
     }
