@@ -1,36 +1,39 @@
-import { Vector } from '@core/game/math/Vector';
+import { Vector } from '@game/math/Vector';
 import { IInputControlSystemEvent, InputControlView, InputControlViewEvent } from '@core/game/graphics/InputControlView';
 
 export class InputControl {
     public down: IInputControlSystemEvent | null = null;
-    public pointer: { position: Vector; } | null = null;
+    public pointer: {
+        angle: number;
+        direction: Vector;
+    } | null = null;
 
     public constructor(private view?: InputControlView) {
-        if (view) {
-            view.on(InputControlViewEvent.OnDown, this.onDown, this);
-            view.on(InputControlViewEvent.OnUp, this.onUp, this);
-            view.on(InputControlViewEvent.OnMove, this.onMove, this);
+        if (this.view) {
+            this.view.on(InputControlViewEvent.StartMove, this.onStartMove, this);
+            this.view.on(InputControlViewEvent.StopMove, this.onStopMove, this);
+            this.view.on(InputControlViewEvent.Moving, this.onMoving, this);
         }
     }
 
-    private onUp(e: IInputControlSystemEvent): void {
-        if (this.pointer) {
-            this.pointer = null;
-        }
-    }
-
-    private onDown(e: IInputControlSystemEvent): void {
+    private onStartMove(e: IInputControlSystemEvent): void {
         this.pointer = {
-            position: e.point
+            angle: e.angle,
+            direction: e.direction,
         };
     }
 
-    private onMove(e: IInputControlSystemEvent): void {
+    private onMoving(e: IInputControlSystemEvent): void {
         if (!this.pointer) {
             return;
         }
         this.pointer = {
-            position: e.point
+            angle: e.angle,
+            direction: e.direction,
         };
+    }
+
+    private onStopMove(): void {
+        this.pointer = null;
     }
 }
