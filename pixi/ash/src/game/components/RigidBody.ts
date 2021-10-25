@@ -122,6 +122,7 @@ export class RigidBody {
             width: this.width,
             height: this.height,
             radius: this.radius,
+            vertices: this.vertices,
             isStatic: this.rigidbodyType === RigidBodyType.Static,
             isSensor: this.isTrigger,
         });

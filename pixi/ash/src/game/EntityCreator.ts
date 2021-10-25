@@ -45,8 +45,7 @@ export class EntityCreator {
 
         const vertices = createVerticesByPoints([
             new Vector(0, 0),
-            new Vector(60, 0),
-            new Vector(60, 30),
+            new Vector(40, 15),
             new Vector(0, 30)
         ]);
 
@@ -64,9 +63,9 @@ export class EntityCreator {
             .add(new Character(fsm))
             .add(new Transform())
             .add(new RigidBody(this.game.physics, {
-                width: 60,
-                height: 30,
-                rigidbodyType: RigidBodyType.Dynamic
+                vertices,
+                rigidbodyType: RigidBodyType.Dynamic,
+                primitiveType: PrimitiveType.Polygon,
             }));
 
         fsm.changeState('white');
