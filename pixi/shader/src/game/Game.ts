@@ -1,9 +1,15 @@
-import { Application, Container, Renderer, Filter } from 'pixi.js';
+import { Application, Container, Renderer, Filter, InteractionEvent } from 'pixi.js';
+
+interface IUniform {
+    uResolution: [number, number];
+    uMouse: [number, number];
+}
 
 export class Game {
     public stage: Container;
     public app: Application;
     public renderer: Renderer;
+    private filter: Filter;
 
     public constructor() {
         this.app = new Application({
@@ -18,7 +24,8 @@ export class Game {
         document.body.appendChild(this.app.view);
 
         const fragmentShader = `
-            varying vec2 vTextureCoord;
+            uniform vec2 uResolution;
+            uniform vec2 uMouse;
 
             float circleSoft(vec2 pt, vec2 center, float radius, float soft) {
                 vec2 p = pt - center;
@@ -27,17 +34,33 @@ export class Game {
             }
 
             void main() {
-                float inCircle = circleSoft(vTextureCoord.xy, vec2(0.5, 0.5), 0.15, 0.1);
-                vec3 color = vec3(vTextureCoord.x, vTextureCoord.y, 0.0) * inCircle;
+                vec2 uv = gl_FragCoord.xy / uResolution.xy;
+                uv.y = 1.0 - uv.y; // flip Y coord
+        
+                vec2 center = uMouse.xy / uResolution.xy;
+
+                float inCircle = circleSoft(uv.xy, center, 0.15, 0.1);
+                vec3 color = vec3(uv.x, uv.y, 0.0) * inCircle;
                 gl_FragColor = vec4(color, 1.0);
             }
         `;
 
-        const filter = new Filter(null, fragmentShader);
+        this.filter = new Filter(null, fragmentShader);
+        (this.filter.uniforms as IUniform).uResolution = [this.app.screen.width, this.app.screen.height];
+        (this.filter.uniforms as IUniform).uMouse = [0, 0];
 
         const container = new Container();
         container.filterArea = this.app.screen;
-        container.filters = [filter];
+        container.filters = [this.filter];
         this.stage.addChild(container);
+
+        this.stage.interactive = true;
+        this.stage.buttonMode = true;
+        this.stage.on('pointermove', this.onMove, this);
+    }
+
+    private onMove(e: InteractionEvent): void {
+        const locPos = e.data.getLocalPosition(this.stage);
+        (this.filter.uniforms as IUniform).uMouse = [locPos.x, locPos.y];
     }
 }
