@@ -79,6 +79,7 @@ export class InputControlView extends BaseView {
 
         switch (this.state) {
             case 'down':
+                this.joy.position.set(movePos.x, movePos.y);
                 this.emit(InputControlViewEvent.StartMove, { angle, direction: direction.normalize() });
                 break;
             case 'move':
@@ -86,6 +87,7 @@ export class InputControlView extends BaseView {
                 break;
             case 'up':
                 this.joyTouch.position.set(0, 0);
+                this.joy.position.set(0, this.h * 0.5 - 150);
                 this.emit(InputControlViewEvent.StopMove, { angle, direction: direction.normalize() });
                 this.state = 'none';
                 break;

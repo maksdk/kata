@@ -50,11 +50,6 @@ export class MotionControlSystem extends System {
                     rigidbody.velocity = direction;
                     rigidbody.angle = angle;
                 }
-            } else {
-                for (let node = this.motionNodes.head; node; node = node.next) {
-                    const { rigidbody } = node;
-                    rigidbody.velocity = new Vector();
-                }
             }
         }
     }
