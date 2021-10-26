@@ -19,8 +19,17 @@ export class Game {
 
         const fragmentShader = `
             varying vec2 vTextureCoord;
+
+            float circleSoft(vec2 pt, vec2 center, float radius, float soft) {
+                vec2 p = pt - center;
+                float edge = radius * soft;
+                return smoothstep(radius - edge, radius + edge, length(p));
+            }
+
             void main() {
-                gl_FragColor = vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 1.0);
+                float inCircle = circleSoft(vTextureCoord.xy, vec2(0.5, 0.5), 0.15, 0.1);
+                vec3 color = vec3(vTextureCoord.x, vTextureCoord.y, 0.0) * inCircle;
+                gl_FragColor = vec4(color, 1.0);
             }
         `;
 
@@ -32,34 +41,3 @@ export class Game {
         this.stage.addChild(container);
     }
 }
-
-
-// var app = new PIXI.Application({width : window.innerWidth, height : window.innerHeight});
-// app.resizeTo = window;
-
-// let fragmentShader = document.getElementById('fragmentShader').textContent;
-
-// let filter = new PIXI.Filter(null, fragmentShader);
-// filter.uniforms.iResolution = [app.screen.width, app.screen.height];
-// filter.uniforms.iGlobalTime = 0.0;
-
-// let container = new PIXI.Container();
-// container.filterArea = app.screen;
-// container.filters = [filter];
-
-// app.stage.addChild(container);
-// document.getElementById('container').appendChild(app.view);
-
-// function onresize(event) {
-//     if (app.resize)
-//         app.resize();
-//     container.filterArea = app.screen;
-//     filter.uniforms.iResolution = [app.screen.width, app.screen.height];
-// }
-// window.addEventListener('resize', onresize, false);
-
-// startTime = Date.now();
-// app.ticker.add(function(delta) {
-//     var currentTime = Date.now();
-//     filter.uniforms.iGlobalTime = (currentTime - startTime) * 0.0005;
-// });
