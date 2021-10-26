@@ -1,0 +1,36 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "es2017": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "tsconfig.json",
+        "tsconfigRootDir": "."
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "no-console": "warn",
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "@typescript-eslint/explicit-member-accessibility": "error",
+        "no-multi-spaces": "error",
+        "key-spacing": "error",
+        "semi": "error",
+        "sort-imports": "off",
+        "no-cond-assign": "error",
+        "no-dupe-args": "error",
+        "quotes": ["error", "single"],
+        "quote-props": ["error", "as-needed"],
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
+    }
+}
