@@ -43,11 +43,12 @@ export class MotionControlSystem extends System {
 
         if (inputNode) {
             const { control } = inputNode;
-            if (control.pointer) {
-                const { angle, direction } = control.pointer;
+            const input = control.useInput();
+            if (input) {
+                const { angle, direction, type } = input;
                 for (let node = this.motionNodes.head; node; node = node.next) {
                     const { rigidbody } = node;
-                    rigidbody.velocity = direction;
+                    rigidbody.velocity = type === 'stop' ? new Vector(0, 0) : direction;
                     rigidbody.angle = angle;
                 }
             }

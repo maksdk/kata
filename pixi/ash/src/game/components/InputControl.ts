@@ -1,12 +1,16 @@
 import { Vector } from '@game/math/Vector';
 import { IInputControlSystemEvent, InputControlView, InputControlViewEvent } from '@core/game/graphics/InputControlView';
 
+type InputCommandType = 'start' | 'moving' | 'stop';
+
+interface IInputCommand {
+    type: InputCommandType;
+    angle: number;
+    direction: Vector;
+}
+
 export class InputControl {
-    public down: IInputControlSystemEvent | null = null;
-    public pointer: {
-        angle: number;
-        direction: Vector;
-    } | null = null;
+    private input: IInputCommand | null = null;
 
     public constructor(private view?: InputControlView) {
         if (this.view) {
@@ -16,24 +20,25 @@ export class InputControl {
         }
     }
 
+    public useInput(): IInputCommand | null {
+        const input = this.input;
+    
+        if (input && input.type === 'stop') {
+            this.input = null;
+        }
+
+        return input;
+    }
+
     private onStartMove(e: IInputControlSystemEvent): void {
-        this.pointer = {
-            angle: e.angle,
-            direction: e.direction,
-        };
+        this.input = { type: 'start', angle: e.angle, direction: e.direction };
     }
 
     private onMoving(e: IInputControlSystemEvent): void {
-        if (!this.pointer) {
-            return;
-        }
-        this.pointer = {
-            angle: e.angle,
-            direction: e.direction,
-        };
+        this.input = { type: 'moving', angle: e.angle, direction: e.direction };
     }
 
-    private onStopMove(): void {
-        this.pointer = null;
+    private onStopMove(e: IInputControlSystemEvent): void {
+        this.input = { type: 'stop', angle: e.angle, direction: e.direction };
     }
 }
