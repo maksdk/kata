@@ -38,6 +38,7 @@ export class InputControlView extends BaseView {
             .drawCircle(0, 0, 100)
             .endFill();
         this.joy.position.set(0, this.h * 0.5 - 150);
+        this.joy.visible = false;
 
         this.joyTouch = this.joy.addChild(new Graphics())
             .lineStyle(2, 0xFFFFFF)
@@ -72,25 +73,23 @@ export class InputControlView extends BaseView {
         const joyPos = new Vector(this.joy.position.x, this.joy.position.y);
         const direction = new Vector(movePos.x - joyPos.x, movePos.y - joyPos.y);
         const angle = Math.atan2(direction.y, direction.x);
-        
-        const x = Math.cos(angle) * this.joyTouchMaxRadius;
-        const y = Math.sin(angle) * this.joyTouchMaxRadius;
-        this.joyTouch.position.set(x, y);
-
-        switch (this.state) {
-            case 'down':
-                this.joy.position.set(movePos.x, movePos.y);
-                this.emit(InputControlViewEvent.StartMove, { angle, direction: direction.normalize() });
-                break;
-            case 'move':
-                this.emit(InputControlViewEvent.Moving, { angle, direction: direction.normalize() });
-                break;
-            case 'up':
-                this.joyTouch.position.set(0, 0);
-                this.joy.position.set(0, this.h * 0.5 - 150);
-                this.emit(InputControlViewEvent.StopMove, { angle, direction: direction.normalize() });
-                this.state = 'none';
-                break;
+    
+        if (this.state === 'down') {
+            this.joy.position.set(movePos.x, movePos.y);
+            this.joy.visible = true;
+            this.joyTouch.position.set(0, 0);
+            this.emit(InputControlViewEvent.StartMove, { angle: 0, direction: new Vector(0, 0) });
+        } else if (this.state === 'move') {
+            const x = Math.cos(angle) * this.joyTouchMaxRadius;
+            const y = Math.sin(angle) * this.joyTouchMaxRadius;
+            this.joyTouch.position.set(x, y);
+            this.emit(InputControlViewEvent.Moving, { angle, direction: direction.normalize() });
+        } else if (this.state === 'up') {
+            this.joy.visible = false;
+            this.joyTouch.position.set(0, 0);
+            this.joy.position.set(0, this.h * 0.5 - 150);
+            this.emit(InputControlViewEvent.StopMove, { angle, direction: direction.normalize() });
+            this.state = 'none';
         }
     }
 }
