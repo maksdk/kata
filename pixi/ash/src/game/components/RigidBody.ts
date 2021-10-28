@@ -139,7 +139,7 @@ export class RigidBody {
                 }
                 break;
             case PrimitiveType.Circle:
-                if (this.radius) {
+                if (!this.radius) {
                     console.error(`RigidBodyComponent. Circle has invalid radius: "${this.radius}"`);
                 }
                 break;

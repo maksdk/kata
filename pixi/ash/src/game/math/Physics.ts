@@ -1,7 +1,8 @@
 import decomp from 'poly-decomp';
 import { Vector } from '@core/game/math/Vector';
-import { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector } from 'matter-js';
+import { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events } from 'matter-js';
 import { PrimitiveType } from '@core/game/components/RigidBody';
+import { utils } from 'pixi.js';
 
 export interface IPhysicsPrimitiveProps {
     primitiveType: PrimitiveType;
@@ -21,14 +22,27 @@ export interface IPhysicsConfig {
     isDebug?: boolean
 }
 
-export class Physics {
+export interface IPhysicsCollisionPair {
+    bodyA: Primitive; 
+    bodyB: Primitive;
+}
+
+
+export interface IPhysicsStartCollisionEvent {
+    pairs: IPhysicsCollisionPair[];
+}
+
+export class Physics extends utils.EventEmitter {
     private readonly config: IPhysicsConfig;
     private render: Render | null = null;
     private readonly engine: Engine;
     private readonly runner: Runner;
     private isRun = false;
+    private primitives: Map<number, Primitive> = new Map();
 
     public constructor(config: IPhysicsConfig) {
+        super();
+
         this.config = {
             isDebug: false,
             ...config
@@ -44,6 +58,8 @@ export class Physics {
         }
 
         Common.setDecomp(decomp);
+
+        Events.on(this.engine, 'collisionStart', (event) => this.onStartCollision(event));
     }
 
     public run(): void {
@@ -88,37 +104,44 @@ export class Physics {
         const x = position.x + this.config.worldPosition.x;
         const y = position.y + this.config.worldPosition.y;
 
+        let body = null;
+
         if (primitiveType === PrimitiveType.Rect) {
             const rect = Bodies.rectangle(x, y, width, height, config);
             World.add(this.engine.world, rect);
-            return new Primitive(rect, this.config.worldPosition);
-        }
-
-        if (primitiveType === PrimitiveType.Circle) {
+            body = new Primitive(rect, this.config.worldPosition);
+        } else if (primitiveType === PrimitiveType.Circle) {
             const circle = Bodies.circle(x, y, radius, config);
             World.add(this.engine.world, circle);
-            return new Primitive(circle, this.config.worldPosition);
-        }
-
-        if (primitiveType === PrimitiveType.Polygon) {
+            body = new Primitive(circle, this.config.worldPosition);
+        } else if (primitiveType === PrimitiveType.Polygon) {
             if (vertices.length > 0) {
                 const polygon = Bodies.fromVertices(x, y, vertices, config);
                 World.add(this.engine.world, polygon);
-                return new Primitive(polygon, this.config.worldPosition);
+                body = new Primitive(polygon, this.config.worldPosition);
+            } else {
+                console.error('Physics- addChild. Error: polygon is empty');
             }
-
-            console.error('Physics. Polygon is empty');
-
-            return null;
+        } else {
+            console.error(`Physics. Such type of primitive: "${primitiveType as string}" is not found`);
         }
 
-        console.error(`Physics. Such type of primitive: "${primitiveType as string}" is not found`);
 
-        return null;
+        if (body) {
+            this.primitives.set(body.id, body);
+        }
+
+        return body;
     }
 
     public removeChild(child: Primitive): void {
         World.remove(this.engine.world, child.body);
+
+        if (this.primitives.has(child.id)) {
+            this.primitives.delete(child.id);
+        } else {
+            console.error('Physics - removeChild. Error: child is not found in primitive list: ', child);
+        }
     }
 
     public update(dt: number): void {
@@ -157,11 +180,33 @@ export class Physics {
 
         return canvas;
     }
+
+    //TODO:  ADD types
+    private onStartCollision(event: any): void {
+        
+        const initReduce: IPhysicsCollisionPair[] = [];
+        const pairs: IPhysicsCollisionPair[] = event.pairs.reduce((acc, pair) => {
+            const { bodyA, bodyB } = pair;
+            const b1 = this.primitives.get(bodyA.id);
+            const b2 = this.primitives.get(bodyB.id);
+
+            console.log('pair: ', pair)
+
+            if (!b1 || !b2) {
+                console.error('Physics - onStartCollision. Error: bodies are not found in primitives list', event);
+                return acc;
+            }
+
+            return [...acc, { bodyA: b1, bodyB: b2 }];
+        }, initReduce);
+        console.log('Start collision', pairs);
+        this.emit('collisionstart', { pairs });
+    }
 }
 
 export class Primitive {
     public constructor(public body: Body, private offset: { x: number; y: number }) {
-        
+
     }
 
     public get position(): { x: number; y: number; } {

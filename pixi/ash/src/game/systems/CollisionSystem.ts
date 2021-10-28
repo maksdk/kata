@@ -1,7 +1,8 @@
 import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
+import { Collided } from '@core/game/components/Collided';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Transform } from '@core/game/components/Transform';
-import { Physics } from '@core/game/math/Physics';
+import { IPhysicsStartCollisionEvent, Physics } from '@core/game/math/Physics';
 
 const CollisionNode = defineNode({
     transform: Transform,
@@ -26,6 +27,8 @@ export class CollisionSystem extends System {
 
         this.nodes.nodeAdded.add((node) => this.addNode(node));
         this.nodes.nodeRemoved.add((node) => this.removeNode(node));
+
+        this.physics.on('collisionstart', this.onStartCollision, this);
     }
 
     public removeFromEngine(): void {
@@ -40,6 +43,21 @@ export class CollisionSystem extends System {
     private removeNode(node: CollisionNode): void {
         const { rigidbody } = node;
         rigidbody.remove();
+    }
+
+    private onStartCollision(event: IPhysicsStartCollisionEvent): void {
+        const { pairs } = event;
+
+        // TODO: Bad decision. Think more about it.
+        pairs.forEach((elem) => {
+            const { bodyA, bodyB } = elem;
+            for (let node = this.nodes.head; node; node = node.next) {
+                const { rigidbody } = node;
+                if (rigidbody.body.id === bodyA.id || rigidbody.body.id === bodyB.id) {
+                    node.entity.add(new Collided());
+                }
+            }
+        });
     }
 
     public update( dt: number): void {

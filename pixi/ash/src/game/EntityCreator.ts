@@ -25,6 +25,7 @@ import { Input } from '@core/game/components/Input';
 import { createVerticesByPoints } from '@core/game/math/Physics';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Game } from '@core/game/Game';
+import { Shooting } from '@core/game/components/Shooting';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -49,18 +50,19 @@ export class EntityCreator {
             new Vector(0, 30)
         ]);
 
-        fsm.createState('white')
-            .add(Display)
-            .withInstance(new Display(new CharacterView(0xFFFFFF, vertices), RenderViewLayer.World));
+        fsm.createState('idle');
 
-        fsm.createState('red')
-            .add(Display)
-            .withInstance(new Display(new CharacterView(0xFF0000, vertices), RenderViewLayer.World));
+        fsm.createState('shooting')
+            .add(Shooting)
+            .withInstance(new Shooting());
+
+        fsm.createState('motion')
+            .add(Motion)
+            .withInstance(new Motion());
 
         character
-            .add(new Motion())
-            .add(new Pistol())
             .add(new Character(fsm))
+            .add(new Display(new CharacterView(0xFF0000, vertices), RenderViewLayer.World))
             .add(new Transform())
             .add(new RigidBody(this.game.physics, {
                 vertices,
@@ -68,7 +70,7 @@ export class EntityCreator {
                 primitiveType: PrimitiveType.Polygon,
             }));
 
-        fsm.changeState('white');
+        fsm.changeState('motion');
 
         this.game.engine.addEntity(character);
 
@@ -106,20 +108,23 @@ export class EntityCreator {
     }
 
     public createBullet(from: Vector, dir: Vector): Entity {
-        const bullet = new Entity();
+        const bullet = new Entity('Bullet');
 
         const radius = 10;
 
         const bulletView = new BulletView({ radius });
 
-        const velocity = new Vector(dir.x, dir.y);
-        const position = new Vector(from.x, from.y);
+        const position = new Vector(-50, 50);
 
         bullet
             .add(new Display(bulletView, RenderViewLayer.World))
             .add(new Transform(position))
-            .add(new Motion({ velocity, moveSpeed: 600 }))
-            .add(new Collision({ radius, type: PrimitiveType.Circle }))
+            .add(new RigidBody(this.game.physics, {
+                radius,
+                rigidbodyType: RigidBodyType.Dynamic,
+                primitiveType: PrimitiveType.Circle,
+                isTrigger: false,
+            }))
             .add(new Bullet());
 
         this.game.engine.addEntity(bullet);

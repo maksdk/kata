@@ -6,6 +6,8 @@ import { Physics } from '@core/game/math/Physics';
 import { Vector } from '@core/game/math/Vector';
 import { MotionControlSystem } from '@core/game/systems/MotionControlSystem';
 import { Application } from 'pixi.js';
+import { BulletSystem } from '@core/game/systems/BulletSystem';
+import { ClearFrameSystem } from '@core/game/systems/ClearFrameSystem';
 
 enum SystemPriorities {
     PreUpdate = 1,
@@ -16,6 +18,7 @@ enum SystemPriorities {
     Debug = 6,
     Render = 7,
     Audio = 8,
+    ClearFrame = 9,
 }
 
 export class Game {
@@ -50,8 +53,10 @@ export class Game {
 
     public create(): void {
         this.engine.addSystem(new MotionControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
         this.engine.addSystem(new RenderSystem(this.app.stage), SystemPriorities.Render);    
+        this.engine.addSystem(new ClearFrameSystem(this), SystemPriorities.ClearFrame);   
 
         if (this.physics) {
             this.physics.run();
