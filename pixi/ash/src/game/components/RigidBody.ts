@@ -1,4 +1,4 @@
-import { Physics, Primitive as Body } from '@core/game/math/Physics';
+import { IPhysicsPrimitiveConfig, Physics, Primitive as Body } from '@core/game/math/Physics';
 import { Vector } from '@core/game/math/Vector';
 
 export enum RigidBodyType {
@@ -12,9 +12,8 @@ export enum PrimitiveType {
     Polygon = 'Polygon',
 }
 
-export interface IRigidBodyOptions {
-    primitiveType?: PrimitiveType;
-    rigidbodyType?: RigidBodyType;
+export interface IRigidBodyOptions extends IPhysicsPrimitiveConfig {
+    rigidbodyType: RigidBodyType;
     width?: number;
     height?: number;
     radius?: number;
@@ -22,7 +21,7 @@ export interface IRigidBodyOptions {
     isTrigger?: boolean;
 }
 
-const defaultOptions = {
+const defaultOptions: IRigidBodyOptions = {
     primitiveType: PrimitiveType.Rect,
     rigidbodyType: RigidBodyType.Static,
     width: 0,
@@ -30,16 +29,17 @@ const defaultOptions = {
     radius: 0,
     vertices: [] as Vector[],
     isTrigger: false,
+    friction: 0.1,
 };
 
 export class RigidBody {
     private _body: Body | null = null;
     private options: IRigidBodyOptions = defaultOptions;
 
-    public constructor(private physics: Physics, options: IRigidBodyOptions = {}) {
+    public constructor(private physics: Physics, options: IRigidBodyOptions) {
         this.options = {
             ...defaultOptions,
-            ...options,
+            ...options || {},
         };
 
         this.createBody();
@@ -117,15 +117,18 @@ export class RigidBody {
 
         this.checkPrimitives();
 
+        const { rigidbodyType, isTrigger, ...rest } = this.options;
+
         this._body = this.physics.addChild({
-            primitiveType: this.primitiveType,
-            width: this.width,
-            height: this.height,
-            radius: this.radius,
-            vertices: this.vertices,
-            isStatic: this.rigidbodyType === RigidBodyType.Static,
-            isSensor: this.isTrigger,
+            ...rest,
+            isStatic: rigidbodyType === RigidBodyType.Static,
+            isSensor: isTrigger,
         });
+
+        // TODO: Work only such way
+        if (this.options.velocity) {
+            this.body.setVelocity(this.options.velocity.x, this.options.velocity.y);
+        }
     }
 
     private checkPrimitives(): void | never {

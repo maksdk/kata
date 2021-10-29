@@ -1,6 +1,6 @@
 import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
 import { Bullet } from '@core/game/components/Bullet';
-import { Collided } from '@core/game/components/Collided';
+import { CollisionStart } from '@core/game/components/CollisionStart';
 import { RemoveEntity } from '@core/game/components/RemoveEntity';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Transform } from '@core/game/components/Transform';
@@ -16,17 +16,17 @@ const BulletNode = defineNode({
 type BulletNode = InstanceType<typeof BulletNode>;
 
 
-const CollidedBulletNode = defineNode({
+const CollisionStartBulletNode = defineNode({
     bullet: Bullet,
-    collided: Collided,
+    collision: CollisionStart,
     rigidbody: RigidBody,
-}, 'CollidedBulletNode');
+}, 'CollisionStartBulletNode');
 
-type CollidedBulletNode = InstanceType<typeof CollidedBulletNode>;
+type CollisionStartBulletNode = InstanceType<typeof CollisionStartBulletNode>;
 
 export class BulletSystem extends System {
     private bullets: NodeList<BulletNode> | null = null;
-    private collidedBullets: NodeList<CollidedBulletNode> | null = null;
+    private collidedBullets: NodeList<CollisionStartBulletNode> | null = null;
 
     public constructor(private game: Game) {
         super();
@@ -42,8 +42,8 @@ export class BulletSystem extends System {
         this.bullets.nodeAdded.add((node) => this.addBullet(node));
         this.bullets.nodeRemoved.add((node) => this.removeBullet(node));
 
-        this.collidedBullets = engine.getNodeList(CollidedBulletNode);
-        this.collidedBullets.nodeAdded.add((node) => this.addCollidedBullet(node));
+        this.collidedBullets = engine.getNodeList(CollisionStartBulletNode);
+        this.collidedBullets.nodeAdded.add((node) => this.onStartCollisionBullet(node));
     }
 
     public removeFromEngine(): void {
@@ -55,20 +55,25 @@ export class BulletSystem extends System {
         rigidbody.body.setPosition(transform.x, transform.y);
     }
 
-    private removeBullet(node: BulletNode | CollidedBulletNode): void {
+    private removeBullet(node: BulletNode | CollisionStartBulletNode): void {
         const { rigidbody } = node;
         rigidbody.remove();
     }
 
-    private addCollidedBullet(node: CollidedBulletNode): void {
-        node.entity.add(new RemoveEntity());
+    private onStartCollisionBullet(node: CollisionStartBulletNode): void {
+        const { collision } = node;
+
+        collision.collision.pairs.forEach(pair => {
+            pair.activeContacts.forEach(contact => {
+                this.game.entityCreator.createBuckshotBullet(
+                    new Vector(contact.x, contact.y),
+                    new Vector(1, 0)
+                );
+            });
+        });
     }
 
     public update(dt: number): void {
-        for (let node = this.bullets.head; node; node = node.next) {
-            const { rigidbody, transform } = node;
-            rigidbody.velocity = new Vector(1, 0);
-            rigidbody.angle = 0;
-        }
+        //
     }
 }

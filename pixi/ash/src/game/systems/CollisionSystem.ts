@@ -1,8 +1,8 @@
 import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
-import { Collided } from '@core/game/components/Collided';
+import { CollisionStart } from '@core/game/components/CollisionStart';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Transform } from '@core/game/components/Transform';
-import { IPhysicsStartCollisionEvent, Physics } from '@core/game/math/Physics';
+import { IPhysicsCollisionStart, Physics } from '@core/game/math/Physics';
 
 const CollisionNode = defineNode({
     transform: Transform,
@@ -45,7 +45,7 @@ export class CollisionSystem extends System {
         rigidbody.remove();
     }
 
-    private onStartCollision(event: IPhysicsStartCollisionEvent): void {
+    private onStartCollision(event: IPhysicsCollisionStart): void {
         const { pairs } = event;
 
         // TODO: Bad decision. Think more about it.
@@ -54,7 +54,7 @@ export class CollisionSystem extends System {
             for (let node = this.nodes.head; node; node = node.next) {
                 const { rigidbody } = node;
                 if (rigidbody.body.id === bodyA.id || rigidbody.body.id === bodyB.id) {
-                    node.entity.add(new Collided());
+                    node.entity.add(new CollisionStart(event));
                 }
             }
         });

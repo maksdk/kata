@@ -23,7 +23,7 @@ import { ShotgunView } from '@core/game/graphics/ShotgunView';
 import { PistolView } from '@core/game/graphics/PistolItemView';
 import { Input } from '@core/game/components/Input';
 import { createVerticesByPoints } from '@core/game/math/Physics';
-import { RigidBody } from '@core/game/components/RigidBody';
+import { IRigidBodyOptions, RigidBody } from '@core/game/components/RigidBody';
 import { Game } from '@core/game/Game';
 import { Shooting } from '@core/game/components/Shooting';
 
@@ -107,23 +107,22 @@ export class EntityCreator {
         return input;
     }
 
-    public createBullet(from: Vector, dir: Vector): Entity {
-        const bullet = new Entity('Bullet');
+    public createBullet(from: Vector, options: Partial<IRigidBodyOptions> = {}): Entity {
+        const bullet = new Entity(`Bullet-${Math.random()}`);
 
-        const radius = 10;
+        const { radius = 10 } = options;
 
         const bulletView = new BulletView({ radius });
 
-        const position = new Vector(-50, 50);
-
         bullet
             .add(new Display(bulletView, RenderViewLayer.World))
-            .add(new Transform(position))
+            .add(new Transform(from))
             .add(new RigidBody(this.game.physics, {
                 radius,
                 rigidbodyType: RigidBodyType.Dynamic,
                 primitiveType: PrimitiveType.Circle,
-                isTrigger: false,
+                label: 'Bullet',
+                ...options
             }))
             .add(new Bullet());
 
@@ -148,7 +147,10 @@ export class EntityCreator {
             .add(new RigidBody(this.game.physics, {
                 width: 30,
                 height: 200,
-                rigidbodyType: RigidBodyType.Static
+                rigidbodyType: RigidBodyType.Static,
+                primitiveType: PrimitiveType.Rect,
+                angle: 0,
+                label: 'Wall',
             }));
 
         this.game.engine.addEntity(wall);
@@ -183,7 +185,7 @@ export class EntityCreator {
 
         for (let i = 0; i < count; i += 1) {
             const bullet = new Entity();
-            const bulletView = new BulletView({ radius, color: 0xFFFF00 });
+            const bulletView = new BulletView({ radius, color: 0x00FF00 });
             const rad = angleOfDir - angleOfDefeat / 2 + i * angleStep;
             const velocity = dir.setAngle(rad).normalize();
             const x = from.x + randomRange(-2, 2);
@@ -192,10 +194,18 @@ export class EntityCreator {
 
             bullet
                 .add(new Display(bulletView, RenderViewLayer.World))
-                .add(new Transform(position))
-                .add(new Motion({ velocity, moveSpeed: randomInt(600, 900) }))
-                .add(new Collision({ radius, type: PrimitiveType.Circle }))
-                .add(new Bullet());
+                .add(new Transform(position));
+                // .add(new RigidBody(this.game.physics, {
+                //     primitiveType: PrimitiveType.Circle,
+                //     rigidbodyType: RigidBodyType.Dynamic,
+                //     radius,
+                //     label: 'Particles',
+                //     velocity,
+                //     friction: 0,
+                //     frictionAir: 0,
+                //     isTrigger: true,
+                // }))
+                // .add(new Bullet());
 
             this.game.engine.addEntity(bullet);
 

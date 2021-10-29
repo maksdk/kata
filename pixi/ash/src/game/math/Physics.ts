@@ -1,18 +1,16 @@
 import decomp from 'poly-decomp';
 import { Vector } from '@core/game/math/Vector';
-import { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events } from 'matter-js';
+import Matter, { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events, IChamferableBodyDefinition, IEventCollision } from 'matter-js';
 import { PrimitiveType } from '@core/game/components/RigidBody';
 import { utils } from 'pixi.js';
 
-export interface IPhysicsPrimitiveProps {
+export interface IPhysicsPrimitiveConfig extends IChamferableBodyDefinition {
     primitiveType: PrimitiveType;
     position?: { x: number; y: number };
     width?: number;
     height?: number;
     radius?: number;
     vertices?: Vector[];
-    isStatic?: boolean;
-    isSensor?: boolean;
 }
 
 export interface IPhysicsConfig {
@@ -22,14 +20,33 @@ export interface IPhysicsConfig {
     isDebug?: boolean
 }
 
+export interface IPhysicsCollisionPairActiveContact {
+    x: number;
+    y: number;
+}
+
 export interface IPhysicsCollisionPair {
     bodyA: Primitive; 
     bodyB: Primitive;
+    activeContacts: IPhysicsCollisionPairActiveContact[];
 }
 
-
-export interface IPhysicsStartCollisionEvent {
+export interface IPhysicsCollisionStart {
     pairs: IPhysicsCollisionPair[];
+}
+
+// Matter types
+interface IMatterActiveContact {
+    id: string;
+    normalImpulse: number;
+    tangentImpuls: 0;
+    vertex: {
+        x: number;
+        y: number;
+        body: Body;
+        index: number;
+        isInterval: boolean;
+    }
 }
 
 export class Physics extends utils.EventEmitter {
@@ -78,7 +95,7 @@ export class Physics extends utils.EventEmitter {
         }
     }
 
-    public addChild(props: IPhysicsPrimitiveProps): Primitive | null {
+    public addChild(config: IPhysicsPrimitiveConfig): Primitive | null {
         if (!this.isRun) {
             console.error('Physics is not ran');
             return null;
@@ -92,9 +109,9 @@ export class Physics extends utils.EventEmitter {
             position = { x: 0, y: 0 },
             vertices = [],
             ...rest
-        } = props;
+        } = config;
 
-        const config = {
+        const settings = {
             isStatic: false,
             isSensor: false,
             ...rest,
@@ -107,16 +124,16 @@ export class Physics extends utils.EventEmitter {
         let body = null;
 
         if (primitiveType === PrimitiveType.Rect) {
-            const rect = Bodies.rectangle(x, y, width, height, config);
+            const rect = Bodies.rectangle(x, y, width, height, settings);
             World.add(this.engine.world, rect);
             body = new Primitive(rect, this.config.worldPosition);
         } else if (primitiveType === PrimitiveType.Circle) {
-            const circle = Bodies.circle(x, y, radius, config);
+            const circle = Bodies.circle(x, y, radius, settings);
             World.add(this.engine.world, circle);
             body = new Primitive(circle, this.config.worldPosition);
         } else if (primitiveType === PrimitiveType.Polygon) {
             if (vertices.length > 0) {
-                const polygon = Bodies.fromVertices(x, y, vertices, config);
+                const polygon = Bodies.fromVertices(x, y, vertices, settings);
                 World.add(this.engine.world, polygon);
                 body = new Primitive(polygon, this.config.worldPosition);
             } else {
@@ -182,37 +199,53 @@ export class Physics extends utils.EventEmitter {
     }
 
     //TODO:  ADD types
-    private onStartCollision(event: any): void {
-        
+    private onStartCollision(event: IEventCollision<Engine>): void {
         const initReduce: IPhysicsCollisionPair[] = [];
+
         const pairs: IPhysicsCollisionPair[] = event.pairs.reduce((acc, pair) => {
             const { bodyA, bodyB } = pair;
             const b1 = this.primitives.get(bodyA.id);
             const b2 = this.primitives.get(bodyB.id);
-
-            console.log('pair: ', pair)
 
             if (!b1 || !b2) {
                 console.error('Physics - onStartCollision. Error: bodies are not found in primitives list', event);
                 return acc;
             }
 
-            return [...acc, { bodyA: b1, bodyB: b2 }];
+            // Get matter contacts
+            const matterContacts: IMatterActiveContact[] = pair.activeContacts as IMatterActiveContact[] || [];
+
+            // Adapt matter contacts to use in app
+            const initReduce: IPhysicsCollisionPairActiveContact[] = [];
+            const customContacts: IPhysicsCollisionPairActiveContact[] = matterContacts.reduce((acc, elem) => {
+                const pos = this.adaptPos({ x: elem.vertex.x, y: elem.vertex.y });
+                return [...acc, { ...pos } ];
+            }, initReduce);
+        
+            return [...acc, {
+                bodyA: b1,
+                bodyB: b2,
+                activeContacts: customContacts,
+            }];
         }, initReduce);
-        console.log('Start collision', pairs);
+
         this.emit('collisionstart', { pairs });
+    }
+
+    private adaptPos(pos: { x: number; y: number }): { x: number; y: number } {
+        return { x: pos.x - this.config.worldPosition.x, y: pos.y - this.config.worldPosition.y };
     }
 }
 
 export class Primitive {
-    public constructor(public body: Body, private offset: { x: number; y: number }) {
+    public constructor(public body: Body, private _offset: { x: number; y: number }) {
 
     }
 
     public get position(): { x: number; y: number; } {
         return {
-            x: this.body.position.x - this.offset.x,
-            y: this.body.position.y - this.offset.y,
+            x: this.body.position.x - this._offset.x,
+            y: this.body.position.y - this._offset.y,
         };
     }
 
@@ -225,7 +258,7 @@ export class Primitive {
     }
 
     public setPosition(x: number, y: number): void {
-        Body.setPosition(this.body, MatterVector.create(x + this.offset.x, y + this.offset.y));
+        Body.setPosition(this.body, MatterVector.create(x + this._offset.x, y + this._offset.y));
     }
 
     public setAngle(angle: number): void {
