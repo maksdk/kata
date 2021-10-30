@@ -1,5 +1,5 @@
 import { Entity, EntityStateMachine } from '@ash.ts/ash';
-import { Collision, RigidBodyType } from '@core/game/components/Collision';
+import { RigidBodyType } from '@core/game/components/Collision';
 import { CharacterView } from '@core/game/graphics/CharacterView';
 import { Transform } from '@core/game/components/Transform';
 import { Display } from '@core/game/components/Display';
@@ -25,7 +25,6 @@ import { Input } from '@core/game/components/Input';
 import { createVerticesByPoints } from '@core/game/math/Physics';
 import { IRigidBodyOptions, RigidBody } from '@core/game/components/RigidBody';
 import { Game } from '@core/game/Game';
-import { Shooting } from '@core/game/components/Shooting';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -53,8 +52,8 @@ export class EntityCreator {
         fsm.createState('idle');
 
         fsm.createState('shooting')
-            .add(Shooting)
-            .withInstance(new Shooting());
+            .add(Pistol)
+            .withInstance(new Pistol());
 
         fsm.createState('motion')
             .add(Motion)
@@ -63,14 +62,14 @@ export class EntityCreator {
         character
             .add(new Character(fsm))
             .add(new Display(new CharacterView(0xFF0000, vertices), RenderViewLayer.World))
-            .add(new Transform())
+            .add(new Transform({ maxWidth: 40, maxHeight: 30 }))
             .add(new RigidBody(this.game.physics, {
                 vertices,
                 rigidbodyType: RigidBodyType.Dynamic,
-                primitiveType: PrimitiveType.Polygon,
+                primitiveType: PrimitiveType.Polygon
             }));
 
-        fsm.changeState('motion');
+        fsm.changeState('shooting');
 
         this.game.engine.addEntity(character);
 

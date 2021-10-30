@@ -1,3 +1,4 @@
+import { PistolControlSystem } from './systems/PistolControlSystem';
 import { Engine, FrameTickProvider } from '../libs/ash';
 import { EntityCreator } from '@core/game/EntityCreator';
 import { CollisionSystem } from '@core/game/systems/CollisionSystem';
@@ -10,15 +11,16 @@ import { BulletSystem } from '@core/game/systems/BulletSystem';
 import { ClearFrameSystem } from '@core/game/systems/ClearFrameSystem';
 
 enum SystemPriorities {
-    PreUpdate = 1,
-    Update = 2,
-    Move = 3,
-    Collision = 4,
-    Animation = 5,
-    Debug = 6,
-    Render = 7,
-    Audio = 8,
-    ClearFrame = 9,
+    PreUpdate,
+    Update,
+    Move,
+    PreCollision,
+    Collision,
+    Animation,
+    Debug,
+    Render,
+    Audio,
+    AfterFrame,
 }
 
 export class Game {
@@ -53,10 +55,11 @@ export class Game {
 
     public create(): void {
         this.engine.addSystem(new MotionControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update); 
         this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
         this.engine.addSystem(new RenderSystem(this.app.stage), SystemPriorities.Render);    
-        this.engine.addSystem(new ClearFrameSystem(this), SystemPriorities.ClearFrame);   
+        this.engine.addSystem(new ClearFrameSystem(this), SystemPriorities.AfterFrame);   
 
         if (this.physics) {
             this.physics.run();

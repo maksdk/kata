@@ -2,8 +2,6 @@ import { defineNode } from '../libs/ash';
 import { Bullet } from '@core/game/components/Bullet';
 import { Character } from '@core/game/components/Character';
 import { Collision } from '@core/game/components/Collision';
-import { Display } from '@core/game/components/Display';
-import { Pistol } from '@core/game/components/weapon/Pistol';
 import { Motion } from '@core/game/components/Motion';
 import { Transform } from '@core/game/components/Transform';
 import { TriggerTarget } from '@core/game/components/TriggerTarget';
@@ -18,11 +16,6 @@ export const CharacterNode = defineNode({
 }, 'CharacterNode');
 export type CharacterNode = InstanceType<typeof CharacterNode>;
 
-export const PistolControlNode = defineNode({
-    pistol: Pistol,
-    transform: Transform,
-}, 'PistolControlNode');
-export type PistolControlNode = InstanceType<typeof PistolControlNode>;
 
 export const ShotgunControlNode = defineNode({
     shotgun: Shotgun,
