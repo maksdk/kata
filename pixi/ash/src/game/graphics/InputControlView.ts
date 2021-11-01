@@ -75,7 +75,6 @@ export class InputControlView extends BaseView {
         const angle = Math.atan2(direction.y, direction.x);
     
         if (this.state === 'down') {
-            this.joy.position.set(movePos.x, movePos.y);
             this.joy.visible = true;
             this.joyTouch.position.set(0, 0);
             this.emit(InputControlViewEvent.StartMove, { angle: 0, direction: new Vector(0, 0) });

@@ -1,14 +1,14 @@
 import { Entity, EntityStateMachine } from '@ash.ts/ash';
 import { RigidBodyType } from '@core/game/components/Collision';
-import { CharacterView } from '@core/game/graphics/CharacterView';
+import { PlayerView } from '@core/game/graphics/PlayerView';
 import { Transform } from '@core/game/components/Transform';
 import { Display } from '@core/game/components/Display';
 import { InputControlView } from '@core/game/graphics/InputControlView';
-import { Motion } from '@core/game/components/Motion';
+import { InputMotion } from '@core/game/components/InputMotion';
 import { InputControl } from '@core/game/components/InputControl';
 import { BulletView } from '@core/game/graphics/BulletView';
 import { Pistol } from '@core/game/components/weapon/Pistol';
-import { Character } from '@core/game/components/Character';
+import { Character, CharacterGroup } from '@core/game/components/Character';
 import { Vector } from '@core/game/math/Vector';
 import { WallView } from '@core/game/graphics/WallView';
 import { DebugCollisionShapeView } from '@core/game/graphics/DebugCollisionShapeView';
@@ -25,6 +25,7 @@ import { Input } from '@core/game/components/Input';
 import { createVerticesByPoints } from '@core/game/math/Physics';
 import { IRigidBodyOptions, RigidBody } from '@core/game/components/RigidBody';
 import { Game } from '@core/game/Game';
+import { EnemyView } from '@core/game/graphics/EnemyView';
 
 export interface IEntityCreatorConfig {
     width: number;
@@ -38,10 +39,10 @@ export class EntityCreator {
         this.game.engine.removeEntity(entity);
     }
 
-    public createCharacter(): Entity {
-        const character: Entity = new Entity('Character');
+    public createPlayer(): Entity {
+        const player: Entity = new Entity('Player');
 
-        const fsm = new EntityStateMachine(character);
+        const fsm = new EntityStateMachine(player);
 
         const vertices = createVerticesByPoints([
             new Vector(0, 0),
@@ -56,12 +57,12 @@ export class EntityCreator {
             .withInstance(new Pistol());
 
         fsm.createState('motion')
-            .add(Motion)
-            .withInstance(new Motion());
+            .add(InputMotion)
+            .withInstance(new InputMotion());
 
-        character
-            .add(new Character(fsm))
-            .add(new Display(new CharacterView(0xFF0000, vertices), RenderViewLayer.World))
+        player
+            .add(new Character({ fsm, group: CharacterGroup.Singleton }))
+            .add(new Display(new PlayerView(0xFF0000, vertices), RenderViewLayer.World))
             .add(new Transform({ maxWidth: 40, maxHeight: 30 }))
             .add(new RigidBody(this.game.physics, {
                 vertices,
@@ -71,12 +72,35 @@ export class EntityCreator {
 
         fsm.changeState('shooting');
 
-        this.game.engine.addEntity(character);
+        this.game.engine.addEntity(player);
 
         // @ts-ignore
-        window.Character = character;
+        window.Player = player;
 
-        return character;
+        return player;
+    }
+
+    public createEnemy(): Entity {
+        const enemy: Entity = new Entity('Enemy');
+
+        enemy
+            .add(new Character({ group: CharacterGroup.Singleton }))
+            .add(new Display(new EnemyView({ width: 50, height: 50 }), RenderViewLayer.World))
+            .add(new Transform({ x: 0, y: -200 }))
+            .add(new RigidBody(this.game.physics, {
+                width: 50,
+                height: 50,
+                rigidbodyType: RigidBodyType.Dynamic,
+                primitiveType: PrimitiveType.Rect
+            }));
+
+
+        this.game.engine.addEntity(enemy);
+
+        // @ts-ignore
+        window.Enemy = enemy;
+
+        return enemy;
     }
 
     public createInputControl(): Entity {

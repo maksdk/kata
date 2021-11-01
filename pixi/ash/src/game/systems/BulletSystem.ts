@@ -71,6 +71,8 @@ export class BulletSystem extends System {
                 );
             });
         });
+
+        node.entity.add(new RemoveEntity());
     }
 
     public update(dt: number): void {

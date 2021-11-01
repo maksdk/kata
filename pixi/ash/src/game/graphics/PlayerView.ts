@@ -2,7 +2,7 @@ import { BaseView } from '@core/game/graphics/BaseView';
 import { Vector } from '@core/game/math/Vector';
 import { Graphics } from 'pixi.js';
 
-export class CharacterView extends BaseView {
+export class PlayerView extends BaseView {
     private color = 0xffffff;
 
     public constructor(color: number, private vertices: Vector[]) {
@@ -11,7 +11,7 @@ export class CharacterView extends BaseView {
         this.draw(color || this.color);
     }
 
-    public redraw(color: number): CharacterView {
+    public redraw(color: number): PlayerView {
         this.draw(color);
         return this;
     }

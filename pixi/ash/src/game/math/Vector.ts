@@ -37,4 +37,14 @@ export class Vector {
     public getAngle(): number {
 		return Math.atan2(this.y, this.x);
 	}
+
+    public static distance(v1: Vector, v2: Vector): number {
+        const dx = v1.x - v2.x;
+        const dy = v1.y - v2.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    } 
+
+    public static sub2(v1: Vector, v2: Vector): Vector {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    }
 }

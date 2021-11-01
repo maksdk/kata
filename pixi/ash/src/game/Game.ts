@@ -5,7 +5,7 @@ import { CollisionSystem } from '@core/game/systems/CollisionSystem';
 import { RenderSystem } from '@core/game/systems/RenderSystem';
 import { Physics } from '@core/game/math/Physics';
 import { Vector } from '@core/game/math/Vector';
-import { MotionControlSystem } from '@core/game/systems/MotionControlSystem';
+import { InputMotionControlSystem } from '@core/game/systems/InputMotionControlSystem';
 import { Application } from 'pixi.js';
 import { BulletSystem } from '@core/game/systems/BulletSystem';
 import { ClearFrameSystem } from '@core/game/systems/ClearFrameSystem';
@@ -54,7 +54,7 @@ export class Game {
     }
 
     public create(): void {
-        this.engine.addSystem(new MotionControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new InputMotionControlSystem(), SystemPriorities.PreUpdate); 
         this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update); 
         this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
@@ -66,7 +66,8 @@ export class Game {
         }
 
         this.entityCreator.createWall();
-        this.entityCreator.createCharacter();
+        this.entityCreator.createPlayer();
+        this.entityCreator.createEnemy();
         this.entityCreator.createInputControl();
 
         document.body.appendChild(this.app.view);

@@ -1,15 +1,15 @@
 import { Vector } from '@core/game/math/Vector';
 
-interface IMotionProps {
+interface IInputMotionProps {
     velocity?: Vector;
     rotation?: number;
     speed?: number;
 }
 
-export class Motion {
+export class InputMotion {
     public readonly speed;
 
-    public constructor(props: IMotionProps = {}) {
+    public constructor(props: IInputMotionProps = {}) {
         const { speed = 2 } = props;
         this.speed = speed;
     }
