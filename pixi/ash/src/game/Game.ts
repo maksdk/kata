@@ -1,84 +1,60 @@
-import { PistolControlSystem } from './systems/PistolControlSystem';
-import { Engine, FrameTickProvider } from '../libs/ash';
-import { EntityCreator } from '@core/game/EntityCreator';
-import { CollisionSystem } from '@core/game/systems/CollisionSystem';
-import { RenderSystem } from '@core/game/systems/RenderSystem';
-import { Physics } from '@core/game/math/Physics';
-import { Vector } from '@core/game/math/Vector';
-import { InputMotionControlSystem } from '@core/game/systems/InputMotionControlSystem';
-import { Application } from 'pixi.js';
-import { BulletSystem } from '@core/game/systems/BulletSystem';
-import { ClearFrameSystem } from '@core/game/systems/ClearFrameSystem';
+import { FrameTickProvider } from '../libs/ash';
+import { Application, Container, DisplayObject } from 'pixi.js';
+import { World } from '@core/game/World';
+import { Scene } from '@core/game/Scene';
 
-enum SystemPriorities {
-    PreUpdate,
-    Update,
-    Move,
-    PreCollision,
-    Collision,
-    Animation,
-    Debug,
-    Render,
-    Audio,
-    AfterFrame,
+export class GameplayState {
+    public width: number;
+    public height: number;
+    public characters: { id: string; weaponId: string | null; }[];
+    public weapons: { id: string; type: string; ownerId: string | null; }[];
+    public settings: {
+        weapons: { type: string; power: number; }[];
+    };
 }
 
 export class Game {
-    public readonly engine: Engine;
-    public readonly ticker: FrameTickProvider;
-    public readonly entityCreator: EntityCreator;
-    public readonly config = { width: window.innerWidth, height: window.innerHeight };
-    public readonly physics: Physics;
     private readonly app: Application;
+    private readonly ticker: FrameTickProvider;
+    private readonly state: GameplayState;
+    private readonly world: World;
+    private readonly scene: Scene;
 
     public constructor() {
+        this.state = new GameplayState();
+        this.state.width = window.innerWidth;
+        this.state.height = window.innerHeight;
+
         this.app = new Application({
-            width: this.config.width,
-            height: this.config.height,
+            width: this.state.width,
+            height: this.state.height,
             backgroundColor: 0,
         });
-        this.app.stage.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
 
-        this.engine = new Engine();
+        this.scene = new Scene(this.app.stage);
+        
+        this.world = new World(this.scene, this.state);
 
         this.ticker = new FrameTickProvider();
-
-        this.entityCreator = new EntityCreator(this);
-
-        this.physics = new Physics({
-            width: this.config.width,
-            height: this.config.height,
-            isDebug: true,
-            worldPosition: new Vector(this.config.width / 2, this.config.height / 2)
-        });
     }
 
-    public create(): void {
-        this.engine.addSystem(new InputMotionControlSystem(), SystemPriorities.PreUpdate); 
-        this.engine.addSystem(new PistolControlSystem(this.entityCreator), SystemPriorities.Update); 
-        this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
-        this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
-        this.engine.addSystem(new RenderSystem(this.app.stage), SystemPriorities.Render);    
-        this.engine.addSystem(new ClearFrameSystem(this), SystemPriorities.AfterFrame);   
-
-        if (this.physics) {
-            this.physics.run();
-        }
-
-        this.entityCreator.createWall();
-        this.entityCreator.createPlayer();
-        this.entityCreator.createEnemy();
-        this.entityCreator.createInputControl();
-
+    public start(): void {
+        this.app.stage.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
         document.body.appendChild(this.app.view);
 
+        this.world.start();
+
         this.ticker.add((dt: number) => {
-            this.engine.update(dt);
             this.app.renderer.render(this.app.stage);
+            this.world.update(dt);
         });
         this.ticker.start();
+
+        this.world.createPlayer();
         
         // @ts-ignore
         window.Game = this;
     }
 }
+
+

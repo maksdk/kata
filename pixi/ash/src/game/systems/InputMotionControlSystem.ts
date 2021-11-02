@@ -21,32 +21,32 @@ type InputMotionNode = InstanceType<typeof InputMotionNode>;
 
 
 export class InputMotionControlSystem extends System {
-    private inputNodes: NodeList<InputControlNode>;
-    private inputMotionNodes: NodeList<InputMotionNode>;
+    private inputs: NodeList<InputControlNode>;
+    private motions: NodeList<InputMotionNode>;
 
     public constructor() {
         super();
     }
 
     public addToEngine(engine: Engine): void {
-        this.inputMotionNodes = engine.getNodeList(InputMotionNode);
-        this.inputNodes = engine.getNodeList(InputControlNode);
+        this.motions = engine.getNodeList(InputMotionNode);
+        this.inputs = engine.getNodeList(InputControlNode);
     }
 
     public removeFromEngine(engine: Engine): void {
-        this.inputMotionNodes = null;
-        this.inputNodes = null;
+        this.motions = null;
+        this.inputs = null;
     }
 
     public update(dt: number): void {
-        const inputNode = this.inputNodes.head;
+        const inputNode = this.inputs.head;
 
         if (inputNode) {
             const { control } = inputNode;
             const input = control.useInput();
             if (input) {
                 const { angle, direction, type } = input;
-                for (let node = this.inputMotionNodes.head; node; node = node.next) {
+                for (let node = this.motions.head; node; node = node.next) {
                     const { rigidbody } = node;
                     rigidbody.velocity = type === 'stop' ? new Vector(0, 0) : direction;
                     rigidbody.angle = angle;

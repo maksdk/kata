@@ -2,8 +2,8 @@ import { RigidBody } from './../components/RigidBody';
 import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
 import { Character } from '@core/game/components/Character';
 import { Transform } from '@core/game/components/Transform';
-import { Pistol } from '@core/game/components/weapon/Pistol';
-import { EntityCreator } from '@core/game/EntityCreator';
+import { Pistol } from '@core/game/components/Pistol';
+import { World } from '@core/game/World';
 import { Vector } from '@core/game/math/Vector';
 
 const PistolNode = defineNode({
@@ -25,7 +25,7 @@ export class PistolControlSystem extends System {
     private targets: NodeList<TargetNode> | null;
     private pistols: NodeList<PistolNode> | null;
 
-    public constructor(private creator: EntityCreator) {
+    public constructor(private world: World) {
         super();
     }
 
@@ -64,7 +64,7 @@ export class PistolControlSystem extends System {
                         y: pistol.transform.y + dir.y * pistol.transform.maxHeight
                     };
         
-                    this.creator.createBullet(new Vector(pos.x, pos.y), {
+                    this.world.createBullet(new Vector(pos.x, pos.y), {
                         velocity: {
                             x: dir.x * speed, 
                             y: dir.y * speed,

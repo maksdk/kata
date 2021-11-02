@@ -79,7 +79,7 @@ export class Physics extends utils.EventEmitter {
         Events.on(this.engine, 'collisionStart', (event) => this.onStartCollision(event));
     }
 
-    public run(): void {
+    public start(): void {
         this.isRun = true;
 
         if (this.render) {

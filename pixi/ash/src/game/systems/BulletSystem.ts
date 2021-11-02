@@ -4,7 +4,7 @@ import { CollisionStart } from '@core/game/components/CollisionStart';
 import { RemoveEntity } from '@core/game/components/RemoveEntity';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Transform } from '@core/game/components/Transform';
-import { Game } from '@core/game/Game';
+import { World } from '@core/game/World';
 import { Vector } from '@core/game/math/Vector';
 
 const BulletNode = defineNode({
@@ -28,7 +28,7 @@ export class BulletSystem extends System {
     private bullets: NodeList<BulletNode> | null = null;
     private collidedBullets: NodeList<CollisionStartBulletNode> | null = null;
 
-    public constructor(private game: Game) {
+    public constructor(private world: World) {
         super();
     }
 
@@ -65,7 +65,7 @@ export class BulletSystem extends System {
 
         collision.collision.pairs.forEach(pair => {
             pair.activeContacts.forEach(contact => {
-                this.game.entityCreator.createBuckshotBullet(
+                this.world.createBuckshotBullet(
                     new Vector(contact.x, contact.y),
                     new Vector(1, 0)
                 );

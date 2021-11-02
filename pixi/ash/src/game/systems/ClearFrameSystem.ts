@@ -1,6 +1,6 @@
 import { defineNode, ListIteratingSystem } from '@ash.ts/ash';
 import { RemoveEntity } from '@core/game/components/RemoveEntity';
-import { Game } from '@core/game/Game';
+import { World } from '@core/game/World';
 
 const ClearSystemNode = defineNode({
     remove: RemoveEntity,
@@ -9,11 +9,11 @@ const ClearSystemNode = defineNode({
 type ClearSystemNode = InstanceType<typeof ClearSystemNode>;
 
 export class ClearFrameSystem extends ListIteratingSystem<ClearSystemNode> {
-    public constructor(private game: Game) {
+    public constructor(private world: World) {
         super(ClearSystemNode);
     }
 
     public updateNode(node: ClearSystemNode): void {
-        this.game.entityCreator.removeEntity(node.entity);
+        this.world.removeEntity(node.entity);
     }
 }
