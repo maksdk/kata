@@ -16,7 +16,7 @@ import { Bullet } from '@core/game/components/Bullet';
 import { createVerticesByPoints, Physics } from '@core/game/math/Physics';
 import { IRigidBodyOptions, PrimitiveType, RigidBody, RigidBodyType } from '@core/game/components/RigidBody';
 import { EnemyView } from '@core/game/graphics/EnemyView';
-import { InputMotionControlSystem } from '@core/game/systems/InputMotionControlSystem';
+import { MotionControlSystem } from '@core/game/systems/MotionControlSystem';
 import { PistolControlSystem } from '@core/game/systems/PistolControlSystem';
 import { BulletSystem } from '@core/game/systems/BulletSystem';
 import { CollisionSystem } from '@core/game/systems/CollisionSystem';
@@ -24,12 +24,21 @@ import { ClearFrameSystem } from '@core/game/systems/ClearFrameSystem';
 import { SystemPriorities } from '@core/game/systems/constants';
 import { GameplayState } from '@core/game/Game';
 import { Scene, SceneLayer } from '@core/game/Scene';
+import { InputController } from '@core/game/InputController';
+import { ShootingSystem } from '@core/game/systems/ShootingSystem';
+import { Shooting } from '@core/game/components/Shooting';
+import { Input } from '@core/game/components/Input';
+import { InputControlSystem } from '@core/game/systems/InputControlSystem';
 
 export class World {
     public readonly engine: Engine;
     public readonly physics: Physics;
 
-    public constructor(public readonly scene: Scene, private readonly state: GameplayState){
+    public constructor(
+        private readonly scene: Scene,
+        private readonly state: GameplayState,
+        private readonly input: InputController,
+    ){
         this.engine = new Engine();
 
         this.physics = new Physics({
@@ -41,7 +50,9 @@ export class World {
     }
 
     public start(): void {
-        this.engine.addSystem(new InputMotionControlSystem(), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new InputControlSystem(this.input), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new MotionControlSystem(this.input), SystemPriorities.PreUpdate); 
+        this.engine.addSystem(new ShootingSystem(), SystemPriorities.PreUpdate); 
         this.engine.addSystem(new PistolControlSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
@@ -73,8 +84,8 @@ export class World {
         fsm.createState('idle');
 
         fsm.createState('shooting')
-            .add(Pistol)
-            .withInstance(new Pistol());
+            .add(Shooting)
+            .withInstance(new Shooting());
 
         fsm.createState('motion')
             .add(InputMotion)
@@ -82,6 +93,7 @@ export class World {
 
         player
             .add(new Character({ fsm, group: CharacterGroup.Singleton }))
+            .add(new Input())
             .add(new Display(new PlayerView(0xFF0000, vertices), SceneLayer.World))
             .add(new Transform({ maxWidth: 40, maxHeight: 30 }))
             .add(new RigidBody(this.physics, {
@@ -90,7 +102,7 @@ export class World {
                 primitiveType: PrimitiveType.Polygon
             }));
 
-        fsm.changeState('shooting');
+        fsm.changeState('idle');
 
         this.engine.addEntity(player);
 

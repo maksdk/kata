@@ -1,7 +1,8 @@
 import { FrameTickProvider } from '../libs/ash';
-import { Application, Container, DisplayObject } from 'pixi.js';
+import { Application } from 'pixi.js';
 import { World } from '@core/game/World';
-import { Scene } from '@core/game/Scene';
+import { Scene, SceneLayer } from '@core/game/Scene';
+import { InputController } from '@core/game/InputController';
 
 export class GameplayState {
     public width: number;
@@ -19,6 +20,7 @@ export class Game {
     private readonly state: GameplayState;
     private readonly world: World;
     private readonly scene: Scene;
+    private readonly input: InputController;
 
     public constructor() {
         this.state = new GameplayState();
@@ -31,16 +33,18 @@ export class Game {
             backgroundColor: 0,
         });
 
-        this.scene = new Scene(this.app.stage);
-        
-        this.world = new World(this.scene, this.state);
-
+        this.scene = new Scene(this.app);
+        this.input = new InputController(this.scene);
+        this.world = new World(this.scene, this.state, this.input);
         this.ticker = new FrameTickProvider();
+
+        console.log('Window size: ', this.state.width, this.state.height);
     }
 
     public start(): void {
-        this.app.stage.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
         document.body.appendChild(this.app.view);
+
+        this.scene.addChild(this.input.view, SceneLayer.Input);
 
         this.world.start();
 
@@ -51,10 +55,8 @@ export class Game {
         this.ticker.start();
 
         this.world.createPlayer();
-        
+
         // @ts-ignore
         window.Game = this;
     }
 }
-
-
