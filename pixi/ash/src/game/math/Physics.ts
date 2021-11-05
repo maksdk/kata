@@ -166,7 +166,10 @@ export class Physics extends utils.EventEmitter {
 
     public update(dt: number): void {
         Runner.tick(this.runner, this.engine, dt);
-        Render.world(this.render);
+
+        if (this.render) {
+            Render.world(this.render);
+        }
     }
 
     private createRender(): Render {
