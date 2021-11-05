@@ -3,6 +3,7 @@ import { Application } from 'pixi.js';
 import { World } from '@core/game/World';
 import { Scene, SceneLayer } from '@core/game/Scene';
 import { InputController } from '@core/game/InputController';
+import { WeaponType } from '@core/game/constants';
 
 export class GameplayState {
     public width: number;
@@ -56,7 +57,9 @@ export class Game {
 
         this.world.createPlayer();
         this.world.createEnemy();
-        this.world.createWeaponItem();
+
+        this.world.createWeaponItem({ type: WeaponType.Pistol });
+        this.world.createWeaponItem({ type: WeaponType.Shotgun });
 
         // @ts-ignore
         window.Game = this;

@@ -5,6 +5,9 @@ import { Character } from '@core/game/components/Character';
 import { circleInRect } from '@core/game/math/collision';
 import { World } from '@core/game/World';
 import { Pistol } from '@core/game/components/Pistol';
+import { Shotgun } from '@core/game/components/Shotgun';
+
+// TODO: System is used to collect and use new weapons in the World
 
 const WeaponItemNode = defineNode({
     transform: Transform,
@@ -20,9 +23,11 @@ const CharacterNode = defineNode({
 
 type CharacterNode = InstanceType<typeof CharacterNode>;
 
-export class CollectItemSystem extends System {
+export class CollectWeaponSystem extends System {
     private weapons: NodeList<WeaponItemNode> | null = null;
     private characters: NodeList<CharacterNode> | null = null;
+
+    private weaponComponents: [typeof Pistol, typeof Shotgun] = [Pistol, Shotgun];
 
     public constructor(private world: World) {
         super();
@@ -48,7 +53,22 @@ export class CollectItemSystem extends System {
                 );
                 
                 if (intersect) {
-                    character.entity.add(Pistol);
+                    const Weapon = this.weaponComponents.find((c) => c.type === weapon.weaponItem.type);
+                    
+                    if (!Weapon) {
+                        console.error(`CollectWeaponSystem - update. Weapon item : "${weapon.weaponItem.type}" is not found in weapon components list.`, this.weaponComponents);
+                        continue;
+                    }
+
+                    this.weaponComponents.forEach(c => {
+                        if (character.entity.has(c)) {
+                            character.entity.remove(c);
+                        }
+                    });
+
+                    // TODO: Maybe in the future use WeaponChangingSystem to add weapons
+                    character.entity.add(new Weapon());
+
                     this.world.removeEntity(weapon.entity);
                 }
             }

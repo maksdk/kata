@@ -1,4 +1,4 @@
-import { RigidBody } from './../components/RigidBody';
+import { RigidBody } from '../components/RigidBody';
 import { defineNode, Engine, NodeList, System } from '@ash.ts/ash';
 import { Character } from '@core/game/components/Character';
 import { Transform } from '@core/game/components/Transform';
@@ -23,7 +23,7 @@ const TargetNode = defineNode({
 
 type TargetNode = InstanceType<typeof TargetNode>;
 
-export class PistolControlSystem extends System {
+export class PistolSystem extends System {
     private targets: NodeList<TargetNode> | null;
     private pistols: NodeList<PistolNode> | null;
 
@@ -53,8 +53,6 @@ export class PistolControlSystem extends System {
             if (pistol.pistol.timeSinceLastShot >= pistol.pistol.minShotInterval) {
                 const target = this.findNearestTarget(pistol);
                 if (target) {
-                    const speed = 8;
-
                     const dir = Vector.sub2(
                         new Vector(target.transform.x, target.transform.y),
                         new Vector(pistol.transform.x, pistol.transform.y)
@@ -66,17 +64,7 @@ export class PistolControlSystem extends System {
                     };
         
                     this.world.createBullet(new Vector(pos.x, pos.y), {
-                        velocity: {
-                            x: dir.x * speed, 
-                            y: dir.y * speed,
-                        },
-                        radius: 6,
-                        friction: 0,
-                        frictionAir: 0,
-                        //TODO: Avoid collisions between bullets 
-                        collisionFilter: {
-                            group: -100,
-                        }
+                        velocity: dir,
                     });
 
                     pistol.pistol.timeSinceLastShot = 0;
