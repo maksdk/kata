@@ -10,17 +10,19 @@ export enum CharacterGroup {
 interface ICharacterOptions {
     fsm?: EntityStateMachine | null;
     group?: CharacterGroup;
+    id: string;
 }
 
 const defaultOptions: ICharacterOptions = {
     fsm: null,
     group: CharacterGroup.Singleton,
+    id: 'unknown',
 };
 
 export class Character {
     private options: ICharacterOptions;
 
-    public constructor(options: ICharacterOptions = {}) {
+    public constructor(options: ICharacterOptions) {
         this.options = {
             ...defaultOptions,
             ...options
@@ -33,6 +35,10 @@ export class Character {
 
     public get group(): CharacterGroup {
         return this.options.group;
+    }
+
+    public get id(): string {
+        return this.options.id;
     }
 
     public isEnemy(group: CharacterGroup): boolean {

@@ -5,9 +5,11 @@ import { Transform } from '@core/game/components/Transform';
 import { Pistol } from '@core/game/components/Pistol';
 import { World } from '@core/game/World';
 import { Vector } from '@core/game/math/Vector';
+import { Shooting } from '@core/game/components/Shooting';
 
 const PistolNode = defineNode({
     pistol: Pistol,
+    shooting: Shooting,
     rigidbody: RigidBody,
     transform: Transform,
 }, 'PistolNode');
@@ -40,7 +42,6 @@ export class PistolControlSystem extends System {
     }
 
     public update(dt: number): void {
-        
         if (!this.targets.head) {
             return;
         }

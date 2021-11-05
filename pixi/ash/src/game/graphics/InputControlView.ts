@@ -77,6 +77,7 @@ export class InputControlView extends BaseView {
         if (this.state === 'down') {
             this.joy.visible = true;
             this.joyTouch.position.set(0, 0);
+            this.joy.position.set(movePos.x, movePos.y);
             this.emit(InputControlViewEvent.StartMove, { angle: 0, direction: new Vector(0, 0) });
         } else if (this.state === 'move') {
             const x = Math.cos(angle) * this.joyTouchMaxRadius;

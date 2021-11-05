@@ -5,7 +5,6 @@ import { RemoveEntity } from '@core/game/components/RemoveEntity';
 import { RigidBody } from '@core/game/components/RigidBody';
 import { Transform } from '@core/game/components/Transform';
 import { World } from '@core/game/World';
-import { Vector } from '@core/game/math/Vector';
 
 const BulletNode = defineNode({
     bullet: Bullet,
@@ -61,17 +60,6 @@ export class BulletSystem extends System {
     }
 
     private onStartCollisionBullet(node: CollisionStartBulletNode): void {
-        const { collision } = node;
-
-        collision.collision.pairs.forEach(pair => {
-            pair.activeContacts.forEach(contact => {
-                this.world.createBuckshotBullet(
-                    new Vector(contact.x, contact.y),
-                    new Vector(1, 0)
-                );
-            });
-        });
-
         node.entity.add(new RemoveEntity());
     }
 

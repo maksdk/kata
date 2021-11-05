@@ -33,3 +33,28 @@ export function pointInRect(point: Vector, r: { x: number; y: number; width: num
 function inRange(val: number, min: number, max: number): boolean {
 	return val >= Math.min(max, min) && val <= Math.max(max, min);
 }
+
+export function circleInRect(circle: { x: number; y: number; r: number; }, rect: {x: number; y: number; w: number; h: number } ): boolean {
+    const dx = Math.abs(circle.x - rect.x);
+    const dy = Math.abs(circle.y - rect.y);
+
+    if (dx > (rect.w / 2 + circle.r)) { 
+        return false; 
+    }
+
+    if (dy > (rect.h / 2 + circle.r)) { 
+        return false; 
+    }
+
+    if (dx <= (rect.w / 2)) { 
+        return true; 
+    } 
+
+    if (dy <= (rect.h / 2)) {
+        return true; 
+    }
+
+    const conerDist = (dx - rect.w / 2) ** 2 + (dy - rect.h / 2) ** 2;
+
+    return conerDist <= circle.r ** 2;
+}

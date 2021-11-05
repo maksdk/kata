@@ -29,6 +29,11 @@ import { ShootingSystem } from '@core/game/systems/ShootingSystem';
 import { Shooting } from '@core/game/components/Shooting';
 import { Input } from '@core/game/components/Input';
 import { InputControlSystem } from '@core/game/systems/InputControlSystem';
+import { CollisionClearSystem } from '@core/game/systems/CollisionClearSystem';
+import { ItemView } from '@core/game/graphics/ItemView';
+import { WeaponItem } from '@core/game/components/WeaponItem';
+import { CollectItemSystem } from '@core/game/systems/CollectItemSystem';
+import { randomInt } from '@core/game/math/helpers';
 
 export class World {
     public readonly engine: Engine;
@@ -55,6 +60,8 @@ export class World {
         this.engine.addSystem(new ShootingSystem(), SystemPriorities.PreUpdate); 
         this.engine.addSystem(new PistolControlSystem(this), SystemPriorities.Update); 
         this.engine.addSystem(new BulletSystem(this), SystemPriorities.Update); 
+        this.engine.addSystem(new CollectItemSystem(this), SystemPriorities.Update); 
+        this.engine.addSystem(new CollisionClearSystem(), SystemPriorities.PreCollision);   
         this.engine.addSystem(new CollisionSystem(this.physics), SystemPriorities.Collision);   
         this.engine.addSystem(new RenderSystem(this.scene), SystemPriorities.Render);    
         this.engine.addSystem(new ClearFrameSystem(this), SystemPriorities.AfterFrame);   
@@ -92,8 +99,9 @@ export class World {
             .withInstance(new InputMotion());
 
         player
-            .add(new Character({ fsm, group: CharacterGroup.Singleton }))
+            .add(new Character({ fsm, group: CharacterGroup.Singleton, id: 'main player' }))
             .add(new Input())
+            .add(new Pistol())
             .add(new Display(new PlayerView(0xFF0000, vertices), SceneLayer.World))
             .add(new Transform({ maxWidth: 40, maxHeight: 30 }))
             .add(new RigidBody(this.physics, {
@@ -116,14 +124,15 @@ export class World {
         const enemy: Entity = new Entity('Enemy');
 
         enemy
-            .add(new Character({ group: CharacterGroup.Singleton }))
+            .add(new Character({ group: CharacterGroup.Singleton, id: 'enemy' }))
             .add(new Display(new EnemyView({ width: 50, height: 50 }), SceneLayer.World))
-            .add(new Transform({ x: 0, y: -200 }))
+            .add(new Transform({ x: 0, y: 200 }))
             .add(new RigidBody(this.physics, {
                 width: 50,
                 height: 50,
                 rigidbodyType: RigidBodyType.Dynamic,
-                primitiveType: PrimitiveType.Rect
+                primitiveType: PrimitiveType.Rect,
+                label: 'Enemy'
             }));
 
 
@@ -198,5 +207,24 @@ export class World {
         this.engine.addEntity(wall);
 
         return wall;
+    }
+
+    public createWeaponItem(): Entity {
+        const item = new Entity();
+
+        const p = new Vector(
+            randomInt(-this.state.width * 0.4, this.state.width * 0.4),
+            randomInt(-this.state.height * 0.4, this.state.height * 0.4)
+        );
+
+        const itemView = new ItemView();
+
+        item.add(new Transform({ x: p.x, y: p.y }))
+            .add(new Display(itemView, SceneLayer.World))
+            .add(new WeaponItem());
+
+        this.engine.addEntity(item);
+
+        return item;
     }
 }

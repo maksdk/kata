@@ -1,6 +1,7 @@
 import decomp from 'poly-decomp';
 import { Vector } from '@core/game/math/Vector';
-import Matter, { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events, IChamferableBodyDefinition, IEventCollision } from 'matter-js';
+// import { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events, IChamferableBodyDefinition, IEventCollision } from '../../libs/matter.js';
+import { Engine, Render, Runner, World, Body, Bodies, Vertices, Common, Vector as MatterVector, Events, IChamferableBodyDefinition, IEventCollision } from 'matter-js';
 import { PrimitiveType } from '@core/game/components/RigidBody';
 import { utils } from 'pixi.js';
 
@@ -31,7 +32,7 @@ export interface IPhysicsCollisionPair {
     activeContacts: IPhysicsCollisionPairActiveContact[];
 }
 
-export interface IPhysicsCollisionStart {
+export interface IPhysicsCollision {
     pairs: IPhysicsCollisionPair[];
 }
 
@@ -77,6 +78,7 @@ export class Physics extends utils.EventEmitter {
         Common.setDecomp(decomp);
 
         Events.on(this.engine, 'collisionStart', (event) => this.onStartCollision(event));
+        Events.on(this.engine, 'collisionEnd', (event) => this.onEndCollision(event));
     }
 
     public start(): void {
@@ -133,6 +135,7 @@ export class Physics extends utils.EventEmitter {
             body = new Primitive(circle, this.config.worldPosition);
         } else if (primitiveType === PrimitiveType.Polygon) {
             if (vertices.length > 0) {
+                // @ts-ignore
                 const polygon = Bodies.fromVertices(x, y, vertices, settings);
                 World.add(this.engine.world, polygon);
                 body = new Primitive(polygon, this.config.worldPosition);
@@ -142,7 +145,6 @@ export class Physics extends utils.EventEmitter {
         } else {
             console.error(`Physics. Such type of primitive: "${primitiveType as string}" is not found`);
         }
-
 
         if (body) {
             this.primitives.set(body.id, body);
@@ -154,11 +156,12 @@ export class Physics extends utils.EventEmitter {
     public removeChild(child: Primitive): void {
         World.remove(this.engine.world, child.body);
 
-        if (this.primitives.has(child.id)) {
-            this.primitives.delete(child.id);
-        } else {
-            console.error('Physics - removeChild. Error: child is not found in primitive list: ', child);
-        }
+        // TODO: Add primitive removing after some time
+        // if (this.primitives.has(child.id)) {
+        //     this.primitives.delete(child.id);
+        // } else {
+        //     console.error('Physics - removeChild. Error: child is not found in primitive list: ', child);
+        // }
     }
 
     public update(dt: number): void {
@@ -198,17 +201,26 @@ export class Physics extends utils.EventEmitter {
         return canvas;
     }
 
-    //TODO:  ADD types
     private onStartCollision(event: IEventCollision<Engine>): void {
-        const initReduce: IPhysicsCollisionPair[] = [];
+        const collision = this.adaptCollision(event);
+        this.emit('collisionstart', collision);
+    }
 
+    private onEndCollision(event: IEventCollision<Engine>): void {
+        const collision = this.adaptCollision(event);
+        this.emit('collisionend', collision);
+    }
+
+    private adaptCollision(event: IEventCollision<Engine>): IPhysicsCollision {
+        const initReduce: IPhysicsCollisionPair[] = [];
+        
         const pairs: IPhysicsCollisionPair[] = event.pairs.reduce((acc, pair) => {
             const { bodyA, bodyB } = pair;
             const b1 = this.primitives.get(bodyA.id);
             const b2 = this.primitives.get(bodyB.id);
 
             if (!b1 || !b2) {
-                console.error('Physics - onStartCollision. Error: bodies are not found in primitives list', event);
+                console.error('Physics - adaptCollision. Error: bodies are not found in primitives list', event);
                 return acc;
             }
 
@@ -229,7 +241,7 @@ export class Physics extends utils.EventEmitter {
             }];
         }, initReduce);
 
-        this.emit('collisionstart', { pairs });
+        return { pairs };
     }
 
     private adaptPos(pos: { x: number; y: number }): { x: number; y: number } {
@@ -238,9 +250,7 @@ export class Physics extends utils.EventEmitter {
 }
 
 export class Primitive {
-    public constructor(public body: Body, private _offset: { x: number; y: number }) {
-
-    }
+    public constructor(public body: Body, private _offset: { x: number; y: number }) {}
 
     public get position(): { x: number; y: number; } {
         return {

@@ -55,6 +55,8 @@ export class Game {
         this.ticker.start();
 
         this.world.createPlayer();
+        this.world.createEnemy();
+        this.world.createWeaponItem();
 
         // @ts-ignore
         window.Game = this;
