@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Animate Vertex</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3" style="overflow-x: hidden;">  
+    <h3>Anamite vertex</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Set parameters:</b><br>
+            <div class="row mt-2">
+                <label class="col-sm-2 control-label" for="parameters">f(z):</label>
+                <div class="col-sm-10">
+                    <input id="id-zfunc" type="text" class="form-control input-sm" style="height:25px;" value="(z^2+a)/(z^2-a)" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">parameter range:</label>
+                <div class="col-sm-6">
+                    <input id="id-param-range" type="text" class="form-control" style="height:25px;" value="-2,2" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">select chart type:</label>
+                <select class="col-sm-6 form-control" id="id-charttype" >
+                    <option>magnitude</option>
+                    <option>phase</option>
+                    <option>real</option>
+                    <option>imaginary</option>               
+                </select>
+            </div>        
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">xz range:</label>
+                <div class="col-sm-6">
+                    <input id="id-xzrange" type="text" class="form-control" style="height:25px;" value="-2,2,-2,2" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">xz points:</label>
+                <div class="col-sm-6">
+                    <input id="id-xzpoints" type="text" class="form-control" style="height:25px;" value="20,20" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">scale factor:</label>
+                <div class="col-sm-6">
+                    <input id="id-scale" type="text" class="form-control" style="height:25px;" value="2,0.2" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">select colormap:</label>
+                <select class="col-sm-6 form-control" id="id-select" >
+                    <option>jet</option>
+                    <option>autumn</option>
+                    <option>bone</option>
+                    <option>cool</option>
+                    <option>copper</option>
+                    <option>greys</option>
+                    <option>hot</option>
+                    <option selected>hsv</option>
+                    <option>spring</option>
+                    <option>summer</option>
+                    <option>winter</option>                   
+                </select>
+            </div>        
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">animation speed:</label>
+                <div class="col-sm-6">
+                    <input id="id-speed" type="text" class="form-control" style="height:25px;" value="0.02" />
+                </div>
+            </div>
+            <hr>
+            <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Redraw</button>
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+            <div id="id-res"></div>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch12AnimateVertex.bundle.js"></script>
+</body>
+</html>

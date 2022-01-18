@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Cube with Distinct Face Colors</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2">  
+    <h3>Cube with distinct face colors</h3>
+    <div class="row m-2 mt-3">
+        <div class="btn-group btn-group-toggle" id="id-projection" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="radio" name="projections" value="perspective" checked>Perspective
+            </label>
+            <label class="btn btn-secondary ml-2 mr-3">
+                <input type="radio" name="projections" value="orthographic">Orthographic
+            </label>              ||
+        </div>       
+        <div class="btn-group btn-group-toggle" id="id-radio" data-toggle="buttons">
+            <label class="btn btn-secondary active ml-3">
+                <input type="radio" name="options" value="animation" checked>Animation
+            </label>
+            <label class="btn btn-secondary ml-2">
+                <input type="radio" name="options" value="trackball">Mouse Control
+            </label>               
+        </div>        
+    </div>
+   <div class="row m-2">
+    <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+   </div>   
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch06Cube.bundle.js"></script>
+</body>
+</html>

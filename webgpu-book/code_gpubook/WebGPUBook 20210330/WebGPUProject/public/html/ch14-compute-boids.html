@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Compute Boids</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3">  
+    <h3>Compute boids</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Set parameters:</b><br>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">number of particles:</label>
+                <div class="col-sm-6">
+                    <input id="id-num" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="2000" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">particle size:</label>
+                <div class="col-sm-6">
+                    <input id="id-size" type="text" class="form-control" 
+                          style="height:25px;width:100%" value="1.0" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">color control [0,1]:</label>
+                <div class="col-sm-6">
+                    <input id="id-color" type="text" class="form-control" 
+                           style="height:25px;width:100%" value="0.1" />
+                </div>
+            </div>   
+            <hr>
+            <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Redraw</button>
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch14ComputeBoids.bundle.js"></script>
+</body>
+</html>

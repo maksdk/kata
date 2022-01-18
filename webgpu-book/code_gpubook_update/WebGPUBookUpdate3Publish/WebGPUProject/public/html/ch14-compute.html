@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Compute Shader</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2">  
+    <h3>Test compute shader</h3>
+    <div class="row mt-3">
+      <div class="col-3 text-left">
+          <b>Set parameters:</b><br>
+          <div class="row mt-2">
+              <label class="col-sm-6 control-label" for="parameters">input vector (vec2):</label>
+              <div class="col-sm-6">
+                  <input id="id-vec2" type="text" class="form-control input-sm" 
+                         style="height:25px;width:100%" value="1, 0" />
+              </div>
+          </div>
+          <div class="row mt-2">
+              <label class="col-sm-6 control-label" for="parameters">rotate angle (degree):</label>
+              <div class="col-sm-6">
+                  <input id="id-angle" type="text" class="form-control" 
+                        style="height:25px;width:100%" value="45" />
+              </div>
+          </div>         
+          <hr>
+          <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Refresh result</button>
+      </div>
+
+      <div class="col-9">
+        <b>Vector after rotation</b> <br>
+        <div id="id-res"></div>
+      </div>   
+  </div>  
+
+   <div class="row m-2">
+    <canvas id="canvas-webgpu"></canvas>
+   </div>   
+   
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch14Compute.bundle.js"></script>
+</body>
+</html>

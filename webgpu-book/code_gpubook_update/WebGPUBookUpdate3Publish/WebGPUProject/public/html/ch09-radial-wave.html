@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Radial WaveSurface</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3">  
+    <h3>Radial wave surface</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Shape motion:</b><br>
+            <div class="btn-group btn-group-toggle mt-2" id="id-radio" data-toggle="buttons">
+                <label class="btn btn-sm btn-secondary active">
+                    <input type="radio" name="options" value="animation" checked>Animation
+                </label>
+                <label class="btn btn-sm btn-secondary ml-2">
+                    <input type="radio" name="options" value="trackball">Mouse control
+                </label>               
+            </div>        
+            <hr />
+            <b>Set parameters:</b><br>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">isPhong:</label>
+                <div class="col-sm-6">
+                    <input id="id-isphong" type="text" class="form-control input-sm" style="height:25px;width:100%" value="0" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">isTwoSideLighting:</label>
+                <div class="col-sm-6">
+                    <input id="id-twoside" type="text" class="form-control" style="height:25px;width:100%" value="1" />
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">select colormap:</label>
+                <select class="col-sm-6 form-control" id="id-select" >
+                    <option>jet</option>
+                    <option>autumn</option>
+                    <option>bone</option>
+                    <option>cool</option>
+                    <option>copper</option>
+                    <option>greys</option>
+                    <option>hot</option>
+                    <option>hsv</option>
+                    <option>spring</option>
+                    <option>summer</option>
+                    <option>winter</option>                   
+                </select>
+            </div>        
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">colormap direction:</label>
+                <div class="col-sm-6">
+                    <input id="id-direction" type="text" class="form-control" style="height:25px;width:100%" value="y" />
+                </div>
+            </div>   
+            <hr>
+            <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Redraw</button>
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch09RadialWave.bundle.js"></script>
+</body>
+</html>

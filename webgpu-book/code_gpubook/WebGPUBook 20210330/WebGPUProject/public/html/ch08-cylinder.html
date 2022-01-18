@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Cylinder with Lighting</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3">  
+    <h3>Cylinder with lighting</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Control shape motion:</b><br>
+            <div class="btn-group btn-group-toggle mt-2" id="id-radio" data-toggle="buttons">
+                <label class="btn btn-sm btn-secondary active">
+                    <input type="radio" name="options" value="animation" checked>Animation
+                </label>
+                <label class="btn btn-sm btn-secondary ml-2">
+                    <input type="radio" name="options" value="trackball">Mouse control
+                </label>               
+            </div>        
+            <hr />
+            <b>Set parameters:</b><br>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">object color:</label>
+                <div class="col-sm-6">
+                    <input id="id-color" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="(1.0, 0.0, 0.0)" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">isPhong:</label>
+                <div class="col-sm-6">
+                    <input id="id-isphong" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="0" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">ambient:</label>
+                <div class="col-sm-6">
+                    <input id="id-ambient" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="0.1" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">diffuseCoeff:</label>
+                <div class="col-sm-6">
+                    <input id="id-diffuse" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="0.8" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">specularCoeff:</label>
+                <div class="col-sm-6">
+                    <input id="id-specular" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="0.4" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">shininess:</label>
+                <div class="col-sm-6">
+                    <input id="id-shininess" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="30.0" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">specular color:</label>
+                <div class="col-sm-6">
+                    <input id="id-scolor" type="text" class="form-control input-sm" 
+                           style="height:25px;width:100%" value="(1.0, 1.0, 1.0)" />
+                </div>
+            </div>
+            <hr>
+            <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Redraw</button>
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch08Cylinder.bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Cylinder with Texture</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3">  
+    <h3>Cylinder with texture</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Shape motion:</b><br>
+            <div class="btn-group btn-group-toggle mt-2" id="id-radio" data-toggle="buttons">
+                <label class="btn btn-sm btn-secondary active">
+                    <input type="radio" name="options" value="animation" checked>Animation
+                </label>
+                <label class="btn btn-sm btn-secondary ml-2">
+                    <input type="radio" name="options" value="trackball">Mouse control
+                </label>               
+            </div>        
+            <hr />
+            <b>Set parameters:</b><br>           
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">select image:</label>
+                <select class="col-sm-6 form-control" id="id-select" >
+                    <option value="brick">Brick</option>
+                    <option value="earth">Earth</option>
+                    <option value="grass">Grass</option>
+                    <option value="greatcanyon">Great Canyon</option>
+                    <option value="jiuzhaigou">Jiu Zhai Gou</option>
+                    <option value="marble">Marble</option>
+                    <option value="newyork">New York</option>
+                    <option value="wood">Wood</option>
+                    <option value="yellowstone">Yellow Stone</option>                               
+                </select>
+            </div>    
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">u length:</label>
+                <div class="col-sm-6">
+                    <input id="id-ulength" type="text" class="form-control" style="height:25px;width:100%" value="1.0" />
+                </div>
+            </div>       
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">v length:</label>
+                <div class="col-sm-6">
+                    <input id="id-vlength" type="text" class="form-control" style="height:25px;width:100%" value="1.0" />
+                </div>
+            </div>        
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">addressModeU:</label>
+                <select class="col-sm-6 form-control" id="id-addressu" >
+                    <option value="repeat">repeat</option>
+                    <option value="clamp-to-edge">clamp-to-edge</option>                   
+                    <option value="mirror-repeat">mirror-repeat</option>                                            
+                </select>
+            </div>    
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">addressModeV:</label>
+                <select class="col-sm-6 form-control" id="id-addressv" >
+                    <option value="repeat">repeat</option>
+                    <option value="clamp-to-edge">clamp-to-edge</option>                   
+                    <option value="mirror-repeat">mirror-repeat</option>                                            
+                </select>
+            </div>    
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">shininess:</label>
+                <div class="col-sm-6">
+                    <input id="id-shininess" type="text" class="form-control" style="height:25px;width:100%" value="30.0" />
+                </div>
+            </div>      
+            <hr>
+            <button type="button" id="btn-redraw" class="btn btn-primary btn-sm">Redraw</button>          
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch10Cylinder.bundle.js"></script>
+</body>
+</html>

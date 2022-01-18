@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Fractal: Mandelbrot Set</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2 ml-3" style="overflow-x: hidden;">  
+    <h3>Fractal: Mandelbrot set from shaders</h3>
+    <div class="row mt-3">
+        <div class="col-3 text-left">
+            <b>Set parameters:</b><br>
+            <div class="row mt-2">
+                <label class="col-sm-6 control-label" for="parameters">max iterations:</label>
+                <div class="col-sm-6">
+                    <input id="id-iterations" type="text" class="form-control input-sm" style="height:25px;" value="20" />
+                </div>
+            </div>
+            <div class="row mt-2">
+              <label class="col-sm-6 control-label" for="parameters">scale:</label>
+              <div class="col-sm-6">
+                  <input id="id-scale" type="text" class="form-control input-sm" style="height:25px;" value="0.4" />
+              </div>
+            </div>
+            <div class="row mt-2">
+              <label class="col-sm-6 control-label" for="parameters">cx:</label>
+              <div class="col-sm-6">
+                  <input id="id-cx" type="text" class="form-control input-sm" style="height:25px;" value="0.8" />
+              </div>
+            </div>
+            <div class="row mt-2">
+              <label class="col-sm-6 control-label" for="parameters">cy:</label>
+              <div class="col-sm-6">
+                  <input id="id-cy" type="text" class="form-control input-sm" style="height:25px;" value="0.1" />
+              </div>
+            </div>
+            <hr>
+            <div class="row mt-2">
+              <button type="button" id="btn-redraw" class="col-sm-6 btn btn-primary btn-sm ml-3" style="max-width: 100px;">Redraw</button>
+              <button type="button" id="btn-reset" class="col-sm-6 btn btn-primary btn-sm ml-3" style="max-width: 100px;">Reset</button>
+            </div>
+        </div>
+
+        <div class="col-9">
+            <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+            <div id="id-perf"></div>
+        </div>   
+    </div>  
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch12FractalShader.bundle.js"></script>
+</body>
+</html>

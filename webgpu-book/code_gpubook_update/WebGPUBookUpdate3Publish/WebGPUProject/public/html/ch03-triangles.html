@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+  <link rel="stylesheet" href="../dist/vendor.css" />
+  <link res="stylesheet" href="../dist/main.css" />
+  <title>Triangles</title>
+</head>
+<body>
+  <div id="id_navbar"></div>  
+  <div class="m-2">  
+    <h3>Create triangles with triangle-list or triangle-strip</h3>
+    <div class="row m-2 mt-3">
+        <div class="btn-group btn-group-toggle" id="id-radio" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="radio" name="options" value="triangle-list" checked>triangle-list
+            </label>
+            <label class="btn btn-secondary ml-2">
+                <input type="radio" name="options" value="triangle-strip">triangle-strip
+            </label> 
+        </div>           
+    </div>
+   <div class="row m-2">
+    <canvas id="canvas-webgpu" width="640" height="480"></canvas>
+   </div>   
+  </div>
+  
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/main.bundle.js"></script>
+  <script src="../dist/ch03Triangles.bundle.js"></script>
+</body>
+</html>
